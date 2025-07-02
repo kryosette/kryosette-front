@@ -3,12 +3,13 @@
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/lib/auth-provider';
-import { getUserEmail } from './api';
+import { checkSubscription, getFollowersCount, getUserEmail, subscribeToUser, unsubscribeFromUser } from './api';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Mail, User, Key, MoreHorizontal, MessageSquare, Bell, Share2, Home, MessageCircle, Users, Settings, Bookmark, Video } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { OnlineStatus } from '../../profile/status/online.status';
 
 interface UserProfile {
     id: string;
@@ -18,6 +19,9 @@ interface UserProfile {
     status?: string;
     followers?: number;
     following?: number;
+    isSubscribed?: boolean;
+    isOnline: boolean;
+    lastSeenAt?: string;
 }
 
 function UserEmail({ emailId }: { emailId: string }) {
@@ -25,17 +29,23 @@ function UserEmail({ emailId }: { emailId: string }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { token } = useAuth();
+    const [profile, setProfile] = useState<UserProfile | null>(null);
 
     useEffect(() => {
         const fetchUser = async () => {
             try {
                 const userData = await getUserEmail(emailId, token);
+                const [isSubscribed, followersCount] = await Promise.all([
+                    checkSubscription(emailId, token),
+                    getFollowersCount(emailId, token)
+                ]);
                 setUser({
                     ...userData,
                     avatar: userData.avatar || `https://i.pravatar.cc/150?u=${userData.id}`,
                     status: "Online",
-                    followers: 1243,
-                    following: 567
+                    followers: getFollowersCount(emailId, token),
+                    following: 0,
+                    isSubscribed
                 });
             } catch (err: any) {
                 setError('Не удалось загрузить пользователя: ' + (err.message || ''));
@@ -52,6 +62,33 @@ function UserEmail({ emailId }: { emailId: string }) {
             setLoading(false);
         }
     }, [emailId, token]);
+
+    const handleSubscribe = async () => {
+        if (!user || !token) return;
+
+        try {
+            if (user.isSubscribed) {
+                await unsubscribeFromUser(emailId, token);
+            } else {
+                await subscribeToUser(emailId, token);
+            }
+
+            // Обновляем состояние после изменения подписки
+            const [isSubscribed, followersCount] = await Promise.all([
+                checkSubscription(emailId, token),
+                getFollowersCount(emailId, token)
+            ]);
+
+            setUser(prev => ({
+                ...prev!,
+                isSubscribed,
+                followers: followersCount
+            }));
+        } catch (err) {
+            console.error('Subscription error:', err);
+            setError('Ошибка при изменении подписки');
+        }
+    };
 
     if (loading) return (
         <div className="flex justify-center min-h-screen p-4">
@@ -110,7 +147,10 @@ function UserEmail({ emailId }: { emailId: string }) {
                                         <h2 className="text-2xl font-bold">{user.username}</h2>
                                         <Badge variant="outline" className="flex items-center space-x-1">
                                             <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                                            <span>{user.status}</span>
+                                            <OnlineStatus
+                                                userId={emailId}
+                                                initialStatus={profile?.isOnline || false}
+                                            />
                                         </Badge>
                                     </div>
 
@@ -164,9 +204,12 @@ function UserEmail({ emailId }: { emailId: string }) {
                                     <MessageSquare className="mr-2 h-4 w-4" />
                                     Написать
                                 </Button>
-                                <Button variant="outline">
+                                <Button
+                                    variant={user.isSubscribed ? "outline" : "default"}
+                                    onClick={handleSubscribe}
+                                >
                                     <Bell className="mr-2 h-4 w-4" />
-                                    Подписаться
+                                    {user.isSubscribed ? "Отписаться" : "Подписаться"}
                                 </Button>
                             </div>
                             <Button variant="ghost">
