@@ -5,8 +5,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { useComments } from "@/hooks/use_comments";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, MessageSquare, Reply } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import Replies from "./Replies";
 
 interface CommentSectionProps {
     postId: number;
@@ -17,6 +19,7 @@ export const CommentSection = ({ postId }: CommentSectionProps) => {
     const [replyingTo, setReplyingTo] = useState<number | null>(null);
     const [replyContent, setReplyContent] = useState('');
     const [expandedReplies, setExpandedReplies] = useState<Record<number, boolean>>({});
+    const queryClient = useQueryClient();
 
     const {
         comments,
@@ -24,8 +27,29 @@ export const CommentSection = ({ postId }: CommentSectionProps) => {
         addComment,
         addReply,
         isAddingComment,
-        isAddingReply
+        isAddingReply,
+
     } = useComments(postId);
+
+    // Добавляем этот эффект в компонент
+    const loadReplies = async (commentId: number) => {
+        try {
+            const res = await fetch(`http://localhost:8091/comments/${commentId}/replies`)
+            const replies = await res.json()
+
+            // Обновляем только replies у нужного комментария
+            queryClient.setQueryData(
+                ['posts', postId, 'comments'],
+                (old: any[]) => old.map(comment =>
+                    comment.id === commentId
+                        ? { ...comment, replies }
+                        : comment
+                )
+            )
+        } catch (err) {
+            console.error('Ошибка загрузки ответов:', err)
+        }
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,6 +62,17 @@ export const CommentSection = ({ postId }: CommentSectionProps) => {
             console.error('Failed to create comment:', err);
         }
     };
+
+    const fetchReplies = async (commentId: number) => {
+        try {
+            const res = await fetch(`http://localhost:8091/comments/${commentId}/replies`)
+            return await res.json()
+        } catch (err) {
+            console.error('Ошибка загрузки ответов:', err)
+            return []
+        }
+    }
+
 
     const handleReplySubmit = async (commentId: number) => {
         if (!replyContent.trim()) return;
@@ -52,11 +87,23 @@ export const CommentSection = ({ postId }: CommentSectionProps) => {
         }
     };
 
-    const toggleReplies = (commentId: number) => {
-        setExpandedReplies(prev => ({
-            ...prev,
-            [commentId]: !prev[commentId]
-        }));
+    const toggleReplies = async (commentId: number) => {
+        const comment = comments.find(c => c.id === commentId);
+        if (!comment) return;
+
+        if (comment.replies && comment.replies.length > 0) {
+            setExpandedReplies(prev => ({
+                ...prev,
+                [commentId]: !prev[commentId]
+            }));
+        }
+        else {
+            await loadReplies(commentId);
+            setExpandedReplies(prev => ({
+                ...prev,
+                [commentId]: true
+            }));
+        }
     };
 
     return (
@@ -186,49 +233,49 @@ export const CommentSection = ({ postId }: CommentSectionProps) => {
                                         </div>
                                     </div>
                                 )}
+                                <Replies commentId={comment.id} userId={comment.username} />
+                                {/* Ответы
 
-                                {/* Ответы */}
-                                {expandedReplies[comment.id] && comment.replies && (
-                                    <div className="mt-3">
-                                        {comment.replies.map(reply => (
-                                            <div key={reply.id} className="flex gap-3 reply-item">
-                                                <div className="flex flex-col items-center">
-                                                    <div className="w-8 h-8 flex items-center justify-center">
-                                                        <div className="w-4 h-4 border-l-2 border-b-2 border-muted-foreground/30 rounded-bl-lg"></div>
-                                                    </div>
-                                                    <Avatar className="h-8 w-8 -mt-1">
-                                                        <AvatarFallback className="bg-gradient-to-r from-primary to-purple-500 text-white text-xs">
-                                                            {reply.authorName?.charAt(0).toUpperCase()}
-                                                        </AvatarFallback>
-                                                    </Avatar>
+                                <div className="mt-3">
+                                    {comment.replies.map(reply => (
+                                        <div key={reply.id} className="flex gap-3 reply-item">
+                                            <div className="flex flex-col items-center">
+                                                <div className="w-8 h-8 flex items-center justify-center">
+                                                    <div className="w-4 h-4 border-l-2 border-b-2 border-muted-foreground/30 rounded-bl-lg"></div>
                                                 </div>
-                                                <div className="flex-1">
-                                                    <div className="bg-muted/30 rounded-lg p-3">
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="font-medium text-sm">
-                                                                {reply.authorName}
-                                                            </span>
-                                                            <span className="text-muted-foreground text-xs">
-                                                                {formatDistanceToNow(new Date(reply.createdAt), { addSuffix: true })}
-                                                            </span>
-                                                        </div>
-                                                        <p className="mt-1 text-sm">{reply.content}</p>
-                                                        <button
-                                                            onClick={() => {
-                                                                setReplyingTo(reply.parentId || comment.id);
-                                                                setReplyContent(`@${reply.authorName} `);
-                                                            }}
-                                                            className="mt-1 text-xs text-muted-foreground hover:text-primary flex items-center gap-1"
-                                                        >
-                                                            <Reply className="h-3 w-3" />
-                                                            Reply
-                                                        </button>
+                                                <Avatar className="h-8 w-8 -mt-1">
+                                                    <AvatarFallback className="bg-gradient-to-r from-primary to-purple-500 text-white text-xs">
+                                                        {reply.authorName?.charAt(0).toUpperCase()}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                            </div>
+                                            <div className="flex-1">
+                                                <div className="bg-muted/30 rounded-lg p-3">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-medium text-sm">
+                                                            {reply.authorName}
+                                                        </span>
+                                                        <span className="text-muted-foreground text-xs">
+                                                            {formatDistanceToNow(new Date(reply.createdAt), { addSuffix: true })}
+                                                        </span>
                                                     </div>
+                                                    <p className="mt-1 text-sm">{reply.content}</p>
+                                                    <button
+                                                        onClick={() => {
+                                                            setReplyingTo(reply.parentId || comment.id);
+                                                            setReplyContent(`@${reply.authorName} `);
+                                                        }}
+                                                        className="mt-1 text-xs text-muted-foreground hover:text-primary flex items-center gap-1"
+                                                    >
+                                                        <Reply className="h-3 w-3" />
+                                                        Reply
+                                                    </button>
                                                 </div>
                                             </div>
-                                        ))}
-                                    </div>
-                                )}
+                                        </div>
+                                    ))}
+                                </div> */}
+
                             </div>
                         </div>
                     </div>

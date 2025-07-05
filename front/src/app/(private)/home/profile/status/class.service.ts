@@ -24,9 +24,8 @@ class StatusService {
             this.stompClient?.subscribe(`/topic/status/${userId}`, (message) => {
                 const statusMessage: { online: boolean } = JSON.parse(message.body);
                 onStatusChange(statusMessage.online);
-            });
+            })
 
-            // Отправляем начальный статус
             this.sendStatus(true, token);
         });
 

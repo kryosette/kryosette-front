@@ -1,44 +1,33 @@
 'use client'
-
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { motion, useMotionTemplate, useMotionValue, animate } from 'framer-motion'
-import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import {
-    User,
-    CreditCard,
-    Landmark,
-    LineChart,
-    ChevronDown,
-    Menu,
-    X
-} from 'lucide-react'
+import { Shield, Banknote, Network, ChevronDown, Menu, X, Gem } from 'lucide-react'
 
-// Конфиг пунктов меню
 const NAV_ITEMS = [
     {
-        name: 'Cards',
-        icon: <CreditCard className="h-4 w-4" />,
+        name: 'Security',
+        icon: <Shield className="h-4 w-4" />,
         submenu: [
-            { title: 'Quantum Shield', href: '/cards/quantum' },
-            { title: 'Stealth Black', href: '/cards/stealth' }
+            { title: 'Quantum Encryption', href: '/security/quantum' },
+            { title: 'Biometric Vaults', href: '/security/biometric' }
         ]
     },
     {
-        name: 'Vault',
-        icon: <Landmark className="h-4 w-4" />,
+        name: 'Finance',
+        icon: <Banknote className="h-4 w-4" />,
         submenu: [
-            { title: 'Crypto Storage', href: '/vault/crypto' },
-            { title: 'Data Bunkers', href: '/vault/bunkers' }
+            { title: 'Private Transactions', href: '/finance/private' },
+            { title: 'Wealth Management', href: '/finance/wealth' }
         ]
     },
     {
         name: 'Network',
-        icon: <LineChart className="h-4 w-4" />,
+        icon: <Network className="h-4 w-4" />,
         submenu: [
-            { title: 'Node Map', href: '/network/map' },
-            { title: 'Traffic Obfuscation', href: '/network/obfs' }
+            { title: 'Ghost Nodes', href: '/network/nodes' },
+            { title: 'Zero-Trace Routing', href: '/network/routing' }
         ]
     }
 ]
@@ -47,195 +36,153 @@ export function Navbar() {
     const [activeHover, setActiveHover] = useState<number | null>(null)
     const [mobileOpen, setMobileOpen] = useState(false)
 
-    // Анимационные значения для математических эффектов
-    const mouseX = useMotionValue(0)
-    const mouseY = useMotionValue(0)
-    const radius = useMotionValue(0)
-    const opacity = useMotionValue(0)
-
-    const handleMouseMove = ({ currentTarget, clientX, clientY }: React.MouseEvent) => {
-        const bounds = currentTarget.getBoundingClientRect()
-        mouseX.set(clientX - bounds.left)
-        mouseY.set(clientY - bounds.top)
-        radius.set(Math.sqrt(bounds.width ** 2 + bounds.height ** 2) / 2.5)
-        animate(opacity, 1, { duration: 0.5 })
-    }
-
     return (
-        <motion.header
-            className="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-xl border-b border-gray-800"
-            onMouseMove={handleMouseMove}
-            onMouseLeave={() => animate(opacity, 0)}
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
-            transition={{ type: 'spring', damping: 20 }}
-        >
-            {/* Градиентный эффект при движении мыши */}
-            <motion.div
-                className="pointer-events-none absolute inset-0 opacity-0"
-                style={{
-                    background: useMotionTemplate`
-            radial-gradient(
-              circle ${radius}px at ${mouseX}px ${mouseY}px,
-              rgba(71, 127, 247, 0.15),
-              transparent 80%
-            )
-          `,
-                    opacity
-                }}
-            />
-
-            <div className="container flex h-16 items-center justify-between px-6">
-                {/* Лого с волновым эффектом */}
-                <Link href="/" className="relative overflow-hidden group">
-                    <motion.span
-                        className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600"
-                        whileHover={{
-                            backgroundPosition: '100% 50%',
-                            transition: { duration: 1.5, ease: [0.83, 0, 0.17, 1] }
-                        }}
-                        style={{
-                            backgroundSize: '300% 100%',
-                            backgroundImage: 'linear-gradient(90deg, #3b82f6, #8b5cf6, #3b82f6)'
-                        }}
-                    >
-                        kryosette
-                    </motion.span>
-
-                    <motion.div
-                        className="absolute bottom-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-600"
-                        initial={{ width: 0 }}
-                        whileHover={{ width: '100%' }}
-                        transition={{ duration: 0.6, ease: 'circOut' }}
-                    />
-                </Link>
-
-                {/* Десктопное меню с 3D-трансформациями */}
-                <nav className="hidden md:flex items-center space-x-1">
-                    {NAV_ITEMS.map((item, idx) => (
+        <header className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
+            <div className="container flex h-24 items-center justify-between px-4 sm:px-6 lg:px-8">
+                {/* Логотип и навигация */}
+                <div className="flex items-center w-full justify-between md:justify-center md:gap-16">
+                    {/* Логотип */}
+                    <Link href="/" className="flex items-center gap-3 group shrink-0">
                         <motion.div
-                            key={item.name}
-                            onHoverStart={() => setActiveHover(idx)}
-                            onHoverEnd={() => setActiveHover(null)}
-                            className="relative px-3 py-2"
-                            whileHover={{
-                                y: -2,
-                                transition: { type: 'spring', stiffness: 500 }
-                            }}
+                            className="p-2 rounded-lg bg-gradient-to-br from-gray-50 to-white border border-gray-100 shadow-xs"
+                            whileHover={{ rotate: 15, scale: 1.1 }}
+                            transition={{ type: 'spring', stiffness: 400 }}
                         >
-                            <Button variant="ghost" className="flex items-center gap-1 text-gray-300 group">
-                                {item.icon}
-                                <span>{item.name}</span>
-                                <ChevronDown className={cn(
-                                    "h-4 w-4 transition-transform",
-                                    activeHover === idx ? "rotate-180" : ""
-                                )} />
-                            </Button>
-
-                            {activeHover === idx && (
-                                <motion.div
-                                    className="absolute left-0 top-full mt-1 w-48 origin-top"
-                                    initial={{ opacity: 0, y: -10, scaleY: 0.8 }}
-                                    animate={{
-                                        opacity: 1,
-                                        y: 0,
-                                        scaleY: 1,
-                                        transition: {
-                                            type: 'spring',
-                                            damping: 25,
-                                            stiffness: 300
-                                        }
-                                    }}
-                                    exit={{ opacity: 0, y: -10 }}
-                                >
-                                    <div className="rounded-lg border border-gray-800 bg-gray-900/95 backdrop-blur-lg p-1.5 shadow-xl">
-                                        {item.submenu.map((subItem) => (
-                                            <motion.div
-                                                key={subItem.title}
-                                                whileHover={{ x: 5 }}
-                                                whileTap={{ scale: 0.97 }}
-                                            >
-                                                <Link
-                                                    href={subItem.href}
-                                                    className="flex w-full items-center px-3 py-2 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white rounded-md"
-                                                >
-                                                    {subItem.title}
-                                                </Link>
-                                            </motion.div>
-                                        ))}
-                                    </div>
-                                </motion.div>
-                            )}
+                            <Gem className="h-6 w-6 text-gray-700" strokeWidth={1.5} />
                         </motion.div>
-                    ))}
-                </nav>
-
-                {/* Кнопка входа с эффектом "жидкого металла" */}
-                <motion.div whileHover={{ scale: 1.03 }}>
-                    <Link href="/login">
-                        <Button className="relative overflow-hidden group">
-                            <span className="relative z-10 flex items-center gap-2">
-                                <User className="h-4 w-4" />
-                                Sign In
-                            </span>
-                            <motion.span
-                                className="absolute inset-0 bg-gradient-to-r from-blue-600/30 to-purple-600/30 opacity-0 group-hover:opacity-100"
-                                initial={{ x: '-100%' }}
-                                whileHover={{ x: '0%' }}
-                                transition={{ duration: 0.6, ease: 'circOut' }}
-                            />
-                        </Button>
+                        <span className="text-2xl font-light tracking-tight text-gray-800 hidden md:block">
+                            KRYO<span className="font-medium">SETTE</span>
+                        </span>
                     </Link>
-                </motion.div>
 
-                {/* Мобильное меню */}
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="md:hidden text-gray-300"
+                    {/* Центрированная навигация */}
+                    <nav className="hidden md:flex items-center">
+                        <div className="flex space-x-1">
+                            {NAV_ITEMS.map((item, idx) => (
+                                <motion.div
+                                    key={item.name}
+                                    onHoverStart={() => setActiveHover(idx)}
+                                    onHoverEnd={() => setActiveHover(null)}
+                                    className="relative px-1 py-1"
+                                >
+                                    <Button
+                                        variant="ghost"
+                                        className="flex items-center gap-2 text-gray-600 hover:text-gray-900 group px-4 py-3"
+                                    >
+                                        <span className="text-gray-400 group-hover:text-gray-600 transition-colors">
+                                            {item.icon}
+                                        </span>
+                                        <span>{item.name}</span>
+                                    </Button>
+
+                                    {activeHover === idx && (
+                                        <motion.div
+                                            className="absolute left-1/2 transform -translate-x-1/2 top-full mt-1 w-56 origin-top"
+                                            initial={{ opacity: 0, y: -5 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ type: 'spring', stiffness: 500 }}
+                                        >
+                                            <div className="rounded-xl bg-white border border-gray-100 shadow-lg p-2 space-y-1">
+                                                {item.submenu.map((subItem) => (
+                                                    <Link
+                                                        key={subItem.title}
+                                                        href={subItem.href}
+                                                        className="flex w-full items-center px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all"
+                                                    >
+                                                        {subItem.title}
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </motion.div>
+                            ))}
+                        </div>
+                    </nav>
+
+                    {/* Кнопки авторизации */}
+                    <div className="flex items-center gap-3">
+                        <Button
+                            variant="outline"
+                            className="hidden md:flex border-gray-300 text-gray-600 hover:border-gray-400 hover:text-gray-900"
+                        >
+                            Sign In
+                        </Button>
+                        <Button className="hidden md:flex bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white shadow-sm">
+                            Get Access
+                        </Button>
+                    </div>
+                </div>
+
+                {/* Кнопка мобильного меню */}
+                <button
+                    className="md:hidden p-2 rounded-lg hover:bg-gray-50 text-gray-500"
                     onClick={() => setMobileOpen(!mobileOpen)}
                 >
                     {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-                </Button>
+                </button>
             </div>
 
-            {/* Мобильное меню (анимированное) */}
-            <motion.div
-                className="md:hidden overflow-hidden"
-                initial={false}
-                animate={{
-                    height: mobileOpen ? 'auto' : 0,
-                    opacity: mobileOpen ? 1 : 0
-                }}
-                transition={{ type: 'spring', damping: 20 }}
-            >
-                <div className="px-6 py-4 space-y-4 border-t border-gray-800">
-                    {NAV_ITEMS.map((item) => (
-                        <div key={item.name} className="space-y-2">
-                            <button className="flex w-full items-center justify-between py-2 text-gray-300">
-                                <div className="flex items-center gap-2">
-                                    {item.icon}
-                                    <span>{item.name}</span>
-                                </div>
-                                <ChevronDown className="h-4 w-4" />
-                            </button>
-
-                            <div className="ml-8 space-y-1 border-l border-gray-800 pl-3">
-                                {item.submenu.map((subItem) => (
-                                    <Link
-                                        key={subItem.title}
-                                        href={subItem.href}
-                                        className="block py-1.5 text-sm text-gray-400 hover:text-white"
-                                        onClick={() => setMobileOpen(false)}
-                                    >
-                                        {subItem.title}
-                                    </Link>
-                                ))}
-                            </div>
+            {/* Мобильное меню */}
+            {mobileOpen && (
+                <motion.div
+                    className="md:hidden bg-white border-t border-gray-100 shadow-inner"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ type: 'spring', damping: 25 }}
+                >
+                    <div className="container px-6 py-6 space-y-6">
+                        <div className="flex flex-col space-y-4">
+                            <Link href={"/login"}>
+                                <Button
+                                    variant="outline"
+                                    className="w-full border-gray-300 text-gray-600 hover:border-gray-400 hover:text-gray-900"
+                                >
+                                    Sign In
+                                </Button>
+                            </Link>
+                            <Button className="w-full bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white shadow-sm">
+                                Get Access
+                            </Button>
                         </div>
-                    ))}
-                </div>
-            </motion.div>
-        </motion.header>
+
+                        <div className="space-y-4">
+                            {NAV_ITEMS.map((item, idx) => (
+                                <div key={item.name} className="space-y-2">
+                                    <button
+                                        className="flex w-full items-center justify-between py-2 text-gray-600"
+                                        onClick={() => setActiveHover(activeHover === idx ? null : idx)}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-gray-400">
+                                                {item.icon}
+                                            </span>
+                                            <span>{item.name}</span>
+                                        </div>
+                                        <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${activeHover === idx ? 'rotate-180' : ''}`} />
+                                    </button>
+
+                                    {activeHover === idx && (
+                                        <div className="ml-11 space-y-2 pl-2 border-l border-gray-100">
+                                            {item.submenu.map((subItem) => (
+                                                <Link
+                                                    key={subItem.title}
+                                                    href={subItem.href}
+                                                    className="block py-2 text-sm text-gray-500 hover:text-gray-900"
+                                                    onClick={() => setMobileOpen(false)}
+                                                >
+                                                    {subItem.title}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </motion.div>
+            )}
+        </header>
     )
 }

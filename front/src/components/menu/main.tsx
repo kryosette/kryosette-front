@@ -1,232 +1,187 @@
 'use client'
-import React, { useRef } from 'react'
-import { motion, useMotionTemplate, useMotionValue, animate } from 'framer-motion'
+import React from 'react'
+import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Lock, Server, Cpu, Shield, EyeOff, Code2 } from 'lucide-react'
+import { LockKeyhole, Gem, Cpu, Shield, Eye, Code, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
-// Анимированный "червоточинный" фон
-function WormholeEffect() {
-    const mouseX = useMotionValue(0)
-    const mouseY = useMotionValue(0)
-    const radius = useMotionValue(0)
-    const opacity = useMotionValue(0)
-
-    const handleMouseMove = (e: React.MouseEvent) => {
-        const bounds = e.currentTarget.getBoundingClientRect()
-        mouseX.set(e.clientX - bounds.left)
-        mouseY.set(e.clientY - bounds.top)
-        radius.set(Math.sqrt(bounds.width ** 2 + bounds.height ** 2) / 2)
-        animate(opacity, 1, { duration: 0.5 })
+const features = [
+    {
+        icon: <LockKeyhole className="h-5 w-5" strokeWidth={1.5} />,
+        title: "Quantum Encryption",
+        description: "Unbreakable security protocols using quantum-resistant algorithms",
+        href: "/quantum"
+    },
+    {
+        icon: <Gem className="h-5 w-5" strokeWidth={1.5} />,
+        title: "Private Wealth",
+        description: "Discreet asset management with zero footprint",
+        href: "/wealth"
+    },
+    {
+        icon: <Cpu className="h-5 w-5" strokeWidth={1.5} />,
+        title: "Neural Privacy",
+        description: "AI-powered behavior obfuscation technology",
+        href: "/neural"
+    },
+    {
+        icon: <Shield className="h-5 w-5" strokeWidth={1.5} />,
+        title: "Zero-Knowledge",
+        description: "Verify without revealing any information",
+        href: "/zero-knowledge"
+    },
+    {
+        icon: <Eye className="h-5 w-5" strokeWidth={1.5} />,
+        title: "Ghost Mode",
+        description: "Complete digital invisibility when needed",
+        href: "/ghost"
+    },
+    {
+        icon: <Code className="h-5 w-5" strokeWidth={1.5} />,
+        title: "Secure API",
+        description: "Military-grade integration for your systems",
+        href: "/api"
     }
-
-    const background = useMotionTemplate`
-    radial-gradient(
-      circle ${radius}px at ${mouseX}px ${mouseY}px,
-      rgba(59, 130, 246, 0.15),
-      transparent 80%
-    )
-  `
-
-    return (
-        <motion.div
-            className="absolute inset-0 overflow-hidden"
-            onMouseMove={handleMouseMove}
-            onMouseLeave={() => animate(opacity, 0)}
-            style={{ opacity }}
-        >
-            <motion.div
-                className="absolute inset-0"
-                style={{
-                    background,
-                }}
-            />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/10 via-black/80 to-black" />
-        </motion.div>
-    )
-}
-
-// Карточка фичи
-const FeatureCard = ({ icon, title, desc, href, delay }: {
-    icon: React.ReactNode
-    title: string
-    desc: string
-    href: string
-    delay: number
-}) => (
-    <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: delay * 0.15, type: 'spring' }}
-        whileHover={{ y: -10 }}
-        className="group relative overflow-hidden rounded-xl border border-gray-800 bg-gradient-to-br from-black to-gray-900/50 p-6 shadow-2xl"
-    >
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-        <div className="relative z-10">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-900/20 text-blue-400">
-                {icon}
-            </div>
-            <h3 className="mb-2 text-xl font-bold text-white">{title}</h3>
-            <p className="text-gray-400">{desc}</p>
-            <Button
-                variant="ghost"
-                className="mt-4 text-blue-400 hover:text-white"
-                asChild
-            >
-                <Link href={href}>
-                    <span>Explore</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="ml-2 h-4 w-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                </Link>
-            </Button>
-        </div>
-    </motion.div>
-)
+]
 
 export function MainMenu() {
     return (
-        <div className="relative min-h-screen overflow-hidden bg-black">
-            {/* Эффект червоточины */}
-            <WormholeEffect />
-
-            {/* Центральный "портал" */}
-            <div className="absolute left-1/2 top-1/3 h-96 w-96 -translate-x-1/2 -translate-y-1/2">
-                <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 1.5, ease: "easeOut" }}
-                    className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-600/20 to-purple-600/20 blur-3xl"
-                />
-                <motion.div
-                    animate={{
-                        rotate: 360,
-                        transition: { duration: 20, repeat: Infinity, ease: "linear" }
-                    }}
-                    className="absolute inset-0 flex items-center justify-center"
-                >
-                    <div className="h-64 w-64 rounded-full border-2 border-dashed border-blue-400/30" />
-                </motion.div>
-            </div>
-
-            {/* Контент */}
-            <div className="relative z-10 mx-auto max-w-7xl px-6 pt-32 pb-20">
-                {/* Заголовок */}
-                <div className="mb-12 text-center">
-                    <motion.span
-                        className="mb-4 inline-block rounded-full bg-blue-900/20 px-4 py-1 text-sm font-medium text-blue-400"
-                        initial={{ scale: 0.8 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.6, type: 'spring' }}
-                    >
-                        WELCOME TO THE VOID
-                    </motion.span>
-                    <h1 className="bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-5xl font-bold leading-tight text-transparent sm:text-7xl">
-                        KRYOSETTE
-                    </h1>
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.4 }}
-                        className="mx-auto mt-6 max-w-2xl text-xl text-gray-400"
-                    >
-                        Социальная сеть нового поколения, где ваши данные исчезают быстрее, чем мысли
-                    </motion.p>
-                </div>
-
-                {/* Карточки фич */}
-                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                    <FeatureCard
-                        icon={<Lock className="h-6 w-6" />}
-                        title="Quantum Encryption"
-                        desc="Шифрование на квантовых алгоритмах"
-                        href="/quantum"
-                        delay={0}
-                    />
-                    <FeatureCard
-                        icon={<Server className="h-6 w-6" />}
-                        title="Dark Nodes"
-                        desc="Децентрализованная сеть на Tor-нодах"
-                        href="/nodes"
-                        delay={1}
-                    />
-                    <FeatureCard
-                        icon={<Cpu className="h-6 w-6" />}
-                        title="Neural Obfuscation"
-                        desc="ИИ маскирует ваши паттерны"
-                        href="/ai"
-                        delay={2}
-                    />
-                    <FeatureCard
-                        icon={<Shield className="h-6 w-6" />}
-                        title="Zero-Knowledge"
-                        desc="Доказательства без раскрытия данных"
-                        href="/zk"
-                        delay={3}
-                    />
-                    <FeatureCard
-                        icon={<EyeOff className="h-6 w-6" />}
-                        title="Ghost Mode"
-                        desc="Полное исчезновение из сети"
-                        href="/ghost"
-                        delay={4}
-                    />
-                    <FeatureCard
-                        icon={<Code2 className="h-6 w-6" />}
-                        title="API для параноиков"
-                        desc="Интеграция с вашими системами"
-                        href="/api"
-                        delay={5}
-                    />
-                </div>
-
-                {/* Кнопка CTA */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.2 }}
-                    className="mt-20 text-center"
-                >
-                    <Button
-                        size="xl"
-                        className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6 text-lg font-bold shadow-lg"
-                    >
-                        <span className="relative z-10">Провалиться в бездну</span>
-                        <motion.span
-                            className="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-700 opacity-0 hover:opacity-100"
-                            initial={{ x: '-100%' }}
-                            whileHover={{ x: '0%' }}
-                            transition={{ duration: 0.6 }}
-                        />
-                    </Button>
-                </motion.div>
-            </div>
-
-            {/* Эффект частиц */}
-            <div className="absolute inset-0 overflow-hidden">
-                {[...Array(50)].map((_, i) => (
+        <div className="bg-gradient-to-b from-white to-gray-50 min-h-screen pt-32 pb-20">
+            {/* Анимированный фон */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                {[...Array(20)].map((_, i) => (
                     <motion.div
                         key={i}
-                        className="absolute rounded-full bg-blue-400/30"
+                        className="absolute rounded-full bg-gray-100"
                         initial={{
-                            x: Math.random() * window.innerWidth,
-                            y: Math.random() * window.innerHeight,
-                            width: Math.random() * 4 + 1,
-                            height: Math.random() * 4 + 1,
+                            x: Math.random() * 100,
+                            y: Math.random() * 100,
+                            width: Math.random() * 8 + 2,
+                            height: Math.random() * 8 + 2,
                             opacity: 0
                         }}
                         animate={{
-                            y: [null, (Math.random() - 0.5) * 100],
-                            opacity: [0, 0.3, 0]
+                            x: [null, (Math.random() - 0.5) * 40],
+                            y: [null, (Math.random() - 0.5) * 40],
+                            opacity: [0, 0.2, 0]
                         }}
                         transition={{
-                            duration: Math.random() * 10 + 5,
+                            duration: Math.random() * 15 + 10,
                             repeat: Infinity,
                             repeatType: 'reverse',
                             delay: Math.random() * 5
                         }}
                     />
                 ))}
+            </div>
+
+            <div className="relative container px-4 sm:px-6 lg:px-8 mx-auto">
+                {/* Герой секция */}
+                <div className="max-w-4xl mx-auto text-center mb-20 px-4">
+                    <motion.span
+                        className="inline-block px-4 py-2 rounded-full bg-gray-100 text-gray-600 text-sm font-medium mb-6"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                    >
+                        EXCLUSIVE PRIVACY NETWORK
+                    </motion.span>
+
+                    <motion.h1
+                        className="text-4xl sm:text-5xl md:text-6xl font-light tracking-tight text-gray-900 mb-6"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                    >
+                        <span className="bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                            Ultimate Digital
+                        </span> <br />
+                        <span className="font-medium">Discretion</span>
+                    </motion.h1>
+
+                    <motion.p
+                        className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.6 }}
+                    >
+                        For those who demand absolute privacy without compromise.
+                        Your digital life remains exclusively yours.
+                    </motion.p>
+                </div>
+
+                {/* Сетка фич */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20 px-4">
+                    {features.map((feature, index) => (
+                        <motion.div
+                            key={feature.title}
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 * index }}
+                            whileHover={{ y: -5 }}
+                            className="bg-white border border-gray-100 rounded-xl p-6 shadow-xs hover:shadow-sm transition-all mx-auto w-full max-w-md"
+                        >
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="p-3 rounded-lg bg-gray-50 text-gray-700">
+                                    {feature.icon}
+                                </div>
+                                <h3 className="text-xl font-medium text-gray-900">
+                                    {feature.title}
+                                </h3>
+                            </div>
+                            <p className="text-gray-600 mb-5">
+                                {feature.description}
+                            </p>
+                            <Link
+                                href={feature.href}
+                                className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-gray-900 group"
+                            >
+                                Learn more
+                                <svg
+                                    className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </Link>
+                        </motion.div>
+                    ))}
+                </div>
+
+                {/* CTA секция */}
+                <motion.div
+                    className="bg-white border border-gray-100 rounded-2xl p-8 md:p-12 shadow-sm max-w-4xl mx-auto px-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8 }}
+                    whileHover={{ scale: 1.005 }}
+                >
+                    <div className="text-center">
+                        <h2 className="text-2xl sm:text-3xl font-light text-gray-900 mb-4">
+                            Ready for <span className="font-medium">absolute privacy</span>?
+                        </h2>
+                        <p className="text-gray-600 max-w-2xl mx-auto mb-8">
+                            Join the most exclusive network of individuals who value their digital sovereignty above all else.
+                        </p>
+                        <div className="flex flex-col sm:flex-row justify-center gap-4">
+                            <Button
+                                size="lg"
+                                className="bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white shadow mx-auto sm:mx-0"
+                            >
+                                Request Invitation
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="lg"
+                                className="border-gray-300 text-gray-700 hover:border-gray-400 hover:text-gray-900 mx-auto sm:mx-0"
+                            >
+                                Speak to Advisor
+                            </Button>
+                        </div>
+                    </div>
+                </motion.div>
             </div>
         </div>
     )

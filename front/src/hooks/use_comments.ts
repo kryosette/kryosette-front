@@ -18,26 +18,74 @@ export const useComments = (postId: number) => {
     } = useQuery({
         queryKey: ['posts', postId, 'comments'],
         queryFn: async () => {
-            const res = await axios.get(`${API_URL}/posts/${postId}/comments`, {
+            const commentsRes = await axios.get(`${API_URL}/posts/${postId}/comments`, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+
+            const commentsWithReplies = await Promise.all(
+                commentsRes.data.map(async (comment: any, commentId: number) => {
+                    if (comment.repliesCount > 0) {
+                        try {
+                            const repliesRes = await axios.get(
+                                `${API_URL}/comments/${commentId}/replies`,
+                                { headers: { Authorization: `Bearer ${token}` } }
+                            )
+                            return { ...comment, replies: repliesRes.data }
+                        } catch (error) {
+                            console.error(`Ошибка загрузки ответов для комментария ${commentId}:`, error)
+                            return { ...comment, replies: [] }
+                        }
+                    }
+                    return { ...comment, replies: [] }
+                })
+            )
+
+            return commentsWithReplies
+        },
+        enabled: !!postId && !!token,
+        select: (data) => data.map(comment => ({
+            ...comment,
+            replies: comment.replies || [], // Initialize replies array
+            repliesCount: comment.repliesCount || 0,
+        }))
+    });
+
+
+    const fetchReplies = async (commentId: number) => {
+        try {
+            const res = await axios.get(`${API_URL}/comments/${commentId}/replies`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
             return res.data;
-        },
-        enabled: !!postId && !!token,
-        select: (data) => data.map(comment => ({
-            ...comment,
-            replies: comment.replies || [] // Добавляем пустой массив, если replies нет
-        }))
-    });
-
-    const fetchReplies = async (commentId: number) => {
-        const res = await axios.get(`/comments/${commentId}/replies`);
-        return res.data;
+        } catch (error) {
+            console.error("Error fetching replies:", error);
+            throw error;
+        }
     };
 
+    const loadReplies = async (commentId: number) => {
+        try {
+            const replies = await fetchReplies(commentId);
+            queryClient.setQueryData(
+                ['posts', postId, 'comments'],
+                (old: any[]) => old.map(comment => {
+                    if (comment.id === commentId) {
+                        return {
+                            ...comment,
+                            replies,
+                            showReplies: true
+                        };
+                    }
+                    return comment;
+                })
+            );
+        } catch (error) {
+            console.error("Ошибка загрузки ответов:", error);
+        }
+    };
     // Мутация для создания комментария
     const { mutate: addComment, isPending: isAddingComment } = useMutation({
         mutationFn: async (content: string) => {
@@ -105,7 +153,7 @@ export const useComments = (postId: number) => {
     const { mutate: addReply, isPending: isAddingReply } = useMutation({
         mutationFn: async ({ commentId, content }: { commentId: number, content: string }) => {
             const res = await axios.post(
-                `${API_URL}/posts/${postId}/comments/${commentId}/replies`,
+                `${API_URL}/comments/${commentId}/replies`,
                 { content },
                 {
                     headers: {
@@ -186,6 +234,7 @@ export const useComments = (postId: number) => {
         addReply: (commentId: number, content: string) => addReply({ commentId, content }),
         isAddingComment,
         isAddingReply,
-        refetchComments
+        refetchComments,
+        loadReplies
     };
 };

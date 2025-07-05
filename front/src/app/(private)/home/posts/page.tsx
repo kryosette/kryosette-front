@@ -12,6 +12,7 @@ import rehypeHighlight from 'rehype-highlight'
 import remarkGfm from 'remark-gfm'
 import 'highlight.js/styles/github-dark.css'
 import { motion } from 'framer-motion'
+import Replies from "./create_comment/Replies"
 
 export default function PostList() {
     const {
@@ -85,7 +86,7 @@ export default function PostList() {
                                 <div>
                                     <Link href={`/home/users/${post.authorName}`}>
                                         <span className="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors">
-                                            @{post.authorName}
+                                            {post.authorName}
                                         </span>
                                     </Link>
                                     <h2 className="text-xl font-bold text-gray-800 mt-1">
