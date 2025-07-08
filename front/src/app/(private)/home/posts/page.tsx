@@ -12,7 +12,8 @@ import rehypeHighlight from 'rehype-highlight'
 import remarkGfm from 'remark-gfm'
 import 'highlight.js/styles/github-dark.css'
 import { motion } from 'framer-motion'
-import Replies from "./create_comment/Replies"
+import { useAuth } from '@/lib/auth-provider'
+import { ConfirmDialog } from "@/components/posts/confirm-dialog"
 
 export default function PostList() {
     const {
@@ -21,9 +22,14 @@ export default function PostList() {
         error,
         fetchNextPage,
         hasNextPage,
-        isFetchingNextPage
+        isFetchingNextPage,
+        deletePost,
+        isDeleting
     } = usePosts()
     const [expandedComments, setExpandedComments] = useState<Record<number, boolean>>({})
+    const [confirmOpen, setConfirmOpen] = useState(false)
+    const [postToDelete, setPostToDelete] = useState<number | null>(null)
+    const { user } = useAuth()
 
     useEffect(() => {
         const handleScroll = () => {
@@ -49,6 +55,18 @@ export default function PostList() {
         }))
     }
 
+    const handleDeleteClick = (postId: number) => {
+        setPostToDelete(postId)
+        setConfirmOpen(true)
+    }
+
+    const handleConfirmDelete = () => {
+        if (postToDelete) {
+            deletePost(postToDelete)
+        }
+        setConfirmOpen(false)
+    }
+
     if (isLoading) return (
         <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
@@ -70,6 +88,17 @@ export default function PostList() {
                     <CreatePostForm />
                 </div>
             </h1>
+
+            <ConfirmDialog
+                isOpen={confirmOpen}
+                onClose={() => setConfirmOpen(false)}
+                onConfirm={handleConfirmDelete}
+                title="Delete Post"
+                message="Are you sure you want to delete this post? This action cannot be undone."
+                confirmText="Delete"
+                cancelText="Cancel"
+                isLoading={isDeleting}
+            />
 
             <div className="space-y-8">
                 {posts.map(post => (
@@ -93,9 +122,22 @@ export default function PostList() {
                                         {post.title}
                                     </h2>
                                 </div>
-                                <span className="text-xs text-gray-400">
-                                    {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
-                                </span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xs text-gray-400">
+                                        {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                                    </span>
+                                    {user?.id === post.authorId && (
+                                        <button
+                                            onClick={() => handleDeleteClick(post.id)}
+                                            className="text-gray-400 hover:text-red-500 transition-colors"
+                                            disabled={isDeleting}
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Post Content */}
@@ -174,8 +216,6 @@ export default function PostList() {
                     </motion.div>
                 ))}
             </div>
-
-
 
             {isFetchingNextPage && (
                 <div className="flex justify-center items-center my-8">

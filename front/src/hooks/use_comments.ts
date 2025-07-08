@@ -7,7 +7,7 @@ import axios from 'axios';
 const API_URL = 'http://localhost:8091';
 
 export const useComments = (postId: number) => {
-    const { token } = useAuth();
+    const { token, user } = useAuth();
     const queryClient = useQueryClient();
 
     const {
@@ -45,7 +45,7 @@ export const useComments = (postId: number) => {
         enabled: !!postId && !!token,
         select: (data) => data.map(comment => ({
             ...comment,
-            replies: comment.replies || [], // Initialize replies array
+            replies: comment.replies || [],
             repliesCount: comment.repliesCount || 0,
         }))
     });
@@ -86,7 +86,7 @@ export const useComments = (postId: number) => {
             console.error("Ошибка загрузки ответов:", error);
         }
     };
-    // Мутация для создания комментария
+
     const { mutate: addComment, isPending: isAddingComment } = useMutation({
         mutationFn: async (content: string) => {
             const res = await axios.post(
@@ -149,7 +149,36 @@ export const useComments = (postId: number) => {
         }
     });
 
-    // Мутация для создания ответа
+    const { mutate: togglePinComment } = useMutation({
+        mutationFn: async (commentId: number) => {
+            const res = await axios.patch(
+                `${API_URL}/posts/${postId}/comments/${commentId}/pin`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            return res.data;
+        },
+        onSuccess: (updatedComment) => {
+            queryClient.setQueryData(
+                ['posts', postId, 'comments'],
+                (old: any[]) => old.map(comment =>
+                    comment.id === updatedComment.id
+                        ? updatedComment
+                        : { ...comment, isPinned: false }
+                )
+            );
+        },
+        onError: (error) => {
+            console.error("Error toggling pin:", error);
+            throw error;
+        }
+    });
+
     const { mutate: addReply, isPending: isAddingReply } = useMutation({
         mutationFn: async ({ commentId, content }: { commentId: number, content: string }) => {
             const res = await axios.post(
@@ -235,6 +264,8 @@ export const useComments = (postId: number) => {
         isAddingComment,
         isAddingReply,
         refetchComments,
-        loadReplies
+        loadReplies,
+        togglePinComment,
+        currentUserId: user?.id
     };
 };

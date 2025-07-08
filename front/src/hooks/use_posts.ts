@@ -1,6 +1,7 @@
+// hooks/use_posts.ts
 'use client'
 
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '@/lib/auth-provider';
 
@@ -8,6 +9,7 @@ const API_URL = 'http://localhost:8091/posts';
 
 export const usePosts = () => {
     const { token } = useAuth();
+    const queryClient = useQueryClient();
 
     const fetchPosts = async ({ pageParam = 0 }) => {
         const response = await axios.get(API_URL, {
@@ -22,6 +24,19 @@ export const usePosts = () => {
         });
         return response.data;
     };
+
+    const deletePostMutation = useMutation({
+        mutationFn: async (postId: number) => {
+            await axios.delete(`${API_URL}/${postId}/delete`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['posts'] });
+        },
+    });
 
     const {
         data,
@@ -55,6 +70,8 @@ export const usePosts = () => {
         hasNextPage,
         fetchNextPage,
         error: isError ? (error instanceof Error ? error.message : 'Failed to load posts') : null,
-        refetch
+        refetch,
+        deletePost: deletePostMutation.mutate,
+        isDeleting: deletePostMutation.isPending,
     };
 };

@@ -102,12 +102,14 @@ export function Navbar() {
 
                     {/* Кнопки авторизации */}
                     <div className="flex items-center gap-3">
-                        <Button
-                            variant="outline"
-                            className="hidden md:flex border-gray-300 text-gray-600 hover:border-gray-400 hover:text-gray-900"
-                        >
-                            Sign In
-                        </Button>
+                        <Link href={"/login"}>
+                            <Button
+                                variant="outline"
+                                className="w-full border-gray-300 text-gray-600 hover:border-gray-400 hover:text-gray-900"
+                            >
+                                Sign In
+                            </Button>
+                        </Link>
                         <Button className="hidden md:flex bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white shadow-sm">
                             Get Access
                         </Button>

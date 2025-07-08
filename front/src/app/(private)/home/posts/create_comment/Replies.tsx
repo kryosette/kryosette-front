@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { formatDistanceToNow } from 'date-fns'
 import { Reply, MessageSquare } from 'lucide-react'
+import Link from 'next/link'
 
 interface ReplyData {
     id: number
@@ -62,9 +63,11 @@ export default function Replies({ commentId, userId }: { commentId: number, user
                     <div className="flex-1">
                         <div className="bg-muted/30 rounded-lg p-3">
                             <div className="flex items-center gap-2">
-                                <span className="font-medium text-sm">
-                                    {reply.username}
-                                </span>
+                                <Link href={`/home/users/${reply.username}`}>
+                                    <span className="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors">
+                                        {reply.username}
+                                    </span>
+                                </Link>
 
                                 <span className="text-xs text-muted-foreground">
                                     → {userId}

@@ -6,20 +6,25 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { useComments } from "@/hooks/use_comments";
 import { useEffect, useState } from "react";
-import { ChevronDown, ChevronUp, MessageSquare, Reply } from "lucide-react";
+import { ChevronDown, ChevronUp, MessageSquare, Pin, PinOff, Reply } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import Replies from "./Replies";
+import Link from "next/link";
+import { toast } from "sonner";
+import { useAuth } from "@/lib/auth-provider";
 
 interface CommentSectionProps {
     postId: number;
+    postAuthorId: string;
 }
 
-export const CommentSection = ({ postId }: CommentSectionProps) => {
+export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) => {
     const [content, setContent] = useState('');
     const [replyingTo, setReplyingTo] = useState<number | null>(null);
     const [replyContent, setReplyContent] = useState('');
     const [expandedReplies, setExpandedReplies] = useState<Record<number, boolean>>({});
     const queryClient = useQueryClient();
+    const { user } = useAuth();
 
     const {
         comments,
@@ -28,7 +33,8 @@ export const CommentSection = ({ postId }: CommentSectionProps) => {
         addReply,
         isAddingComment,
         isAddingReply,
-
+        togglePinComment,
+        currentUserId
     } = useComments(postId);
 
     // Добавляем этот эффект в компонент
@@ -63,15 +69,14 @@ export const CommentSection = ({ postId }: CommentSectionProps) => {
         }
     };
 
-    const fetchReplies = async (commentId: number) => {
+    const handlePinComment = async (commentId: number) => {
         try {
-            const res = await fetch(`http://localhost:8091/comments/${commentId}/replies`)
-            return await res.json()
-        } catch (err) {
-            console.error('Ошибка загрузки ответов:', err)
-            return []
+            await togglePinComment(commentId);
+            toast('succes');
+        } catch (error) {
+            toast('error');
         }
-    }
+    };
 
 
     const handleReplySubmit = async (commentId: number) => {
@@ -135,106 +140,137 @@ export const CommentSection = ({ postId }: CommentSectionProps) => {
             )}
 
             <div className="space-y-4">
-                {comments.map(comment => (
-                    <div key={comment.id} className="comment-thread">
-                        {/* Основной комментарий */}
-                        <div className="flex gap-3">
-                            <div className="flex flex-col items-center">
-                                <Avatar className="h-8 w-8">
-                                    <AvatarFallback className="bg-gradient-to-r from-primary to-purple-500 text-white text-xs">
-                                        {comment.authorName?.charAt(0).toUpperCase()}
-                                    </AvatarFallback>
-                                </Avatar>
-                                {comment.repliesCount > 0 && (
-                                    <button
-                                        onClick={() => toggleReplies(comment.id)}
-                                        className="mt-2 text-muted-foreground hover:text-primary transition-colors"
-                                    >
-                                        {expandedReplies[comment.id] ? (
-                                            <ChevronUp className="h-4 w-4" />
-                                        ) : (
-                                            <ChevronDown className="h-4 w-4" />
-                                        )}
-                                    </button>
-                                )}
-                            </div>
-
-                            <div className="flex-1">
-                                <div className="bg-muted/50 rounded-lg p-3">
-                                    <div className="flex items-center gap-2">
-                                        <span className="font-medium text-sm">
-                                            {comment.username}
-                                        </span>
-                                        <span className="text-muted-foreground text-xs">
-                                            {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
-                                        </span>
-                                    </div>
-                                    <p className="mt-1 text-sm">{comment.content}</p>
-
-                                    <div className="mt-2 flex items-center gap-3">
+                {comments
+                    .sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0))
+                    .map(comment => (
+                        <div key={comment.id} className="comment-thread">
+                            {/* Основной комментарий */}
+                            <div className="flex gap-3">
+                                <div className="flex flex-col items-center">
+                                    <Avatar className="h-8 w-8">
+                                        <AvatarFallback className="bg-gradient-to-r from-primary to-purple-500 text-white text-xs">
+                                            {comment.authorName?.charAt(0).toUpperCase()}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    {comment.repliesCount > 0 && (
                                         <button
-                                            onClick={() => {
-                                                setReplyingTo(replyingTo === comment.id ? null : comment.id);
-                                                setExpandedReplies(prev => ({ ...prev, [comment.id]: true }));
-                                            }}
-                                            className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1"
+                                            onClick={() => toggleReplies(comment.id)}
+                                            className="mt-2 text-muted-foreground hover:text-primary transition-colors"
                                         >
-                                            <Reply className="h-3 w-3" />
-                                            Reply
+                                            {expandedReplies[comment.id] ? (
+                                                <ChevronUp className="h-4 w-4" />
+                                            ) : (
+                                                <ChevronDown className="h-4 w-4" />
+                                            )}
                                         </button>
-
-                                        {comment.repliesCount > 0 && (
-                                            <button
-                                                onClick={() => toggleReplies(comment.id)}
-                                                className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1"
-                                            >
-                                                <MessageSquare className="h-3 w-3" />
-                                                {comment.repliesCount} {comment.repliesCount === 1 ? 'reply' : 'replies'}
-                                            </button>
-                                        )}
-                                    </div>
+                                    )}
                                 </div>
 
-                                {/* Форма ответа */}
-                                {replyingTo === comment.id && (
-                                    <div className="mt-3 ml-8">
-                                        <div className="flex gap-3">
-                                            <div className="flex flex-col items-center">
-                                                <div className="w-8 h-8 flex items-center justify-center">
-                                                    <div className="w-4 h-4 border-l-2 border-b-2 border-muted-foreground/30 rounded-bl-lg"></div>
-                                                </div>
+                                <div className="flex-1">
+                                    <div className={`bg-muted/50 rounded-lg p-3 ${comment.isPinned ? 'border-l-4 border-primary pl-3 bg-primary/10' : ''}`}>
+                                        {/* Первая строка - информация о пользователе и кнопка закрепления */}
+                                        <div className="flex items-center justify-between gap-2">
+                                            <div className="flex items-center gap-2">
+                                                <Link href={`/home/users/${comment.username}`}>
+                                                    <span className="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors">
+                                                        {comment.username}
+                                                    </span>
+                                                </Link>
+                                                <span className="text-muted-foreground text-xs">
+                                                    {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+                                                </span>
+                                                {comment.isPinned && (
+                                                    <span className="text-xs text-primary font-medium flex items-center gap-1">
+                                                        <Pin className="h-3 w-3" />
+                                                        Pinned
+                                                    </span>
+                                                )}
                                             </div>
-                                            <div className="flex-1">
-                                                <Textarea
-                                                    placeholder={`Reply to ${comment.userId}...`}
-                                                    value={replyContent}
-                                                    onChange={(e) => setReplyContent(e.target.value)}
-                                                    required
-                                                    rows={2}
-                                                    className="mb-2"
-                                                />
-                                                <div className="flex gap-2 justify-end">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() => setReplyingTo(null)}
-                                                    >
-                                                        Cancel
-                                                    </Button>
-                                                    <Button
-                                                        size="sm"
-                                                        onClick={() => handleReplySubmit(comment.id)}
-                                                        disabled={isAddingReply || !replyContent.trim()}
-                                                    >
-                                                        {isAddingReply ? 'Posting...' : 'Post Reply'}
-                                                    </Button>
+
+                                            {user?.userId === comment.userId && (
+                                                <button
+                                                    onClick={() => handlePinComment(comment.id)}
+                                                    className={`p-1 rounded-full hover:bg-muted transition-colors ${comment.isPinned ? 'text-primary' : 'text-muted-foreground'}`}
+                                                    title={comment.isPinned ? "Unpin comment" : "Pin comment"}
+                                                >
+                                                    {comment.isPinned ? (
+                                                        <PinOff className="h-4 w-4" />
+                                                    ) : (
+                                                        <Pin className="h-4 w-4" />
+                                                    )}
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        {/* Содержимое комментария */}
+                                        <p className="mt-1 text-sm">{comment.content}</p>
+
+                                        {/* Кнопки действий */}
+                                        <div className="mt-2 flex items-center gap-3">
+                                            <button
+                                                onClick={() => {
+                                                    setReplyingTo(replyingTo === comment.id ? null : comment.id);
+                                                    setExpandedReplies(prev => ({ ...prev, [comment.id]: true }));
+                                                }}
+                                                className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1"
+                                            >
+                                                <Reply className="h-3 w-3" />
+                                                Reply
+                                            </button>
+
+                                            {comment.repliesCount > 0 && (
+                                                <button
+                                                    onClick={() => toggleReplies(comment.id)}
+                                                    className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1"
+                                                >
+                                                    <MessageSquare className="h-3 w-3" />
+                                                    {comment.repliesCount} {comment.repliesCount === 1 ? 'reply' : 'replies'}
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+
+
+                                    {/* Форма ответа */}
+                                    {replyingTo === comment.id && (
+                                        <div className="mt-3 ml-8">
+                                            <div className="flex gap-3">
+                                                <div className="flex flex-col items-center">
+                                                    <div className="w-8 h-8 flex items-center justify-center">
+                                                        <div className="w-4 h-4 border-l-2 border-b-2 border-muted-foreground/30 rounded-bl-lg"></div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex-1">
+                                                    <Textarea
+                                                        placeholder={`Reply to ${comment.username}...`}
+                                                        value={replyContent}
+                                                        onChange={(e) => setReplyContent(e.target.value)}
+                                                        required
+                                                        rows={2}
+                                                        className="mb-2"
+                                                    />
+                                                    <div className="flex gap-2 justify-end">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => setReplyingTo(null)}
+                                                        >
+                                                            Cancel
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            onClick={() => handleReplySubmit(comment.id)}
+                                                            disabled={isAddingReply || !replyContent.trim()}
+                                                        >
+                                                            {isAddingReply ? 'Posting...' : 'Post Reply'}
+                                                        </Button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )}
-                                <Replies commentId={comment.id} userId={comment.username} />
-                                {/* Ответы
+                                    )}
+                                    <Replies commentId={comment.id} userId={comment.username} />
+                                    {/* Ответы
 
                                 <div className="mt-3">
                                     {comment.replies.map(reply => (
@@ -276,10 +312,10 @@ export const CommentSection = ({ postId }: CommentSectionProps) => {
                                     ))}
                                 </div> */}
 
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
             </div>
 
             <style jsx>{`
