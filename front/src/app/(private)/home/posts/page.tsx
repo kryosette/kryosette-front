@@ -14,6 +14,7 @@ import 'highlight.js/styles/github-dark.css'
 import { motion } from 'framer-motion'
 import { useAuth } from '@/lib/auth-provider'
 import { ConfirmDialog } from "@/components/posts/confirm-dialog"
+import { ViewCounter } from "@/components/posts/views/view_counter"
 
 export default function PostList() {
     const {
@@ -24,7 +25,8 @@ export default function PostList() {
         hasNextPage,
         isFetchingNextPage,
         deletePost,
-        isDeleting
+        isDeleting,
+        recordView
     } = usePosts()
     const [expandedComments, setExpandedComments] = useState<Record<number, boolean>>({})
     const [confirmOpen, setConfirmOpen] = useState(false)
@@ -54,6 +56,14 @@ export default function PostList() {
             [postId]: !prev[postId]
         }))
     }
+
+    const handleRecordView = (postId: number) => {
+        try {
+            recordView(postId);
+        } catch (error) {
+            console.error('Failed to record view:', error);
+        }
+    };
 
     const handleDeleteClick = (postId: number) => {
         setPostToDelete(postId)
@@ -108,6 +118,7 @@ export default function PostList() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3 }}
                         className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
+                        onViewportEnter={() => handleRecordView(post.id)}
                     >
                         <div className="p-6">
                             {/* Post Header */}
@@ -126,6 +137,7 @@ export default function PostList() {
                                     <span className="text-xs text-gray-400">
                                         {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
                                     </span>
+                                    <ViewCounter postId={post.id} initialCount={post.viewsCount || 0} />
                                     {user?.id === post.authorId && (
                                         <button
                                             onClick={() => handleDeleteClick(post.id)}

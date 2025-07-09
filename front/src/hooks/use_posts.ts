@@ -38,6 +38,16 @@ export const usePosts = () => {
         },
     });
 
+    const recordViewMutation = useMutation({
+        mutationFn: async (postId: number) => {
+            await axios.post(`${API_URL}/${postId}/view`, {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+        },
+    });
+
     const {
         data,
         fetchNextPage,
@@ -73,5 +83,6 @@ export const usePosts = () => {
         refetch,
         deletePost: deletePostMutation.mutate,
         isDeleting: deletePostMutation.isPending,
+        recordView: recordViewMutation.mutate
     };
 };

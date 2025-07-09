@@ -33,6 +33,7 @@ import PostList from '../posts/page';
 import CreatePostForm from '../posts/create_post/page';
 import { Input } from "@/components/ui/input";
 import { OpenChatButton } from '../chat/chats/chatbutton';
+import { NotificationList } from '@/components/notifications/notifications_list';
 
 interface UserDto {
     id: number;
@@ -286,6 +287,8 @@ function ProfilePage() {
                                     </span>
                                 </Button>
                             </FriendRequestsDropdown>
+
+                            <NotificationList />
 
                             <SendFriendRequest>
                                 <Button variant="outline" size="sm" className="border-indigo-300 hover:bg-indigo-50">
