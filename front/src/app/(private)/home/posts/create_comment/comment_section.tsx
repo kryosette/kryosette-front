@@ -18,14 +18,24 @@ interface CommentSectionProps {
     postAuthorId: string;
 }
 
+/**
+ * CommentSection component - Displays and manages comments for a post
+ * @param {number} postId - The ID of the post
+ * @param {string} postAuthorId - The ID of the post author
+ * @returns {JSX.Element} The comment section UI
+ */
 export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) => {
+    // State management
     const [content, setContent] = useState('');
     const [replyingTo, setReplyingTo] = useState<number | null>(null);
     const [replyContent, setReplyContent] = useState('');
     const [expandedReplies, setExpandedReplies] = useState<Record<number, boolean>>({});
+
+    // Hooks
     const queryClient = useQueryClient();
     const { user } = useAuth();
 
+    // Comment management
     const {
         comments,
         error,
@@ -37,13 +47,16 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
         currentUserId
     } = useComments(postId);
 
-    // Добавляем этот эффект в компонент
+    /**
+     * Loads replies for a specific comment
+     * @param {number} commentId - The ID of the comment to load replies for
+     */
     const loadReplies = async (commentId: number) => {
         try {
-            const res = await fetch(`http://localhost:8091/comments/${commentId}/replies`)
-            const replies = await res.json()
+            const res = await fetch(`http://localhost:8091/comments/${commentId}/replies`);
+            const replies = await res.json();
 
-            // Обновляем только replies у нужного комментария
+            // Update only the replies for the specific comment
             queryClient.setQueryData(
                 ['posts', postId, 'comments'],
                 (old: any[]) => old.map(comment =>
@@ -51,12 +64,17 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
                         ? { ...comment, replies }
                         : comment
                 )
-            )
+            );
         } catch (err) {
-            console.error('Ошибка загрузки ответов:', err)
+            console.error('Error loading replies:', err);
+            toast.error('Failed to load replies');
         }
-    }
+    };
 
+    /**
+     * Handles submission of a new comment
+     * @param {React.FormEvent} e - The form event
+     */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!content.trim()) return;
@@ -64,21 +82,33 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
         try {
             await addComment(content);
             setContent('');
+            toast.success('Comment posted successfully');
         } catch (err) {
             console.error('Failed to create comment:', err);
+            toast.error('Failed to post comment');
         }
     };
 
+    /**
+     * Toggles the pinned status of a comment
+     * @param {number} commentId - The ID of the comment to pin/unpin
+     */
     const handlePinComment = async (commentId: number) => {
         try {
             await togglePinComment(commentId);
-            toast('succes');
+            toast.success(comments.find(c => c.id === commentId)?.isPinned
+                ? 'Comment unpinned'
+                : 'Comment pinned');
         } catch (error) {
-            toast('error');
+            console.error('Error toggling pin:', error);
+            toast.error('Failed to update pin status');
         }
     };
 
-
+    /**
+     * Handles submission of a reply to a comment
+     * @param {number} commentId - The ID of the comment to reply to
+     */
     const handleReplySubmit = async (commentId: number) => {
         if (!replyContent.trim()) return;
 
@@ -87,11 +117,17 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
             setReplyingTo(null);
             setReplyContent('');
             setExpandedReplies(prev => ({ ...prev, [commentId]: true }));
+            toast.success('Reply posted successfully');
         } catch (err) {
             console.error('Failed to create reply:', err);
+            toast.error('Failed to post reply');
         }
     };
 
+    /**
+     * Toggles the visibility of replies for a comment
+     * @param {number} commentId - The ID of the comment
+     */
     const toggleReplies = async (commentId: number) => {
         const comment = comments.find(c => c.id === commentId);
         if (!comment) return;
@@ -101,8 +137,7 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
                 ...prev,
                 [commentId]: !prev[commentId]
             }));
-        }
-        else {
+        } else {
             await loadReplies(commentId);
             setExpandedReplies(prev => ({
                 ...prev,
@@ -113,6 +148,7 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
 
     return (
         <div className="mt-4 border-t pt-4">
+            {/* New Comment Form */}
             <form onSubmit={handleSubmit} className="mb-4">
                 <Textarea
                     placeholder="Write a comment..."
@@ -132,6 +168,7 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
                 </div>
             </form>
 
+            {/* Error Display */}
             {error && (
                 <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
                     <p className="font-bold">Error</p>
@@ -139,12 +176,13 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
                 </div>
             )}
 
+            {/* Comments List */}
             <div className="space-y-4">
                 {comments
                     .sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0))
                     .map(comment => (
                         <div key={comment.id} className="comment-thread">
-                            {/* Основной комментарий */}
+                            {/* Main Comment */}
                             <div className="flex gap-3">
                                 <div className="flex flex-col items-center">
                                     <Avatar className="h-8 w-8">
@@ -156,6 +194,7 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
                                         <button
                                             onClick={() => toggleReplies(comment.id)}
                                             className="mt-2 text-muted-foreground hover:text-primary transition-colors"
+                                            aria-label={expandedReplies[comment.id] ? "Collapse replies" : "Expand replies"}
                                         >
                                             {expandedReplies[comment.id] ? (
                                                 <ChevronUp className="h-4 w-4" />
@@ -168,7 +207,7 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
 
                                 <div className="flex-1">
                                     <div className={`bg-muted/50 rounded-lg p-3 ${comment.isPinned ? 'border-l-4 border-primary pl-3 bg-primary/10' : ''}`}>
-                                        {/* Первая строка - информация о пользователе и кнопка закрепления */}
+                                        {/* Comment Header */}
                                         <div className="flex items-center justify-between gap-2">
                                             <div className="flex items-center gap-2">
                                                 <Link href={`/home/users/${comment.username}`}>
@@ -187,11 +226,13 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
                                                 )}
                                             </div>
 
-                                            {user?.userId === comment.userId && (
+                                            {/* Pin Button (visible to comment author or post author) */}
+                                            {(user?.userId === comment.userId || user?.userId === postAuthorId) && (
                                                 <button
                                                     onClick={() => handlePinComment(comment.id)}
                                                     className={`p-1 rounded-full hover:bg-muted transition-colors ${comment.isPinned ? 'text-primary' : 'text-muted-foreground'}`}
                                                     title={comment.isPinned ? "Unpin comment" : "Pin comment"}
+                                                    aria-label={comment.isPinned ? "Unpin comment" : "Pin comment"}
                                                 >
                                                     {comment.isPinned ? (
                                                         <PinOff className="h-4 w-4" />
@@ -202,10 +243,10 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
                                             )}
                                         </div>
 
-                                        {/* Содержимое комментария */}
+                                        {/* Comment Content */}
                                         <p className="mt-1 text-sm">{comment.content}</p>
 
-                                        {/* Кнопки действий */}
+                                        {/* Comment Actions */}
                                         <div className="mt-2 flex items-center gap-3">
                                             <button
                                                 onClick={() => {
@@ -230,8 +271,7 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
                                         </div>
                                     </div>
 
-
-                                    {/* Форма ответа */}
+                                    {/* Reply Form */}
                                     {replyingTo === comment.id && (
                                         <div className="mt-3 ml-8">
                                             <div className="flex gap-3">
@@ -269,55 +309,20 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
                                             </div>
                                         </div>
                                     )}
-                                    <Replies commentId={comment.id} userId={comment.username} />
-                                    {/* Ответы
 
-                                <div className="mt-3">
-                                    {comment.replies.map(reply => (
-                                        <div key={reply.id} className="flex gap-3 reply-item">
-                                            <div className="flex flex-col items-center">
-                                                <div className="w-8 h-8 flex items-center justify-center">
-                                                    <div className="w-4 h-4 border-l-2 border-b-2 border-muted-foreground/30 rounded-bl-lg"></div>
-                                                </div>
-                                                <Avatar className="h-8 w-8 -mt-1">
-                                                    <AvatarFallback className="bg-gradient-to-r from-primary to-purple-500 text-white text-xs">
-                                                        {reply.authorName?.charAt(0).toUpperCase()}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                            </div>
-                                            <div className="flex-1">
-                                                <div className="bg-muted/30 rounded-lg p-3">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="font-medium text-sm">
-                                                            {reply.authorName}
-                                                        </span>
-                                                        <span className="text-muted-foreground text-xs">
-                                                            {formatDistanceToNow(new Date(reply.createdAt), { addSuffix: true })}
-                                                        </span>
-                                                    </div>
-                                                    <p className="mt-1 text-sm">{reply.content}</p>
-                                                    <button
-                                                        onClick={() => {
-                                                            setReplyingTo(reply.parentId || comment.id);
-                                                            setReplyContent(`@${reply.authorName} `);
-                                                        }}
-                                                        className="mt-1 text-xs text-muted-foreground hover:text-primary flex items-center gap-1"
-                                                    >
-                                                        <Reply className="h-3 w-3" />
-                                                        Reply
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div> */}
-
+                                    {/* Replies Component */}
+                                    <Replies
+                                        commentId={comment.id}
+                                        userId={comment.username}
+                                        expanded={expandedReplies[comment.id]}
+                                    />
                                 </div>
                             </div>
                         </div>
                     ))}
             </div>
 
+            {/* Styling for comment threads */}
             <style jsx>{`
                 .comment-thread {
                     position: relative;
@@ -329,19 +334,6 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
                     top: 40px;
                     bottom: 0;
                     width: 2px;
-                    background: rgba(0,0,0,0.1);
-                }
-                .reply-item {
-                    position: relative;
-                    margin-left: 16px;
-                }
-                .reply-item::before {
-                    content: "";
-                    position: absolute;
-                    left: -16px;
-                    top: 20px;
-                    width: 16px;
-                    height: 2px;
                     background: rgba(0,0,0,0.1);
                 }
             `}</style>

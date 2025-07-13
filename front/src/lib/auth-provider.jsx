@@ -99,7 +99,6 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Функция для проверки токена на сервере
     const verifyToken = async (token) => {
         try {
             const response = await fetch('http://localhost:8088/api/v1/auth/verify', {

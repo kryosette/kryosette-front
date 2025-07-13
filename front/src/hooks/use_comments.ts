@@ -6,10 +6,22 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:8091';
 
+/**
+ * Custom hook for managing comments and replies for a specific post
+ * @param postId - The ID of the post to fetch comments for
+ * @returns An object containing comments data and related functions
+ */
 export const useComments = (postId: number) => {
     const { token, user } = useAuth();
     const queryClient = useQueryClient();
 
+    /**
+     * Query to fetch comments for a post along with their replies
+     * queryKey - Unique identifier for this query (used for caching)
+     * queryFn - Function that fetches the data (comments + replies)
+     * enabled - Only run query when postId and token are available
+     * select - Transforms the data before returning it
+     */
     const {
         data: comments,
         isLoading: isCommentsLoading,
@@ -18,10 +30,12 @@ export const useComments = (postId: number) => {
     } = useQuery({
         queryKey: ['posts', postId, 'comments'],
         queryFn: async () => {
+            // Fetch main comments for the post
             const commentsRes = await axios.get(`${API_URL}/posts/${postId}/comments`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
 
+            // For each comment, fetch its replies if it has any
             const commentsWithReplies = await Promise.all(
                 commentsRes.data.map(async (comment: any, commentId: number) => {
                     if (comment.repliesCount > 0) {
@@ -32,7 +46,7 @@ export const useComments = (postId: number) => {
                             )
                             return { ...comment, replies: repliesRes.data }
                         } catch (error) {
-                            console.error(`Ошибка загрузки ответов для комментария ${commentId}:`, error)
+                            console.error(`Error loading replies for comment ${commentId}:`, error)
                             return { ...comment, replies: [] }
                         }
                     }
@@ -50,7 +64,11 @@ export const useComments = (postId: number) => {
         }))
     });
 
-
+    /**
+     * Fetches replies for a specific comment
+     * @param commentId - The ID of the comment to fetch replies for
+     * @returns Promise with the replies data
+     */
     const fetchReplies = async (commentId: number) => {
         try {
             const res = await axios.get(`${API_URL}/comments/${commentId}/replies`, {
@@ -66,6 +84,10 @@ export const useComments = (postId: number) => {
         }
     };
 
+    /**
+     * Loads replies for a comment and updates the query data
+     * @param commentId - The ID of the comment to load replies for
+     */
     const loadReplies = async (commentId: number) => {
         try {
             const replies = await fetchReplies(commentId);
@@ -83,10 +105,18 @@ export const useComments = (postId: number) => {
                 })
             );
         } catch (error) {
-            console.error("Ошибка загрузки ответов:", error);
+            console.error("Error loading replies:", error);
         }
     };
 
+    /**
+     * Mutation for adding a new comment to the post
+     * mutationFn - Function that performs the API call to add comment
+     * onMutate - Optimistic update before API call
+     * onError - Rollback if API call fails
+     * onSuccess - Update with actual data when API succeeds
+     * onSettled - Invalidate query to ensure fresh data
+     */
     const { mutate: addComment, isPending: isAddingComment } = useMutation({
         mutationFn: async (content: string) => {
             const res = await axios.post(
@@ -108,6 +138,7 @@ export const useComments = (postId: number) => {
 
             const previousComments = queryClient.getQueryData(['posts', postId, 'comments']);
 
+            // Optimistically add new comment
             queryClient.setQueryData(
                 ['posts', postId, 'comments'],
                 (old: any[]) => [
@@ -128,12 +159,14 @@ export const useComments = (postId: number) => {
             return { previousComments };
         },
         onError: (err, newCommentContent, context) => {
+            // Rollback on error
             queryClient.setQueryData(
                 ['posts', postId, 'comments'],
                 context?.previousComments
             );
         },
         onSuccess: (newComment, newCommentContent) => {
+            // Replace optimistic comment with actual data
             queryClient.setQueryData(
                 ['posts', postId, 'comments'],
                 (old: any[]) => [
@@ -143,12 +176,18 @@ export const useComments = (postId: number) => {
             );
         },
         onSettled: () => {
+            // Invalidate to refresh data
             queryClient.invalidateQueries({
                 queryKey: ['posts', postId, 'comments']
             });
         }
     });
 
+    /**
+     * Mutation for toggling a comment's pinned status
+     * mutationFn - API call to toggle pin status
+     * onSuccess - Update local data with new pinned status
+     */
     const { mutate: togglePinComment } = useMutation({
         mutationFn: async (commentId: number) => {
             const res = await axios.patch(
@@ -179,6 +218,14 @@ export const useComments = (postId: number) => {
         }
     });
 
+    /**
+     * Mutation for adding a reply to a comment
+     * mutationFn - API call to add reply
+     * onMutate - Optimistic update
+     * onError - Rollback on failure
+     * onSuccess - Update with actual data
+     * onSettled - Invalidate query
+     */
     const { mutate: addReply, isPending: isAddingReply } = useMutation({
         mutationFn: async ({ commentId, content }: { commentId: number, content: string }) => {
             const res = await axios.post(
@@ -200,6 +247,7 @@ export const useComments = (postId: number) => {
 
             const previousComments = queryClient.getQueryData(['posts', postId, 'comments']);
 
+            // Optimistically add reply
             queryClient.setQueryData(
                 ['posts', postId, 'comments'],
                 (old: any[]) => old.map(comment => {
@@ -226,12 +274,14 @@ export const useComments = (postId: number) => {
             return { previousComments };
         },
         onError: (err, variables, context) => {
+            // Rollback on error
             queryClient.setQueryData(
                 ['posts', postId, 'comments'],
                 context?.previousComments
             );
         },
         onSuccess: (newReply, variables) => {
+            // Replace optimistic reply with actual data
             queryClient.setQueryData(
                 ['posts', postId, 'comments'],
                 (old: any[]) => old.map(comment => {
@@ -249,6 +299,7 @@ export const useComments = (postId: number) => {
             );
         },
         onSettled: () => {
+            // Invalidate to refresh data
             queryClient.invalidateQueries({
                 queryKey: ['posts', postId, 'comments']
             });

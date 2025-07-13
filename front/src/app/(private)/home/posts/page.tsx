@@ -15,6 +15,10 @@ import { motion } from 'framer-motion'
 import { useAuth } from '@/lib/auth-provider'
 import { ConfirmDialog } from "@/components/posts/confirm-dialog"
 import { ViewCounter } from "@/components/posts/views/view_counter"
+import usePostViews from "@/hooks/views/use_post_views"
+import axios from "axios"
+
+const BASE_BACKEND_URL = "http://localhost:8091/posts"
 
 export default function PostList() {
     const {
@@ -25,9 +29,9 @@ export default function PostList() {
         hasNextPage,
         isFetchingNextPage,
         deletePost,
-        isDeleting,
-        recordView
+        isDeleting
     } = usePosts()
+    const { token } = useAuth();
     const [expandedComments, setExpandedComments] = useState<Record<number, boolean>>({})
     const [confirmOpen, setConfirmOpen] = useState(false)
     const [postToDelete, setPostToDelete] = useState<number | null>(null)
@@ -57,13 +61,25 @@ export default function PostList() {
         }))
     }
 
-    const handleRecordView = (postId: number) => {
+    const handleRecordView = async (postId: string) => {
         try {
-            recordView(postId);
+            await axios.post(`${BASE_BACKEND_URL}/${postId}/view`, {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
         } catch (error) {
             console.error('Failed to record view:', error);
+
+            if (axios.isAxiosError(error)) {
+                throw new Error(error.response?.data?.message || 'Failed to record view');
+            } else {
+                throw error;
+            }
         }
     };
+
+    const { recordView } = usePostViews(handleRecordView);
 
     const handleDeleteClick = (postId: number) => {
         setPostToDelete(postId)
@@ -118,7 +134,7 @@ export default function PostList() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3 }}
                         className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
-                        onViewportEnter={() => handleRecordView(post.id)}
+                        onViewportEnter={() => recordView(String(post.id))}
                     >
                         <div className="p-6">
                             {/* Post Header */}
@@ -138,7 +154,7 @@ export default function PostList() {
                                         {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
                                     </span>
                                     <ViewCounter postId={post.id} initialCount={post.viewsCount || 0} />
-                                    {user?.id === post.authorId && (
+                                    {user?.userId === post.authorName && (
                                         <button
                                             onClick={() => handleDeleteClick(post.id)}
                                             className="text-gray-400 hover:text-red-500 transition-colors"
