@@ -1,7 +1,7 @@
 'use client'
 import { useCreatePost } from '@/api/users/posts_queres'
 import { useEffect, useState } from 'react'
-import { Image, Smile, MapPin, Lock, X, Code } from 'lucide-react'
+import { Image, Smile, MapPin, Lock, X, Code, Hash } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -27,6 +27,8 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
     const { token } = useAuth()
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
+    const [hashtags, setHashtags] = useState<string[]>([])
+    const [currentHashtag, setCurrentHashtag] = useState('')
     const [error, setError] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
@@ -42,9 +44,10 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
         setError('')
 
         try {
-            await createPost(title, content)
+            await createPost(title, content, hashtags)
             setTitle('')
             setContent('')
+            setHashtags([])
             setIsExpanded(false)
             onPostCreated()
         } catch (err) {
@@ -83,6 +86,30 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
     const insertCodeBlockJava = () => {
         const newText = `${content}\n\`\`\`java\n// Your code here\n\`\`\`\n`
         setContent(newText)
+    }
+
+    const addHashtag = () => {
+        if (currentHashtag.trim()) {
+            const normalizedTag = currentHashtag.startsWith('#')
+                ? currentHashtag
+                : `#${currentHashtag}`
+
+            if (!hashtags.includes(normalizedTag)) {
+                setHashtags([...hashtags, normalizedTag])
+                setCurrentHashtag('')
+            }
+        }
+    }
+
+    const removeHashtag = (tagToRemove: string) => {
+        setHashtags(hashtags.filter(tag => tag !== tagToRemove))
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            addHashtag()
+        }
     }
 
     return (
@@ -238,6 +265,29 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
                                     )}
                                 </div>
 
+                                <div className="mb-4">
+                                    <div className="flex flex-wrap gap-2 mb-2">
+                                        {hashtags.map((tag, index) => (
+                                            <motion.div
+                                                key={index}
+                                                initial={{ scale: 0.8, opacity: 0 }}
+                                                animate={{ scale: 1, opacity: 1 }}
+                                                exit={{ scale: 0.8, opacity: 0 }}
+                                                className="flex items-center bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm"
+                                            >
+                                                {tag}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeHashtag(tag)}
+                                                    className="ml-1 text-indigo-500 hover:text-indigo-700"
+                                                >
+                                                    <X className="h-3 w-3" />
+                                                </button>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                </div>
+
                                 <motion.div
                                     className="flex items-center justify-between border-t pt-4"
                                     initial={{ opacity: 0 }}
@@ -245,6 +295,23 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
                                     transition={{ delay: 0.2 }}
                                 >
                                     <div className="flex gap-2">
+                                        <Input
+                                            placeholder="Добавьте хештеги"
+                                            value={currentHashtag}
+                                            onChange={(e) => setCurrentHashtag(e.target.value)}
+                                            onKeyDown={handleKeyDown}
+                                            className="flex-1"
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={addHashtag}
+                                            as={motion.button}
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                        >
+                                            <Hash className="h-4 w-4" />
+                                        </Button>
                                         <Button
                                             variant="outline"
                                             size="icon"
@@ -265,7 +332,7 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
                                         >
                                             <Smile className="h-4 w-4 text-yellow-500" />
                                         </Button>
-                                        <Button
+                                        {/* <Button
                                             variant="outline"
                                             size="icon"
                                             type="button"
@@ -302,7 +369,7 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
                                             className="ml-2"
                                         >
                                             {isPreview ? 'Edit' : 'Preview'}
-                                        </Button>
+                                        </Button> */}
                                     </div>
 
                                     <Button

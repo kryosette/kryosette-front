@@ -23,14 +23,14 @@ export const useCreatePost = () => {
      * @returns The created post data
      * @throws Error if post creation fails
      */
-    const createPost = async (title: string, content: string) => {
+    const createPost = async (title: string, content: string, hashtags: string[] = []) => {
         setIsLoading(true);
         setError(null);
 
         try {
             const response = await axios.post(
                 API_URL,
-                { title, content },
+                { title, content, hashtags },
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`

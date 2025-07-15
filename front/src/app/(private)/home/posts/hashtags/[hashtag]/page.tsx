@@ -1,71 +1,49 @@
-'use client'
+'use client';
 
-import { usePosts } from "@/hooks/use_posts"
-import CreatePostForm from "./create_post/page"
-import { LikeButton } from "@/components/posts/like/like_button"
-import { useState, useEffect } from "react"
-import { CommentSection } from "./create_comment/comment_section"
-import { formatDistanceToNow } from "date-fns"
-import Link from "next/link"
-import ReactMarkdown from 'react-markdown'
-import rehypeHighlight from 'rehype-highlight'
-import remarkGfm from 'remark-gfm'
-import 'highlight.js/styles/github-dark.css'
-import { motion } from 'framer-motion'
-import { useAuth } from '@/lib/auth-provider'
-import { ConfirmDialog } from "@/components/posts/confirm-dialog"
-import { ViewCounter } from "@/components/posts/views/view_counter"
-import usePostViews from "@/hooks/views/use_post_views"
-import axios from "axios"
-import { HashtagLink } from "@/components/hashtag_link"
+import { Alert } from '@/components/ui/alert';
+import { usePostsByHashtag } from '@/hooks/use_posts_hashtag';
+import { Loader2 } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
+import rehypeHighlight from 'rehype-highlight';
+import remarkGfm from 'remark-gfm';
+import 'highlight.js/styles/github-dark.css';
+import { motion } from 'framer-motion';
+import { HashtagLink } from '@/components/hashtag_link';
+import { useAuth } from '@/lib/auth-provider';
+import { ViewCounter } from '@/components/posts/views/view_counter';
+import { LikeButton } from '@/components/posts/like/like_button';
+import { useState } from 'react';
+import usePostViews from '@/hooks/views/use_post_views';
+import axios from 'axios';
+import { CommentSection } from '../../create_comment/comment_section';
 
-const BASE_BACKEND_URL = "http://localhost:8091/posts"
+interface Props {
+    params: { hashtag: string };
+}
 
-export default function PostList() {
-    const {
-        posts,
-        isLoading,
-        error,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-        deletePost,
-        isDeleting
-    } = usePosts()
-    const { token } = useAuth();
-    const [expandedComments, setExpandedComments] = useState<Record<number, boolean>>({})
-    const [confirmOpen, setConfirmOpen] = useState(false)
-    const [postToDelete, setPostToDelete] = useState<number | null>(null)
-    const { user } = useAuth()
+const BASE_BACKEND_URL = "http://localhost:8091/posts";
 
-    useEffect(() => {
-        const handleScroll = () => {
-            if (
-                window.innerHeight + document.documentElement.scrollTop + 100 >=
-                document.documentElement.offsetHeight &&
-                hasNextPage &&
-                !isFetchingNextPage
-            ) {
-                fetchNextPage()
-            }
-        }
-
-        window.addEventListener('scroll', handleScroll)
-        return () => window.removeEventListener('scroll', handleScroll)
-    }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+export default function HashtagPostsPage({ params }: Props) {
+    const { hashtag } = params;
+    const { posts, loading, error, hasMore, fetchMore } = usePostsByHashtag(hashtag);
+    const { user } = useAuth();
+    const [expandedComments, setExpandedComments] = useState<Record<number, boolean>>({});
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const toggleComments = (postId: number) => {
         setExpandedComments(prev => ({
             ...prev,
             [postId]: !prev[postId]
-        }))
-    }
+        }));
+    };
 
     const handleRecordView = async (postId: string) => {
         try {
             await axios.post(`${BASE_BACKEND_URL}/${postId}/view`, {}, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${user?.token}`,
                 },
             });
         } catch (error) {
@@ -75,50 +53,24 @@ export default function PostList() {
 
     const { recordView } = usePostViews(handleRecordView);
 
-    const handleDeleteClick = (postId: number) => {
-        setPostToDelete(postId)
-        setConfirmOpen(true)
-    }
-
-    const handleConfirmDelete = () => {
-        if (postToDelete) {
-            deletePost(postToDelete)
-        }
-        setConfirmOpen(false)
-    }
-
-    if (isLoading && posts.length === 0) return (
+    if (loading && posts.length === 0) return (
         <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
         </div>
-    )
+    );
 
     if (error) return (
         <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6" role="alert">
             <p className="font-bold">Error loading posts</p>
             <p>{error}</p>
         </div>
-    )
+    );
 
     return (
         <div className="max-w-3xl mx-auto px-4 py-6 relative">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold text-gray-800">
-                    Community Posts
-                </h1>
-                <CreatePostForm />
-            </div>
-
-            <ConfirmDialog
-                isOpen={confirmOpen}
-                onClose={() => setConfirmOpen(false)}
-                onConfirm={handleConfirmDelete}
-                title="Delete Post"
-                message="Are you sure you want to delete this post? This action cannot be undone."
-                confirmText="Delete"
-                cancelText="Cancel"
-                isLoading={isDeleting}
-            />
+            <h1 className="text-3xl font-bold text-gray-800 mb-6">
+                Посты с хештегом: #{hashtag}
+            </h1>
 
             <div className="space-y-6">
                 {posts.map(post => (
@@ -169,7 +121,7 @@ export default function PostList() {
                                     remarkPlugins={[remarkGfm]}
                                     components={{
                                         code({ node, inline, className, children, ...props }) {
-                                            const match = /language-(\w+)/.exec(className || '')
+                                            const match = /language-(\w+)/.exec(className || '');
                                             return !inline && match ? (
                                                 <div className="relative rounded-lg overflow-hidden mb-4">
                                                     <div className="absolute right-3 top-2 text-xs text-gray-400">
@@ -195,7 +147,7 @@ export default function PostList() {
                                                 >
                                                     {children}
                                                 </code>
-                                            )
+                                            );
                                         }
                                     }}
                                 >
@@ -243,23 +195,23 @@ export default function PostList() {
                 ))}
             </div>
 
-            {isFetchingNextPage && (
+            {loading && posts.length > 0 && (
                 <div className="flex justify-center items-center my-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
                 </div>
             )}
 
-            {!hasNextPage && posts.length > 0 && (
+            {!hasMore && posts.length > 0 && (
                 <div className="text-center text-gray-500 my-8 py-4 border-t border-gray-100">
                     You've reached the end of posts
                 </div>
             )}
 
-            {!isLoading && posts.length === 0 && (
+            {!loading && posts.length === 0 && (
                 <div className="text-center py-12 text-gray-500">
-                    No posts found. Be the first to create one!
+                    No posts found with this hashtag
                 </div>
             )}
         </div>
-    )
+    );
 }
