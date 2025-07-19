@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Mail, User, Key, MoreHorizontal, MessageSquare, Bell, Share2, Home, MessageCircle, Users, Settings, Bookmark, Video } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { OnlineStatus } from '../../profile/status/online.status';
+import OnlineStatus from '../../profile/status/online.status';
 
 interface UserProfile {
     id: string;

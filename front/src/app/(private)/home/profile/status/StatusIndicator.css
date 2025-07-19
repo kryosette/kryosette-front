@@ -1,0 +1,22 @@
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.status-dot.online {
+    background-color: #4caf50;
+    box-shadow: 0 0 5px #4caf50;
+}
+
+.status-dot.offline {
+    background-color: #f44336;
+}

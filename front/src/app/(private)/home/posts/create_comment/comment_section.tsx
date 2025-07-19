@@ -315,6 +315,7 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
                                         commentId={comment.id}
                                         userId={comment.username}
                                         expanded={expandedReplies[comment.id]}
+
                                     />
                                 </div>
                             </div>
