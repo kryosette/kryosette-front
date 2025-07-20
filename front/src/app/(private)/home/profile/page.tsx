@@ -303,7 +303,12 @@ function ProfilePage() {
                                 </Button>
                             </Link>
 
-                            <OpenChatButton />
+
+                            <Link href={"/home/chat/chatss"}>
+                                <Button variant="outline" size="sm" className="border-indigo-300 hover:bg-indigo-50">
+                                    Chats
+                                </Button>
+                            </Link>
 
                             <Button
                                 variant="outline"

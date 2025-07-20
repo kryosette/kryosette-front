@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button";
 import { SendHorizonal, SmilePlus } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { formatDistanceToNow } from "date-fns";
-import { toast } from "@/components/ui/sonner";
+import { formatDistanceToNow, format, isToday, isYesterday, parseISO } from "date-fns";
+import { ru } from "date-fns/locale";
 import Link from "next/link";
+import { useTypingStatus } from '@/hooks/use_typing_status'
 
 interface Message {
     id: number;
@@ -25,12 +26,13 @@ export default function RoomChat({ roomId }: { roomId: string }) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [isTyping, setIsTyping] = useState(false);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const pollingIntervalRef = useRef<NodeJS.Timeout>();
+    const typingTimeoutRef = useRef<NodeJS.Timeout>();
+    const { typingStatus, sendTypingStatus } = useTypingStatus(roomId, token);
 
-
-    // Загрузка сообщений
     useEffect(() => {
         const loadMessages = async () => {
             try {
@@ -53,20 +55,17 @@ export default function RoomChat({ roomId }: { roomId: string }) {
 
                 setMessages(adaptedMessages);
             } catch (error) {
-                toast.error("Не удалось загрузить сообщения");
+
             } finally {
                 setIsLoading(false);
             }
         };
 
-        // Первая загрузка
         setIsLoading(true);
         loadMessages();
 
-        // Настраиваем Polling (обновление каждые 3 секунды)
         pollingIntervalRef.current = setInterval(loadMessages, 3000);
 
-        // Очистка интервала при размонтировании
         return () => {
             if (pollingIntervalRef.current) {
                 clearInterval(pollingIntervalRef.current);
@@ -74,14 +73,52 @@ export default function RoomChat({ roomId }: { roomId: string }) {
         };
     }, [roomId, token]);
 
-    // Автоскролл при новых сообщениях
     useEffect(() => {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [messages]);
 
-    // Отправка сообщения
+    const formatTypingStatus = () => {
+        const activeTypers = typingStatus.filter(status =>
+            status.isTyping && status.userId !== user?.id
+        );
+
+        if (activeTypers.length === 0) return null;
+
+        const names = activeTypers.map(status => status.username);
+
+        if (names.length === 1) {
+            return `${names[0]} печатает...`;
+        } else if (names.length === 2) {
+            return `${names[0]} и ${names[1]} печатают...`;
+        } else {
+            return `${names.slice(0, -1).join(', ')} и ${names.slice(-1)[0]} печатают...`;
+        }
+    };
+
+    const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setNewMessage(value);
+
+        // Отправляем статус печати
+        if (value.trim()) {
+            await sendTypingStatus(true);
+
+            // Сбрасываем предыдущий таймер
+            if (typingTimeoutRef.current) {
+                clearTimeout(typingTimeoutRef.current);
+            }
+
+            // Устанавливаем таймер для сброса статуса печати
+            typingTimeoutRef.current = setTimeout(() => {
+                sendTypingStatus(false);
+            }, 2000);
+        } else {
+            // Если поле пустое, сразу сбрасываем статус
+            await sendTypingStatus(false);
+        }
+    };
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
 
@@ -106,8 +143,13 @@ export default function RoomChat({ roomId }: { roomId: string }) {
 
             setMessages(prev => [...prev, newMsg]);
             setNewMessage("");
+
+            await sendTypingStatus(false);
+            if (typingTimeoutRef.current) {
+                clearTimeout(typingTimeoutRef.current);
+            }
         } catch (error) {
-            toast.error("Не удалось отправить сообщение");
+            console.error("Ошибка отправки сообщения:", error);
         }
     };
 
@@ -122,10 +164,50 @@ export default function RoomChat({ roomId }: { roomId: string }) {
         }
     };
 
+    const groupMessagesByDay = () => {
+        const grouped: { [key: string]: Message[] } = {};
+
+        messages.forEach((message) => {
+            const date = message.createdAt || new Date().toISOString();
+            let dayKey;
+
+            if (isToday(date)) {
+                dayKey = 'Сегодня';
+            } else if (isYesterday(date)) {
+                dayKey = 'Вчера';
+            } else {
+                dayKey = format(date, 'd MMMM yyyy', { locale: ru });
+            }
+
+            if (!grouped[dayKey]) {
+                grouped[dayKey] = [];
+            }
+            grouped[dayKey].push(message);
+        });
+
+        return grouped;
+    };
+
+    const groupedMessages = groupMessagesByDay();
+
     return (
         <div className="flex flex-col h-full">
-            {/* Область сообщений с фиксированной высотой */}
             <div className="flex-1 overflow-hidden">
+                {formatTypingStatus() && (
+                    <div className="flex items-center justify-center py-1 bg-muted/50">
+                        <div className="flex items-center gap-2 px-4 py-1 rounded-full bg-background">
+                            <div className="flex space-x-1">
+                                <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                                <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                            </div>
+                            <span className="text-sm text-muted-foreground">
+                                {formatTypingStatus()}
+                            </span>
+                        </div>
+                    </div>
+                )}
+
                 <ScrollArea
                     ref={scrollAreaRef}
                     className="h-full p-4"
@@ -147,37 +229,46 @@ export default function RoomChat({ roomId }: { roomId: string }) {
                             <p className="text-sm">Начните общение первым!</p>
                         </div>
                     ) : (
-                        <div className="space-y-4">
-                            {messages.map((message) => (
-                                <div
-                                    key={`message-${message.id}-${message.createdAt}`}
-                                    className={`flex gap-3 ${message.userId === user?.id ? "justify-end" : "justify-start"}`}
-                                >
-                                    {message.userId !== user?.id && (
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarFallback>
-                                                {message.sender.charAt(0).toUpperCase()}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                    )}
-                                    <div className={`max-w-[80%] flex flex-col ${message.userId === user?.id ? "items-end" : "items-start"}`}>
-                                        <Link href={`/home/users/${message.sender}`}>
-                                            {message.userId !== user?.id && (
-                                                <span className="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors">{message.sender}</span>
-                                            )}
-                                        </Link>
-                                        <div
-                                            className={`p-3 rounded-lg ${message.userId === user?.id
-                                                ? "bg-primary text-primary-foreground"
-                                                : "bg-muted"}`}
-                                        >
-                                            <p>{message.content}</p>
+                        <div className="space-y-6">
+                            {Object.entries(groupedMessages).map(([day, dayMessages]) => (
+                                <div key={day} className="space-y-4">
+                                    <div className="flex items-center justify-center my-4">
+                                        <div className="px-3 py-1 text-xs text-muted-foreground bg-muted rounded-full">
+                                            {day}
                                         </div>
-
-                                        <span className="text-xs text-muted-foreground mt-1">
-                                            {formatMessageTime(message.createdAt)}
-                                        </span>
                                     </div>
+                                    {dayMessages.map((message) => (
+                                        <div
+                                            key={`message-${message.id}-${message.createdAt}`}
+                                            className={`flex gap-3 ${message.userId === user?.id ? "justify-end" : "justify-start"}`}
+                                        >
+                                            {message.userId !== user?.id && (
+                                                <Avatar className="h-8 w-8">
+                                                    <AvatarFallback>
+                                                        {message.sender.charAt(0).toUpperCase()}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                            )}
+                                            <div className={`max-w-[80%] flex flex-col ${message.userId === user?.id ? "items-end" : "items-start"}`}>
+                                                <Link href={`/home/users/${message.sender}`}>
+                                                    {message.userId !== user?.id && (
+                                                        <span className="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors">{message.sender}</span>
+                                                    )}
+                                                </Link>
+                                                <div
+                                                    className={`p-3 rounded-lg ${message.userId === user?.id
+                                                        ? "bg-primary text-primary-foreground"
+                                                        : "bg-muted"}`}
+                                                >
+                                                    <p>{message.content}</p>
+                                                </div>
+
+                                                <span className="text-xs text-muted-foreground mt-1">
+                                                    {formatMessageTime(message.createdAt)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             ))}
                             <div ref={messagesEndRef} />
@@ -194,7 +285,7 @@ export default function RoomChat({ roomId }: { roomId: string }) {
                     </Button>
                     <Input
                         value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
+                        onChange={handleInputChange}
                         onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
                         placeholder="Напишите сообщение..."
                         className="flex-1"
