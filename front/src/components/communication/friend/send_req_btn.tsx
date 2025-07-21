@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { useToasts } from '@/hooks/use_toats';
 import { useAuth } from '@/lib/auth-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -16,6 +15,7 @@ import {
 } from '../../ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { PlusCircle } from 'lucide-react';
+import { useToasts } from '@/lib/hooks/use_toats';
 
 export function SendFriendRequest() {
     const [userId, setUserId] = useState('');

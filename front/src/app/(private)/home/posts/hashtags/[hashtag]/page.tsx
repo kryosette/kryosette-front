@@ -1,8 +1,5 @@
 'use client';
 
-import { Alert } from '@/components/ui/alert';
-import { usePostsByHashtag } from '@/hooks/use_posts_hashtag';
-import { Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
@@ -10,28 +7,57 @@ import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
 import 'highlight.js/styles/github-dark.css';
 import { motion } from 'framer-motion';
-import { HashtagLink } from '@/components/hashtag_link';
+import { HashtagLink } from '@/components/posts/hashtags/hashtag_link';
 import { useAuth } from '@/lib/auth-provider';
 import { ViewCounter } from '@/components/posts/views/view_counter';
 import { LikeButton } from '@/components/posts/like/like_button';
 import { useState } from 'react';
-import usePostViews from '@/hooks/views/use_post_views';
 import axios from 'axios';
 import { CommentSection } from '../../create_comment/comment_section';
+import { usePostsByHashtag } from '@/lib/hooks/use_posts_hashtag';
+import usePostViews from '@/lib/hooks/views/use_post_views';
 
+/**
+ * Interface for component props
+ * @interface Props
+ * @property {Object} params - Route parameters
+ * @property {string} params.hashtag - Hashtag to filter posts by
+ */
 interface Props {
     params: { hashtag: string };
 }
 
 const BASE_BACKEND_URL = "http://localhost:8091/posts";
 
+/**
+ * HashtagPostsPage Component
+ * 
+ * @component
+ * @description
+ * Displays posts filtered by a specific hashtag with interactive features including:
+ * - Post viewing
+ * - Liking
+ * - Commenting
+ * - View counting
+ * - Infinite scroll
+ * 
+ * @param {Props} props - Component props containing the hashtag parameter
+ * 
+ * @state {Record<number, boolean>} expandedComments - Tracks which posts have comments expanded
+ * @state {boolean} isDeleting - Loading state during post deletion
+ */
 export default function HashtagPostsPage({ params }: Props) {
     const { hashtag } = params;
     const { posts, loading, error, hasMore, fetchMore } = usePostsByHashtag(hashtag);
+    // @ts-ignore
     const { user } = useAuth();
     const [expandedComments, setExpandedComments] = useState<Record<number, boolean>>({});
     const [isDeleting, setIsDeleting] = useState(false);
 
+    /**
+     * Toggles comment section visibility for a post
+     * @param {number} postId - ID of the post to toggle comments for
+     */
     const toggleComments = (postId: number) => {
         setExpandedComments(prev => ({
             ...prev,
@@ -39,7 +65,12 @@ export default function HashtagPostsPage({ params }: Props) {
         }));
     };
 
-    const handleRecordView = async (postId: string) => {
+    /**
+     * Records a view for a post
+     * @async
+     * @param {string} postId - ID of the post being viewed
+     */
+    const handleRecordView = async (postId: number) => {
         try {
             await axios.post(`${BASE_BACKEND_URL}/${postId}/view`, {}, {
                 headers: {
@@ -52,6 +83,27 @@ export default function HashtagPostsPage({ params }: Props) {
     };
 
     const { recordView } = usePostViews(handleRecordView);
+
+    /**
+     * Handles post deletion
+     * @async
+     * @param {number} postId - ID of the post to delete
+     */
+    const handleDeleteClick = async (postId: number) => {
+        setIsDeleting(true);
+        try {
+            await axios.delete(`${BASE_BACKEND_URL}/${postId}`, {
+                headers: {
+                    Authorization: `Bearer ${user?.token}`,
+                },
+            });
+            // TODO: Implement post removal from UI
+        } catch (error) {
+            console.error('Failed to delete post:', error);
+        } finally {
+            setIsDeleting(false);
+        }
+    };
 
     if (loading && posts.length === 0) return (
         <div className="flex justify-center items-center h-64">
@@ -69,7 +121,7 @@ export default function HashtagPostsPage({ params }: Props) {
     return (
         <div className="max-w-3xl mx-auto px-4 py-6 relative">
             <h1 className="text-3xl font-bold text-gray-800 mb-6">
-                Посты с хештегом: #{hashtag}
+                Posts with hashtag: #{hashtag}
             </h1>
 
             <div className="space-y-6">
@@ -106,6 +158,7 @@ export default function HashtagPostsPage({ params }: Props) {
                                             onClick={() => handleDeleteClick(post.id)}
                                             className="text-gray-400 hover:text-red-500 transition-colors"
                                             disabled={isDeleting}
+                                            aria-label="Delete post"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -174,6 +227,8 @@ export default function HashtagPostsPage({ params }: Props) {
                                     <button
                                         className="flex items-center space-x-1 text-gray-500 hover:text-indigo-600 transition-colors"
                                         onClick={() => toggleComments(post.id)}
+                                        aria-expanded={expandedComments[post.id]}
+                                        aria-controls={`comments-${post.id}`}
                                     >
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -186,7 +241,7 @@ export default function HashtagPostsPage({ params }: Props) {
                             </div>
 
                             {expandedComments[post.id] && (
-                                <div className="mt-4 pt-4 border-t border-gray-100">
+                                <div className="mt-4 pt-4 border-t border-gray-100" id={`comments-${post.id}`}>
                                     <CommentSection postId={post.id} />
                                 </div>
                             )}

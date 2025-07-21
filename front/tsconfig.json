@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "noImplicitAny": false,
     "types": [
       "react-markdown",
       "rehype-highlight"
@@ -38,7 +39,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/app/(private)/home/page.jsx",
-    "src/components/private-router.jsx",
+    "src/components/auth/private-router.jsx",
     "src/lib/auth-provider.jsx"
   ],
   "exclude": [

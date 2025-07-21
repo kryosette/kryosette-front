@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/auth-provider";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 import axios from "axios";
-import RoomChat from "../../chat/chatss/room_list";
+import RoomChat from "../../chat/chats/room_list";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, MoreVertical } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";

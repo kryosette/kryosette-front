@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "@/styles/globals.css";
 import { AuthProvider } from "@/lib/auth-provider";
-import {
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
 import { ChatProvider } from "./(private)/home/chat/ChatContext";
 
 const geistSans = Geist({
@@ -19,11 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "manuo",
-  description: "the best bank",
+  title: "kryosette"
 };
-
-const queryClient = new QueryClient()
 
 export default function RootLayout({
   children,
@@ -37,11 +30,7 @@ export default function RootLayout({
       >
         <ChatProvider>
           <AuthProvider>
-
             {children}
-
-
-
           </AuthProvider>
         </ChatProvider>
       </body>

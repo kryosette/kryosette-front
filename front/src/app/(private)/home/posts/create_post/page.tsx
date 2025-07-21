@@ -1,5 +1,5 @@
 'use client'
-import { useCreatePost } from '@/api/users/posts_queres'
+
 import { useEffect, useState } from 'react'
 import { Image, Smile, MapPin, Lock, X, Code, Hash } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -14,7 +14,17 @@ import ReactMarkdown from 'react-markdown'
 import rehypeHighlight from 'rehype-highlight'
 import remarkGfm from 'remark-gfm'
 import 'highlight.js/styles/github-dark.css'
+import { useCreatePost } from '@/lib/api/users/posts_queres'
 
+/**
+ * Interface for CreatePostForm props
+ * @interface CreatePostFormProps
+ * @property {() => void} onPostCreated - Callback when post is successfully created
+ * @property {number} id - User ID
+ * @property {string} firstname - User's first name
+ * @property {string} lastname - User's last name
+ * @property {string} email - User's email
+ */
 interface CreatePostFormProps {
     onPostCreated: () => void
     id: number
@@ -23,6 +33,25 @@ interface CreatePostFormProps {
     email: string
 }
 
+/**
+ * CreatePostForm Component
+ * 
+ * @component
+ * @description
+ * A draggable, expandable form for creating posts with markdown support,
+ * hashtags, and rich media options. Features preview mode and animations.
+ * 
+ * @param {CreatePostFormProps} props - Component props
+ * 
+ * @state {string} title - Post title
+ * @state {string} content - Post content
+ * @state {string[]} hashtags - Array of hashtags
+ * @state {string} currentHashtag - Current hashtag input
+ * @state {string} error - Error message
+ * @state {boolean} isSubmitting - Loading state during submission
+ * @state {boolean} isExpanded - Form expansion state
+ * @state {boolean} isPreview - Markdown preview toggle
+ */
 const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
     const { token } = useAuth()
     const [title, setTitle] = useState('')
@@ -38,6 +67,11 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
 
     const { createPost } = useCreatePost()
 
+    /**
+     * Handles form submission
+     * @async
+     * @param {React.FormEvent} e - Form event
+     */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsSubmitting(true)
@@ -58,6 +92,7 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
         }
     }
 
+    // Animation sequence for avatar pulse effect
     useEffect(() => {
         const sequence = async () => {
             while (true) {
@@ -70,6 +105,11 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
         sequence()
     }, [textControls])
 
+    /**
+     * Handles drag end animation
+     * @param {any} event - Drag event
+     * @param {any} info - Motion event info
+     */
     const handleDragEnd = (event: any, info: any) => {
         controls.start({
             x: 0,
@@ -78,16 +118,25 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
         })
     }
 
+    /**
+     * Inserts JavaScript code block template
+     */
     const insertCodeBlockJs = () => {
         const newText = `${content}\n\`\`\`js\n// Your code here\n\`\`\`\n`
         setContent(newText)
     }
 
+    /**
+     * Inserts Java code block template
+     */
     const insertCodeBlockJava = () => {
         const newText = `${content}\n\`\`\`java\n// Your code here\n\`\`\`\n`
         setContent(newText)
     }
 
+    /**
+     * Adds a hashtag to the list
+     */
     const addHashtag = () => {
         if (currentHashtag.trim()) {
             const normalizedTag = currentHashtag.startsWith('#')
@@ -101,10 +150,18 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
         }
     }
 
+    /**
+     * Removes a hashtag from the list
+     * @param {string} tagToRemove - Hashtag to remove
+     */
     const removeHashtag = (tagToRemove: string) => {
         setHashtags(hashtags.filter(tag => tag !== tagToRemove))
     }
 
+    /**
+     * Handles key events for hashtag input
+     * @param {React.KeyboardEvent} e - Keyboard event
+     */
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault()
@@ -127,8 +184,7 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
             initial={{ x: 0, y: 0 }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`fixed bottom-8 right-8 z-50 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-300 ${isExpanded ? 'w-96' : 'w-14 h-14'
-                }`}
+            className={`fixed bottom-8 right-8 z-50 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-300 ${isExpanded ? 'w-96' : 'w-14 h-14'}`}
         >
             <AnimatePresence>
                 {!isExpanded ? (
@@ -158,11 +214,9 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
                     >
                         <Card className="mx-auto transition-all border-0 shadow-none">
                             <form onSubmit={handleSubmit} className="p-4">
+                                {/* Form header with avatar and close button */}
                                 <div className="flex items-center justify-between mb-4">
-                                    <motion.div
-                                        animate={textControls}
-                                        className="flex items-center gap-3"
-                                    >
+                                    <motion.div animate={textControls} className="flex items-center gap-3">
                                         <Avatar className="h-10 w-10">
                                             <AvatarFallback className="bg-gradient-to-r from-primary to-purple-500 text-white">
                                                 Y
@@ -191,6 +245,7 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
                                     </Button>
                                 </div>
 
+                                {/* Error message display */}
                                 {error && (
                                     <motion.div
                                         initial={{ opacity: 0, y: -20 }}
@@ -202,6 +257,7 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
                                     </motion.div>
                                 )}
 
+                                {/* Title input */}
                                 <div className="mb-4">
                                     <motion.div whileHover={{ scale: 1.01 }}>
                                         <Input
@@ -213,6 +269,7 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
                                     </motion.div>
                                 </div>
 
+                                {/* Content area with preview toggle */}
                                 <div className="mb-4">
                                     {isPreview ? (
                                         <div className="prose prose-sm max-w-none dark:prose-invert p-4 bg-gray-50 rounded-lg">
@@ -265,6 +322,7 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
                                     )}
                                 </div>
 
+                                {/* Hashtags display */}
                                 <div className="mb-4">
                                     <div className="flex flex-wrap gap-2 mb-2">
                                         {hashtags.map((tag, index) => (
@@ -288,6 +346,7 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
                                     </div>
                                 </div>
 
+                                {/* Form footer with action buttons */}
                                 <motion.div
                                     className="flex items-center justify-between border-t pt-4"
                                     initial={{ opacity: 0 }}
@@ -296,7 +355,7 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
                                 >
                                     <div className="flex gap-2">
                                         <Input
-                                            placeholder="Добавьте хештеги"
+                                            placeholder="Add hashtags"
                                             value={currentHashtag}
                                             onChange={(e) => setCurrentHashtag(e.target.value)}
                                             onKeyDown={handleKeyDown}
@@ -332,44 +391,6 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
                                         >
                                             <Smile className="h-4 w-4 text-yellow-500" />
                                         </Button>
-                                        {/* <Button
-                                            variant="outline"
-                                            size="icon"
-                                            type="button"
-                                            as={motion.button}
-                                            whileHover={{ scale: 1.1, y: -5 }}
-                                            whileTap={{ scale: 0.9 }}
-                                        >
-                                            <MapPin className="h-4 w-4 text-red-500" />
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="icon"
-                                            type="button"
-                                            as={motion.button}
-                                            whileHover={{ scale: 1.1 }}
-                                            whileTap={{ scale: 0.9 }}
-                                            onClick={() => insertCodeBlockJs()}
-                                        >
-                                            <Code className="h-4 w-4 text-green-500" />
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            type="button"
-                                            onClick={() => insertCodeBlockJava()}
-                                        >
-                                            <Code className="h-4 w-4 text-green-500" />
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            type="button"
-                                            onClick={() => setIsPreview(!isPreview)}
-                                            className="ml-2"
-                                        >
-                                            {isPreview ? 'Edit' : 'Preview'}
-                                        </Button> */}
                                     </div>
 
                                     <Button

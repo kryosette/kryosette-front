@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8088'; // Replace with your actual API base URL
+const BACKEND_URL = "http://localhost:8088";
 
 /**
  * Registers a new user.
@@ -12,7 +12,7 @@ const API_BASE_URL = 'http://localhost:8088'; // Replace with your actual API ba
  */
 const registerUser = async (registrationData: any) => {
     try {
-        await axios.post(`${API_BASE_URL}/api/v1/auth/register`, registrationData, {
+        await axios.post(`${BACKEND_URL}/api/v1/auth/register`, registrationData, {
             headers: {
                 'Content-Type': 'application/json' // Explicitly set content type
             }

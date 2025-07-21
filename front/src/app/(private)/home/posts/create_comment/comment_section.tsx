@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
-import { useComments } from "@/hooks/use_comments";
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, MessageSquare, Pin, PinOff, Reply } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -12,6 +11,7 @@ import Replies from "./Replies";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth-provider";
+import { useComments } from "@/lib/hooks/use_comments";
 
 interface CommentSectionProps {
     postId: number;
@@ -25,14 +25,12 @@ interface CommentSectionProps {
  * @returns {JSX.Element} The comment section UI
  */
 export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) => {
-    // State management
     const [content, setContent] = useState('');
     const [replyingTo, setReplyingTo] = useState<number | null>(null);
     const [replyContent, setReplyContent] = useState('');
     const [expandedReplies, setExpandedReplies] = useState<Record<number, boolean>>({});
-
-    // Hooks
     const queryClient = useQueryClient();
+    // @ts-ignore
     const { user } = useAuth();
 
     // Comment management

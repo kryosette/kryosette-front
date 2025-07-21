@@ -7,19 +7,69 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Toaster, toast } from 'sonner';
 
-const API_BASE_URL = 'http://localhost:8088';
-const LOGIN_ENDPOINT = `${API_BASE_URL}/api/v1/auth/authenticate`;
+const LOGIN_ENDPOINT = "http://localhost:8088/api/v1/auth/authenticate";
 
+/**
+ * LoginPage Component
+ * 
+ * Handles user authentication with email, password, and OTP verification.
+ * 
+ * @component
+ * @example
+ * return <LoginPage />
+ * 
+ * @description
+ * This component provides:
+ * - Email-based authentication with domain suffix
+ * - Password and OTP verification
+ * - Form validation and error handling
+ * - Loading state during submission
+ * - Success/error feedback via toast notifications
+ * - Automatic redirection upon successful login
+ * - Remember me functionality
+ * - Password recovery link
+ * 
+ * @state {string} username - User's email prefix (before @domain)
+ * @state {string} password - User's password
+ * @state {string} otp - One-time password for 2FA
+ * @state {string} error - Error message to display
+ * @state {boolean} isLoading - Loading state during submission
+ * 
+ * @hooks
+ * - useRouter: For programmatic navigation
+ * - useState: For managing component state
+ * 
+ * @dependencies
+ * - axios: For HTTP requests
+ * - sonner: For toast notifications
+ * - UI components: Button, Input
+ */
 function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [otp, setOtp] = useState();
+    const [otp, setOtp] = useState<string>('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const domain = '@manuo.com';
 
     const router = useRouter();
 
+    /**
+     * Handles form submission for login
+     * 
+     * @async
+     * @param {React.FormEvent} e - Form submission event
+     * 
+     * @description
+     * - Prevents default form submission
+     * - Sets loading state
+     * - Constructs full email with domain
+     * - Makes authenticated POST request to login endpoint
+     * - Stores JWT token in sessionStorage on success
+     * - Shows toast notification based on result
+     * - Redirects to profile page on success
+     * - Handles and displays errors appropriately
+     */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
@@ -51,7 +101,6 @@ function LoginPage() {
                 toast.error('Login failed');
             }
         } catch (err: any) {
-            console.error("Login error:", err);
             setError(err.response?.data?.message || 'An error occurred. Please try again later.');
             toast.error('Login error');
         } finally {
@@ -65,16 +114,15 @@ function LoginPage() {
             <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
                 <div className="text-center">
                     <h2 className="text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
-
                 </div>
 
                 {error && (
-                    <div className="p-4 text-sm text-red-700 bg-red-100 rounded-lg">
+                    <div className="p-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
                         {error}
                     </div>
                 )}
 
-                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                <form className="mt-8 space-y-6" onSubmit={handleSubmit} noValidate>
                     <div className="rounded-md shadow-sm space-y-4">
                         <div>
                             <label htmlFor="username" className="block text-sm font-medium text-gray-700">
@@ -90,13 +138,14 @@ function LoginPage() {
                                     placeholder="yourname"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value.replace(/@.*$/, ''))}
+                                    aria-describedby="email-description"
                                 />
                                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <span className="text-gray-500 sm:text-sm">@manuo.com</span>
+                                    <span className="text-gray-500 sm:text-sm">{domain}</span>
                                 </div>
                             </div>
-                            <p className="mt-1 text-xs text-gray-500">
-                                Your full email will be: {username}@manuo.com
+                            <p id="email-description" className="mt-1 text-xs text-gray-500">
+                                Your full email will be: {username}{domain}
                             </p>
                         </div>
 
@@ -121,19 +170,21 @@ function LoginPage() {
 
                         <div>
                             <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
-                                OTP
+                                OTP Code
                             </label>
                             <div className="mt-1">
                                 <Input
                                     id="otp"
                                     name="otp"
-                                    type="otp"
-                                    autoComplete="current-otp"
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    autoComplete="one-time-code"
                                     required
                                     className="block w-full"
-                                    placeholder="••••••••"
+                                    placeholder="123456"
                                     value={otp}
-                                    onChange={(e) => setOtp(e.target.value)}
+                                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                                 />
                             </div>
                         </div>
@@ -153,7 +204,7 @@ function LoginPage() {
                         </div>
 
                         <div className="text-sm">
-                            <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                            <a href="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
                                 Forgot your password?
                             </a>
                         </div>
@@ -164,6 +215,7 @@ function LoginPage() {
                             type="submit"
                             className="w-full flex justify-center"
                             disabled={isLoading}
+                            aria-busy={isLoading}
                         >
                             {isLoading ? (
                                 <span className="flex items-center">
@@ -181,7 +233,7 @@ function LoginPage() {
                 </form>
 
                 <div className="text-center text-sm text-gray-500">
-                    <p>© {new Date().getFullYear()} Manuo. All rights reserved.</p>
+                    <p>© {new Date().getFullYear()} Kryosette. All rights reserved.</p>
                 </div>
             </div>
         </div>

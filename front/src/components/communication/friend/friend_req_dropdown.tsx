@@ -9,7 +9,7 @@ import {
 } from '../../ui/dropdown-menu';
 import { Button } from '../../ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '../../ui/avatar';
-import { useFriendRequests } from '@/hooks/use_friend_req';
+import { useFriendRequests } from '@/lib/hooks/use_friend_req';
 
 export function FriendRequestsDropdown() {
     const { friendRequests, isLoading, acceptRequest, isAccepting } = useFriendRequests();

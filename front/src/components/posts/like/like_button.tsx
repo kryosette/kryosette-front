@@ -1,4 +1,4 @@
-import { useLike } from '@/hooks/use_likes'
+import { useLike } from '@/lib/hooks/use_likes'
 import { Heart } from 'lucide-react'
 
 export const LikeButton = ({ postId }: { postId: number }) => {

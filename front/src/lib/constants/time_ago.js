@@ -15,6 +15,3 @@ export function timeAgo(date) {
   const yearsAgo = Math.floor(monthsAgo / 12);
   return `${yearsAgo} years ago`;
 }
-
-// Example usage
-console.log(timeAgo("2023-12-01T14:00:00Z")); // Output depends on the current time

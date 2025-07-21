@@ -8,10 +8,10 @@ import { Button } from "@/components/ui/button";
 import { SendHorizonal, SmilePlus } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { formatDistanceToNow, format, isToday, isYesterday, parseISO } from "date-fns";
+import { formatDistanceToNow, format, isToday, isYesterday } from "date-fns";
 import { ru } from "date-fns/locale";
 import Link from "next/link";
-import { useTypingStatus } from '@/hooks/use_typing_status'
+import { useTypingStatus } from "@/lib/hooks/use_typing_status";
 
 interface Message {
     id: number;
@@ -21,46 +21,73 @@ interface Message {
     userId: string;
 }
 
+const BACKEND_URL_CHAT = "http://localhost:8092";
+
+/**
+ * RoomChat Component
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {string} props.roomId - The ID of the chat room
+ * 
+ * @description
+ * A complete chat interface for a specific room that includes:
+ * - Real-time message display
+ * - Message grouping by date
+ * - Typing indicators
+ * - Message input with send functionality
+ * - User authentication
+ * - Message history loading
+ * 
+ * @state {Message[]} messages - List of messages in the room
+ * @state {string} newMessage - Current message being composed
+ * @state {boolean} isLoading - Loading state for messages
+ * @state {boolean} isTyping - Local typing indicator state
+ */
 export default function RoomChat({ roomId }: { roomId: string }) {
+    // @ts-ignore
     const { token, user } = useAuth();
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [isTyping, setIsTyping] = useState(false);
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const pollingIntervalRef = useRef<NodeJS.Timeout>();
-    const typingTimeoutRef = useRef<NodeJS.Timeout>();
+    const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const { typingStatus, sendTypingStatus } = useTypingStatus(roomId, token);
 
-    useEffect(() => {
-        const loadMessages = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8092/api/rooms/${roomId}/messages`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
+    /**
+     * Loads messages for the current room
+     * @async
+     */
+    const loadMessages = async () => {
+        try {
+            const response = await axios.get(
+                `${BACKEND_URL_CHAT}/api/rooms/${roomId}/messages`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
                     }
-                );
+                }
+            );
 
-                const adaptedMessages = response.data.map((msg: any) => ({
-                    id: msg.id,
-                    content: msg.content || msg.text,
-                    createdAt: msg.createdAt || msg.timestamp,
-                    sender: msg.sender || msg.user?.username,
-                    userId: msg.userId || msg.user?.id
-                }));
+            const adaptedMessages = response.data.map((msg: any) => ({
+                id: msg.id,
+                content: msg.content || msg.text,
+                createdAt: msg.createdAt || msg.timestamp,
+                sender: msg.sender || msg.user?.username,
+                userId: msg.userId || msg.user?.id
+            }));
 
-                setMessages(adaptedMessages);
-            } catch (error) {
+            setMessages(adaptedMessages);
+        } catch (error) {
+            console.error("Error loading messages:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
+    useEffect(() => {
         setIsLoading(true);
         loadMessages();
 
@@ -79,6 +106,10 @@ export default function RoomChat({ roomId }: { roomId: string }) {
         }
     }, [messages]);
 
+    /**
+     * Formats typing status message
+     * @returns {string|null} Formatted typing status or null if no one is typing
+     */
     const formatTypingStatus = () => {
         const activeTypers = typingStatus.filter(status =>
             status.isTyping && status.userId !== user?.id
@@ -89,42 +120,47 @@ export default function RoomChat({ roomId }: { roomId: string }) {
         const names = activeTypers.map(status => status.username);
 
         if (names.length === 1) {
-            return `${names[0]} печатает...`;
+            return `${names[0]} is typing...`;
         } else if (names.length === 2) {
-            return `${names[0]} и ${names[1]} печатают...`;
+            return `${names[0]} and ${names[1]} are typing...`;
         } else {
-            return `${names.slice(0, -1).join(', ')} и ${names.slice(-1)[0]} печатают...`;
+            return `${names.slice(0, -1).join(', ')} and ${names.slice(-1)[0]} are typing...`;
         }
     };
 
+    /**
+     * Handles input changes and manages typing status
+     * @param {React.ChangeEvent<HTMLInputElement>} e - Input change event
+     */
     const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setNewMessage(value);
 
-        // Отправляем статус печати
         if (value.trim()) {
             await sendTypingStatus(true);
 
-            // Сбрасываем предыдущий таймер
             if (typingTimeoutRef.current) {
                 clearTimeout(typingTimeoutRef.current);
             }
 
-            // Устанавливаем таймер для сброса статуса печати
             typingTimeoutRef.current = setTimeout(() => {
                 sendTypingStatus(false);
             }, 2000);
         } else {
-            // Если поле пустое, сразу сбрасываем статус
             await sendTypingStatus(false);
         }
     };
+
+    /**
+     * Sends a new message to the chat
+     * @async
+     */
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
 
         try {
             const response = await axios.post(
-                `http://localhost:8092/api/rooms/${roomId}/messages`,
+                `${BACKEND_URL_CHAT}/api/rooms/${roomId}/messages`,
                 { content: newMessage },
                 {
                     headers: {
@@ -137,7 +173,7 @@ export default function RoomChat({ roomId }: { roomId: string }) {
                 id: response.data.id,
                 content: response.data.content,
                 createdAt: response.data.createdAt,
-                sender: user?.username || "Вы",
+                sender: user?.username || "You",
                 userId: user?.id || ""
             };
 
@@ -149,21 +185,30 @@ export default function RoomChat({ roomId }: { roomId: string }) {
                 clearTimeout(typingTimeoutRef.current);
             }
         } catch (error) {
-            console.error("Ошибка отправки сообщения:", error);
+            console.error("Error sending message:", error);
         }
     };
 
+    /**
+     * Formats message timestamp
+     * @param {string} dateString - ISO date string
+     * @returns {string} Formatted relative time
+     */
     const formatMessageTime = (dateString: string) => {
         try {
-            if (!dateString) return 'только что';
+            if (!dateString) return 'just now';
             const date = new Date(dateString);
-            if (isNaN(date.getTime())) return 'только что';
-            return formatDistanceToNow(date, { addSuffix: true });
+            if (isNaN(date.getTime())) return 'just now';
+            return formatDistanceToNow(date, { addSuffix: true, locale: ru });
         } catch {
-            return 'только что';
+            return 'just now';
         }
     };
 
+    /**
+     * Groups messages by date
+     * @returns {Object} Messages grouped by date
+     */
     const groupMessagesByDay = () => {
         const grouped: { [key: string]: Message[] } = {};
 
@@ -171,12 +216,12 @@ export default function RoomChat({ roomId }: { roomId: string }) {
             const date = message.createdAt || new Date().toISOString();
             let dayKey;
 
-            if (isToday(date)) {
-                dayKey = 'Сегодня';
-            } else if (isYesterday(date)) {
-                dayKey = 'Вчера';
+            if (isToday(new Date(date))) {
+                dayKey = 'Today';
+            } else if (isYesterday(new Date(date))) {
+                dayKey = 'Yesterday';
             } else {
-                dayKey = format(date, 'd MMMM yyyy', { locale: ru });
+                dayKey = format(new Date(date), 'd MMMM yyyy', { locale: ru });
             }
 
             if (!grouped[dayKey]) {
@@ -208,10 +253,7 @@ export default function RoomChat({ roomId }: { roomId: string }) {
                     </div>
                 )}
 
-                <ScrollArea
-                    ref={scrollAreaRef}
-                    className="h-full p-4"
-                >
+                <ScrollArea ref={scrollAreaRef} className="h-full p-4">
                     {isLoading ? (
                         <div className="flex flex-col space-y-4">
                             {[...Array(5)].map((_, i) => (
@@ -225,8 +267,8 @@ export default function RoomChat({ roomId }: { roomId: string }) {
                         </div>
                     ) : messages.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                            <p>Нет сообщений</p>
-                            <p className="text-sm">Начните общение первым!</p>
+                            <p>No messages yet</p>
+                            <p className="text-sm">Be the first to start the conversation!</p>
                         </div>
                     ) : (
                         <div className="space-y-6">
@@ -277,7 +319,7 @@ export default function RoomChat({ roomId }: { roomId: string }) {
                 </ScrollArea>
             </div>
 
-            {/* Поле ввода */}
+            {/* Message input */}
             <div className="p-4 border-t">
                 <div className="flex gap-2 items-center">
                     <Button variant="ghost" size="icon">
@@ -287,7 +329,7 @@ export default function RoomChat({ roomId }: { roomId: string }) {
                         value={newMessage}
                         onChange={handleInputChange}
                         onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-                        placeholder="Напишите сообщение..."
+                        placeholder="Type a message..."
                         className="flex-1"
                     />
                     <Button

@@ -1,6 +1,6 @@
 import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import { baseURL } from "../../chat/config/AxiosHelper";
+import { baseURL } from "../lib/constants/axios_helper";
 import { useAuth } from "@/lib/auth-provider";
 
 class StatusService {

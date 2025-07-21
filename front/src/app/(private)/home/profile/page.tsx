@@ -22,8 +22,7 @@ import {
     UserPlus,
     Bell,
     Menu,
-    X,
-    Move
+    X
 } from 'lucide-react';
 import Link from "next/link";
 import { useAuth } from '@/lib/auth-provider';
@@ -32,9 +31,19 @@ import { SendFriendRequest } from '@/components/communication/friend/send_req_bt
 import PostList from '../posts/page';
 import CreatePostForm from '../posts/create_post/page';
 import { Input } from "@/components/ui/input";
-import { OpenChatButton } from '../chat/chats/chatbutton';
 import { NotificationList } from '@/components/notifications/notifications_list';
 
+/**
+ * UserDto Interface
+ * 
+ * @interface UserDto
+ * @property {number} id - User ID
+ * @property {string} username - Username
+ * @property {string} lastname - User's last name
+ * @property {string} email - User's email
+ * @property {string} [firstname] - User's first name (optional)
+ * @property {string} [userId] - User ID (optional)
+ */
 interface UserDto {
     id: number;
     username: string;
@@ -46,12 +55,38 @@ interface UserDto {
 
 const BACKEND_URL = "http://localhost:8088";
 
+/**
+ * Navigation items configuration
+ * @constant
+ * @type {Array<{icon: JSX.Element, title: string, href: string}>}
+ */
 const navItems = [
     { icon: <Home size={20} />, title: 'Posts', href: '/home/posts' },
     { icon: <PlusSquare size={20} />, title: 'Create', href: '/home/posts/create_post' },
     { icon: <CreditCard size={20} />, title: 'Payment', href: '/home/payment' },
 ];
 
+/**
+ * ProfilePage Component
+ * 
+ * @component
+ * @description
+ * The main profile page component that displays user information, navigation,
+ * and post feed. Includes:
+ * - Draggable navigation panel
+ * - User profile editing
+ * - Friend management
+ * - Post creation and viewing
+ * 
+ * @state {UserDto|null} user - Current user data
+ * @state {boolean} loading - Loading state
+ * @state {Object} navPosition - Navigation panel position
+ * @state {boolean} isNavCollapsed - Navigation panel collapsed state
+ * @state {string} newFirstname - Edited first name
+ * @state {string} newLastname - Edited last name
+ * @state {string} updateError - Profile update error message
+ * @state {boolean} isEditing - Profile editing mode state
+ */
 function ProfilePage() {
     const [user, setUser] = useState<UserDto | null>(null);
     const [loading, setLoading] = useState(true);
@@ -65,41 +100,53 @@ function ProfilePage() {
     const [updateError, setUpdateError] = useState('');
     const [isEditing, setIsEditing] = useState(false);
 
-    useEffect(() => {
-        const fetchProfile = async () => {
-            setLoading(true);
-            try {
-                const response = await fetch(`${BACKEND_URL}/api/v1/user/me`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
+    /**
+     * Fetches user profile data
+     * @async
+     */
+    const fetchProfile = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/v1/user/me`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
 
-                if (response.ok) {
-                    const userData = await response.json();
-                    setUser(userData);
-                    setNewFirstname(userData.firstname || '');
-                    setNewLastname(userData.lastname || '');
-                }
-            } catch (error) {
-                console.error('Error fetching profile:', error);
-            } finally {
-                setLoading(false);
+            if (response.ok) {
+                const userData = await response.json();
+                setUser(userData);
+                setNewFirstname(userData.firstname || '');
+                setNewLastname(userData.lastname || '');
             }
-        };
+        } catch (error) {
+            console.error('Error fetching profile:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         if (token) fetchProfile();
 
         const savedPos = localStorage.getItem('navPosition');
         if (savedPos) setNavPosition(JSON.parse(savedPos));
     }, [token]);
 
+    /**
+     * Handles user logout
+     */
     const handleLogout = () => {
         logout();
         router.push('/login');
     };
 
+    /**
+     * Handles navigation panel drag end
+     * @param {any} event - Drag event
+     * @param {any} info - Motion event info
+     */
     const handleDragEnd = (event: any, info: any) => {
         const newPos = {
             x: navPosition.x + info.offset.x,
@@ -117,6 +164,10 @@ function ProfilePage() {
         localStorage.setItem('navPosition', JSON.stringify(newPos));
     };
 
+    /**
+     * Updates user profile information
+     * @async
+     */
     const handleUpdateProfile = async () => {
         setUpdateError('');
         try {
@@ -156,7 +207,7 @@ function ProfilePage() {
 
     return (
         <div className="relative min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 p-4">
-            {/* Floating Navigation */}
+            {/* Floating Navigation Panel */}
             <motion.div
                 drag
                 dragControls={dragControls}
@@ -172,6 +223,7 @@ function ProfilePage() {
                 style={{
                     boxShadow: '0 10px 30px -10px rgba(99, 102, 241, 0.2)'
                 }}
+                aria-label="Navigation panel"
             >
                 <div className="flex h-full" style={{ flexDirection: !isNavCollapsed ? 'row' : 'column' }}>
                     <div
@@ -181,6 +233,7 @@ function ProfilePage() {
                         <button
                             onClick={() => setIsNavCollapsed(!isNavCollapsed)}
                             className="p-1 rounded-full hover:bg-indigo-50 text-indigo-500 transition-colors"
+                            aria-label={isNavCollapsed ? 'Expand navigation' : 'Collapse navigation'}
                         >
                             {isNavCollapsed ? <Menu size={16} className='ml-2' /> : <X size={16} />}
                         </button>
@@ -196,6 +249,7 @@ function ProfilePage() {
                                 className={`flex items-center p-3 ml-1 rounded-lg hover:bg-indigo-50 text-indigo-900 transition-colors ${isNavCollapsed ? 'justify-center' : ''
                                     }`}
                                 title={isNavCollapsed ? item.title : undefined}
+                                aria-label={item.title}
                             >
                                 <span className={isNavCollapsed ? '' : 'mr-3'}>{item.icon}</span>
                                 {!isNavCollapsed && <span className="text-sm font-medium">{item.title}</span>}
@@ -205,14 +259,14 @@ function ProfilePage() {
                 </div>
             </motion.div>
 
-            {/* Main Content */}
+            {/* Main Content Area */}
             <div className="max-w-6xl mx-auto pt-16">
-                {/* Profile Header */}
+                {/* Profile Header Section */}
                 <div className="bg-white rounded-2xl shadow-sm p-6 mb-6 border border-gray-200/50 backdrop-blur-sm bg-white/90">
                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                         <div className="flex items-center space-x-6">
                             <Avatar className="h-20 w-20 border-4 border-white shadow-md">
-                                <AvatarImage src="https://github.com/shadcn.png" />
+                                <AvatarImage src="https://github.com/shadcn.png" alt="Profile picture" />
                                 <AvatarFallback className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
                                     {user?.firstname?.[0]}{user?.lastname?.[0]}
                                 </AvatarFallback>
@@ -228,6 +282,7 @@ function ProfilePage() {
                                                 onChange={(e) => setNewFirstname(e.target.value)}
                                                 className="bg-gray-50 border-gray-200"
                                                 placeholder="First name"
+                                                aria-label="First name"
                                             />
                                             <Input
                                                 type="text"
@@ -235,24 +290,27 @@ function ProfilePage() {
                                                 onChange={(e) => setNewLastname(e.target.value)}
                                                 className="bg-gray-50 border-gray-200"
                                                 placeholder="Last name"
+                                                aria-label="Last name"
                                             />
                                         </div>
                                         <div className="flex space-x-2">
                                             <Button
                                                 onClick={handleUpdateProfile}
                                                 className="bg-indigo-600 hover:bg-indigo-700"
+                                                aria-label="Save changes"
                                             >
                                                 Save
                                             </Button>
                                             <Button
                                                 variant="outline"
                                                 onClick={() => setIsEditing(false)}
+                                                aria-label="Cancel editing"
                                             >
                                                 Cancel
                                             </Button>
                                         </div>
                                         {updateError && (
-                                            <p className="text-sm text-red-500">{updateError}</p>
+                                            <p className="text-sm text-red-500" role="alert">{updateError}</p>
                                         )}
                                     </div>
                                 ) : (
@@ -269,6 +327,7 @@ function ProfilePage() {
                                             size="sm"
                                             onClick={() => setIsEditing(true)}
                                             className="mt-2 text-indigo-600 border-indigo-300 hover:bg-indigo-50"
+                                            aria-label="Edit profile"
                                         >
                                             Edit Profile
                                         </Button>
@@ -303,8 +362,7 @@ function ProfilePage() {
                                 </Button>
                             </Link>
 
-
-                            <Link href={"/home/chat/chatss"}>
+                            <Link href={"/home/chat/chats"}>
                                 <Button variant="outline" size="sm" className="border-indigo-300 hover:bg-indigo-50">
                                     Chats
                                 </Button>
@@ -315,6 +373,7 @@ function ProfilePage() {
                                 size="sm"
                                 onClick={handleLogout}
                                 className="text-red-500 border-red-200 hover:bg-red-50"
+                                aria-label="Logout"
                             >
                                 <LogOut className="h-4 w-4 mr-2" />
                                 Logout
@@ -343,11 +402,7 @@ function ProfilePage() {
                                     </div>
                                     <div>
                                         <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Email</h3>
-                                        <p className="mt-1 text-sm font-medium">{user?.email}</p>
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Account ID</h3>
-                                        <p className="mt-1 text-sm font-medium">{user?.userId || 'N/A'}</p>
+                                        <p className="mt-1 text-sm font-medium">{user?.username}</p>
                                     </div>
                                 </div>
                             </CardContent>
@@ -364,7 +419,7 @@ function ProfilePage() {
                                     {[1, 2, 3, 4, 5, 6].map((_, i) => (
                                         <div key={i} className="flex flex-col items-center">
                                             <Avatar className="h-16 w-16 mb-2 border-2 border-white shadow-sm">
-                                                <AvatarImage src={`https://i.pravatar.cc/150?img=${i + 10}`} />
+                                                <AvatarImage src={`https://i.pravatar.cc/150?img=${i + 10}`} alt={`Friend ${i + 1}`} />
                                                 <AvatarFallback>F</AvatarFallback>
                                             </Avatar>
                                             <p className="text-xs font-medium text-center">Friend {i + 1}</p>
@@ -382,7 +437,6 @@ function ProfilePage() {
                     <div className="lg:col-span-2">
                         <Card className="rounded-2xl overflow-hidden shadow-sm border border-gray-200/50 backdrop-blur-sm bg-white/90">
                             <CardContent className="p-6">
-
                                 <PostList />
                                 <CreatePostForm />
                             </CardContent>

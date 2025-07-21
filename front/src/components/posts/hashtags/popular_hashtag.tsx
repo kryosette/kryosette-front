@@ -1,6 +1,6 @@
 'use client'
 
-import { useHashtags } from "@/hooks/use_hashtags";
+import { useHashtags } from "@/lib/hooks/use_hashtags";
 import { HashtagLink } from "./hashtag_link";
 
 export const PopularHashtags = () => {

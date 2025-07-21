@@ -14,7 +14,10 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import axios from "axios"
 import { useAuth } from "@/lib/auth-provider"
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+
+const BACKEND_URL_CHAT = "http://localhost:8092";
 
 interface Room {
     id: number
@@ -22,86 +25,136 @@ interface Room {
     description: string
 }
 
+/**
+ * RoomList Component
+ * 
+ * @component
+ * @description
+ * Displays a list of chat rooms with the ability to:
+ * - View existing rooms
+ * - Create new rooms
+ * - Navigate to selected rooms
+ * 
+ * @requires
+ * - User authentication token
+ * - Backend API endpoint for rooms
+ * 
+ * @state {Room[]} rooms - List of available rooms
+ * @state {string} newRoomName - Name for new room being created
+ * @state {boolean} isDialogOpen - Controls new room dialog visibility
+ */
 export function RoomList() {
-    const router = useRouter();
-    const { token } = useAuth();
+    const router = useRouter()
+    // @ts-ignore
+    const { token } = useAuth()
     const [rooms, setRooms] = useState<Room[]>([])
     const [newRoomName, setNewRoomName] = useState("")
     const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
         fetchRooms()
     }, [])
 
+    /**
+     * Fetches the list of available rooms from the server
+     * @async
+     */
     const fetchRooms = async () => {
         try {
-            const response = await axios.get("http://localhost:8092/api/rooms");
-            console.log("Данные с сервера:", response.data); // Смотрим, что пришло!
-            setRooms(response.data);
+            setIsLoading(true)
+            const response = await axios.get(`${BACKEND_URL_CHAT}/api/rooms`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setRooms(response.data)
         } catch (error) {
-            console.error("Ошибка при получении комнат:", error);
-            // TODO: Показать сообщение об ошибке пользователю
+            console.error("Error fetching rooms:", error)
+            toast.error("Failed to load rooms")
+        } finally {
+            setIsLoading(false)
         }
-    };
+    }
 
+    /**
+     * Creates a new chat room
+     * @async
+     */
     const createRoom = async () => {
-        if (!newRoomName.trim()) return;
+        if (!newRoomName.trim()) return
 
         try {
-            const response = await axios.post("http://localhost:8092/api/rooms", {
-                name: newRoomName,
-                description: ""
-            },
+            setIsLoading(true)
+            const response = await axios.post(
+                `${BACKEND_URL_CHAT}/api/rooms`,
+                {
+                    name: newRoomName,
+                    description: ""
+                },
                 {
                     headers: {
-                        "Authorization": `Bearer ${token}`  // ← Вот это обязательно!
+                        Authorization: `Bearer ${token}`
                     }
-                });
+                }
+            )
 
-            if (response.status === 200 || response.status === 201) { // Проверяем код статуса
-                fetchRooms();
-                setNewRoomName("");
-                setIsDialogOpen(false);
+            if (response.status === 200 || response.status === 201) {
+                toast.success("Room created successfully")
+                await fetchRooms()
+                setNewRoomName("")
+                setIsDialogOpen(false)
             } else {
-                console.error("Не удалось создать комнату. Код статуса:", response.status);
-                // TODO: Показать сообщение об ошибке пользователю
+                throw new Error(`Unexpected status code: ${response.status}`)
             }
-        } catch (error: any) { // Important type here!
-            console.error("Ошибка при создании комнаты:", error);
-            // TODO: Показать сообщение об ошибке пользователю
+        } catch (error: any) {
+            console.error("Error creating room:", error)
+            toast.error(error.response?.data?.message || "Failed to create room")
+        } finally {
+            setIsLoading(false)
         }
-    };
+    }
 
+    /**
+     * Handles room selection navigation
+     * @param {number} roomId - ID of the selected room
+     */
     const handleRoomSelect = (roomId: number) => {
-        router.push(`/home/room/${roomId}`); // Переход на страницу комнаты
-        // Для React Router: navigate(`/room/${roomId}`);
-    };
+        router.push(`/home/room/${roomId}`)
+    }
 
     return (
         <Card className="w-80 border-r rounded-none">
             <CardHeader>
                 <CardTitle className="flex justify-between items-center">
-                    Комнаты
+                    Chat Rooms
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
-                            <Plus className="cursor-pointer hover:text-primary" />
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                aria-label="Create new room"
+                            >
+                                <Plus className="h-4 w-4" />
+                            </Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>
-                                <DialogTitle>Создать новую комнату</DialogTitle>
+                                <DialogTitle>Create New Room</DialogTitle>
                             </DialogHeader>
                             <div className="space-y-4 py-4">
                                 <Input
-                                    placeholder="Название комнаты"
+                                    placeholder="Room name"
                                     value={newRoomName}
                                     onChange={(e) => setNewRoomName(e.target.value)}
                                     onKeyDown={(e) => e.key === "Enter" && createRoom()}
+                                    disabled={isLoading}
                                 />
                                 <Button
                                     onClick={createRoom}
-                                    disabled={!newRoomName.trim()}
+                                    disabled={!newRoomName.trim() || isLoading}
                                 >
-                                    Создать
+                                    {isLoading ? "Creating..." : "Create Room"}
                                 </Button>
                             </div>
                         </DialogContent>
@@ -109,18 +162,36 @@ export function RoomList() {
                 </CardTitle>
             </CardHeader>
             <div className="p-4 space-y-2">
-                {rooms?.map((room) => (
-                    <div
-                        key={room.id}
-                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded cursor-pointer transition-colors"
-                        onClick={() => handleRoomSelect(room.id)} // ← Теперь клик ведёт в комнату
-                    >
-                        <p className="font-medium">{room.name}</p>
-                        {room.description && (
-                            <p className="text-sm text-muted-foreground">{room.description}</p>
-                        )}
+                {isLoading ? (
+                    <div className="space-y-2">
+                        {[...Array(3)].map((_, i) => (
+                            <div key={i} className="p-2 space-y-2">
+                                <div className="h-4 w-3/4 bg-muted rounded animate-pulse"></div>
+                                <div className="h-3 w-1/2 bg-muted rounded animate-pulse"></div>
+                            </div>
+                        ))}
                     </div>
-                ))}
+                ) : rooms.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                        No rooms available
+                    </p>
+                ) : (
+                    rooms.map((room) => (
+                        <div
+                            key={room.id}
+                            className="p-2 hover:bg-muted rounded cursor-pointer transition-colors"
+                            onClick={() => handleRoomSelect(room.id)}
+                            aria-label={`Select room ${room.name}`}
+                        >
+                            <p className="font-medium">{room.name}</p>
+                            {room.description && (
+                                <p className="text-sm text-muted-foreground truncate">
+                                    {room.description}
+                                </p>
+                            )}
+                        </div>
+                    ))
+                )}
             </div>
         </Card>
     )

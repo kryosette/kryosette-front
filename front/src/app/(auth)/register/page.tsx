@@ -19,35 +19,75 @@ import { Button } from "@/components/ui/button";
 import { Toaster, toast } from 'sonner';
 import { Check, X } from 'lucide-react';
 
-const passwordSchema = z.string()
-    .min(12, { message: "Пароль должен содержать минимум 12 символов" })
-    .regex(/[A-Z]/, { message: "Должна быть хотя бы одна заглавная буква" })
-    .regex(/[a-z]/, { message: "Должна быть хотя бы одна строчная буква" })
-    .regex(/[0-9]/, { message: "Должна быть хотя бы одна цифра" })
-    .regex(/[^A-Za-z0-9]/, { message: "Должен быть хотя бы один спецсимвол" });
+const BACKEND_URL = "http://localhost:8088";
 
+/**
+ * Password validation schema using Zod
+ * 
+ * @constant
+ * @type {z.ZodString}
+ * 
+ * @description
+ * Defines password requirements:
+ * - Minimum 12 characters
+ * - At least one uppercase letter
+ * - At least one lowercase letter
+ * - At least one number
+ * - At least one special character
+ */
+const passwordSchema = z.string()
+    .min(12, { message: "Password must contain at least 12 characters" })
+    .regex(/[A-Z]/, { message: "Must contain at least one uppercase letter" })
+    .regex(/[a-z]/, { message: "Must contain at least one lowercase letter" })
+    .regex(/[0-9]/, { message: "Must contain at least one number" })
+    .regex(/[^A-Za-z0-9]/, { message: "Must contain at least one special character" });
+
+/**
+ * Form validation schema using Zod
+ * 
+ * @constant
+ * @type {z.ZodObject}
+ * 
+ * @description
+ * Defines form validation rules for:
+ * - First name (min 2 characters)
+ * - Last name (min 2 characters)
+ * - Email (username without domain)
+ * - Password (validated by passwordSchema)
+ */
 const formSchema = z.object({
     firstname: z.string().min(2, {
-        message: "Имя должно содержать не менее 2 символов.",
+        message: "First name must contain at least 2 characters",
     }),
     lastname: z.string().min(2, {
-        message: "Фамилия должна содержать не менее 2 символов.",
+        message: "Last name must contain at least 2 characters",
     }),
     email: z.string()
-        .min(1, { message: "Введите имя пользователя" })
+        .min(1, { message: "Please enter a username" })
         .refine(value => !value.includes('@'), {
-            message: "Не включайте домен @manuo.com - он будет добавлен автоматически"
+            message: "Do not include @manuo.com domain - it will be added automatically"
         }),
     password: passwordSchema,
 });
 
+/**
+ * PasswordRequirements Component
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {string} props.password - Current password value to validate
+ * 
+ * @description
+ * Displays password requirements with visual validation indicators.
+ * Shows checkmarks for met requirements and X's for unmet ones.
+ */
 const PasswordRequirements = ({ password }: { password: string }) => {
     const requirements = [
-        { id: 1, text: "Минимум 12 символов", validator: (p: string) => p.length >= 12 },
-        { id: 2, text: "Заглавная буква", validator: (p: string) => /[A-Z]/.test(p) },
-        { id: 3, text: "Строчная буква", validator: (p: string) => /[a-z]/.test(p) },
-        { id: 4, text: "Цифра", validator: (p: string) => /[0-9]/.test(p) },
-        { id: 5, text: "Спецсимвол", validator: (p: string) => /[^A-Za-z0-9]/.test(p) },
+        { id: 1, text: "Minimum 12 characters", validator: (p: string) => p.length >= 12 },
+        { id: 2, text: "Uppercase letter", validator: (p: string) => /[A-Z]/.test(p) },
+        { id: 3, text: "Lowercase letter", validator: (p: string) => /[a-z]/.test(p) },
+        { id: 4, text: "Number", validator: (p: string) => /[0-9]/.test(p) },
+        { id: 5, text: "Special character", validator: (p: string) => /[^A-Za-z0-9]/.test(p) },
     ];
 
     return (
@@ -68,11 +108,27 @@ const PasswordRequirements = ({ password }: { password: string }) => {
     );
 };
 
+/**
+ * RegistrationForm Component
+ * 
+ * @component
+ * 
+ * @description
+ * Handles user registration with:
+ * - Form validation using Zod
+ * - Password strength visualization
+ * - API integration for registration
+ * - Loading states
+ * - Success/error feedback
+ * 
+ * @state {boolean} isLoading - Loading state during submission
+ * @state {string} password - Current password value for validation display
+ * @state {boolean|null} emailAvailable - Email availability status (not currently used)
+ */
 export default function RegistrationForm() {
     const [isLoading, setIsLoading] = useState(false);
     const [password, setPassword] = useState("");
     const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8088';
 
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -84,6 +140,20 @@ export default function RegistrationForm() {
         },
     });
 
+    /**
+     * Handles form submission
+     * 
+     * @async
+     * @param {Object} values - Form values
+     * 
+     * @description
+     * - Sets loading state
+     * - Constructs full email with domain
+     * - Makes API request to registration endpoint
+     * - Handles success/error responses
+     * - Shows appropriate toast notifications
+     * - Resets form on success
+     */
     const onSubmit = async (values: any) => {
         setIsLoading(true);
 
@@ -94,7 +164,7 @@ export default function RegistrationForm() {
             };
 
             const response = await axios.post(
-                `${API_BASE_URL}/api/v1/auth/register`,
+                `${BACKEND_URL}/api/v1/auth/register`,
                 dataToSend,
                 {
                     headers: {
@@ -104,33 +174,15 @@ export default function RegistrationForm() {
             );
 
             if (response.status === 202) {
-                toast.success("Регистрация успешна! Проверьте свою электронную почту для активации учетной записи.");
+                toast.success("Registration successful! Please check your email to activate your account.");
                 form.reset();
                 setPassword("");
             } else {
-                toast.error(`Ошибка регистрации: ${response.status} ${response.statusText}`);
+                toast.error(`Registration error: ${response.status} ${response.statusText}`);
             }
         } catch (error: any) {
-            console.error("Ошибка регистрации:", error);
-
-            let errorMessage = "Ошибка регистрации. Пожалуйста, проверьте свою информацию и попробуйте еще раз.";
-
-
-            // if (error.response?.data?.message?.includes('Duplicate entry') ||
-            //     error.response?.data?.message?.toLowerCase().includes('email already exists')) {
-            //     errorMessage = "Этот email уже зарегистрирован. Пожалуйста, используйте другой email или восстановите пароль.";
-            // } else if (error.response?.data?.message) {
-            //     errorMessage = error.response.data.message;
-            // } else if (error.message) {
-            //     errorMessage = error.message;
-            // }
-
+            const errorMessage = "Registration error. Please check your information and try again.";
             toast.error(errorMessage);
-
-            // form.setError('email', {
-            //     type: 'manual',
-            //     message: 'Этот email уже зарегистрирован'
-            // });
         } finally {
             setIsLoading(false);
         }
@@ -142,9 +194,9 @@ export default function RegistrationForm() {
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
                 <div className="flex flex-col space-y-1.5 p-6">
                     <p className='flex justify-center font-bold'>manuo</p>
-                    <h3 className="text-2xl font-semibold tracking-tight">Регистрация</h3>
+                    <h3 className="text-2xl font-semibold tracking-tight">Create Account</h3>
                     <p className="text-sm text-muted-foreground">
-                        Создайте новую учетную запись.
+                        Create a new account to get started
                     </p>
                 </div>
                 <Form {...form}>
@@ -154,9 +206,9 @@ export default function RegistrationForm() {
                             name="firstname"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Имя</FormLabel>
+                                    <FormLabel>First Name</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Введите ваше имя" {...field} />
+                                        <Input placeholder="Enter your first name" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -167,9 +219,9 @@ export default function RegistrationForm() {
                             name="lastname"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Фамилия</FormLabel>
+                                    <FormLabel>Last Name</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Введите вашу фамилию" {...field} />
+                                        <Input placeholder="Enter your last name" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -180,11 +232,11 @@ export default function RegistrationForm() {
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Электронная почта</FormLabel>
+                                    <FormLabel>Email</FormLabel>
                                     <FormControl>
                                         <div className="relative">
                                             <Input
-                                                placeholder="Введите имя пользователя"
+                                                placeholder="Enter username"
                                                 {...field}
                                                 onChange={(e) => {
                                                     const value = e.target.value.replace(/@manuo\.com$/, '');
@@ -205,11 +257,11 @@ export default function RegistrationForm() {
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Пароль</FormLabel>
+                                    <FormLabel>Password</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="password"
-                                            placeholder="Введите ваш пароль"
+                                            placeholder="Enter your password"
                                             {...field}
                                             onChange={(e) => {
                                                 field.onChange(e);
@@ -229,9 +281,9 @@ export default function RegistrationForm() {
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
-                                    Регистрируется...
+                                    Registering...
                                 </span>
-                            ) : "Зарегистрироваться"}
+                            ) : "Create Account"}
                         </Button>
                     </form>
                 </Form>

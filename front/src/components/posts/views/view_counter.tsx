@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { EyeIcon } from 'lucide-react';
 
 interface ViewCounterProps {
+    postId: number;
     initialCount: number;
 }
 
