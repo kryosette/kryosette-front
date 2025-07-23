@@ -185,7 +185,7 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
                                 <div className="flex flex-col items-center">
                                     <Avatar className="h-8 w-8">
                                         <AvatarFallback className="bg-gradient-to-r from-primary to-purple-500 text-white text-xs">
-                                            {comment.authorName?.charAt(0).toUpperCase()}
+                                            {comment.username?.charAt(0).toUpperCase()}
                                         </AvatarFallback>
                                     </Avatar>
                                     {comment.repliesCount > 0 && (
@@ -225,7 +225,7 @@ export const CommentSection = ({ postId, postAuthorId }: CommentSectionProps) =>
                                             </div>
 
                                             {/* Pin Button (visible to comment author or post author) */}
-                                            {(user?.userId === comment.userId || user?.userId === postAuthorId) && (
+                                            {user?.userId === comment.userId && (
                                                 <button
                                                     onClick={() => handlePinComment(comment.id)}
                                                     className={`p-1 rounded-full hover:bg-muted transition-colors ${comment.isPinned ? 'text-primary' : 'text-muted-foreground'}`}

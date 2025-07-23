@@ -5,6 +5,7 @@ import axios from 'axios'
 import { formatDistanceToNow } from 'date-fns'
 import { Reply, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
+import { toast } from 'sonner'
 
 interface ReplyData {
     id: number
@@ -74,8 +75,13 @@ export default function Replies({
      * @param {string} username - The username of the comment author
      */
     const handleReplyClick = (parentId: number, username: string) => {
-        if (onReply) {
-            onReply(parentId, username)
+        try {
+            if (onReply) {
+                onReply(parentId, username)
+            }
+        } catch (err) {
+            console.error('Failed to create reply:', err);
+            toast.error('Failed to post reply');
         }
     }
 

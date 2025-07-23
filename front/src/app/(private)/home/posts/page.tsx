@@ -168,7 +168,7 @@ export default function PostList() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3 }}
                         className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
-                        onViewportEnter={() => recordView(String(post.id))}
+                        onViewportEnter={() => handleRecordView(post.id)}
                     >
                         <div className="p-6">
                             {/* Post header with author and metadata */}

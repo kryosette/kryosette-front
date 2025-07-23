@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { useAuth } from '@/lib/auth-provider';
-import './StatusIndicator.css';
+import '@/styles/status_indicator.css';
 
 /**
  * UserStatusPage Component

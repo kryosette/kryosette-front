@@ -10,6 +10,7 @@ import { ArrowLeft, MoreVertical } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import PrivateRoomChat from "../../../chat/(private-chat)/pchat/room_chat";
 
 interface Room {
     id: number;
@@ -31,7 +32,7 @@ export default function RoomPage({ params }: { params: { id: string } }) {
         const fetchRoom = async () => {
             try {
                 const response = await axios.get(
-                    `http://localhost:8092/api/rooms/${id}`,
+                    `http://localhost:8092/api/rooms/${id}/private`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`
@@ -42,9 +43,9 @@ export default function RoomPage({ params }: { params: { id: string } }) {
             } catch (err) {
                 console.error("Ошибка при получении комнаты:", err);
                 setError("Не удалось загрузить комнату");
-                if (axios.isAxiosError(err) && err.response?.status === 404) {
-                    router.push("/not-found");
-                }
+                // if (axios.isAxiosError(err) && err.response?.status === 404) {
+                //     router.push("/not-found");
+                // }
             } finally {
                 setLoading(false);
             }
@@ -91,7 +92,7 @@ export default function RoomPage({ params }: { params: { id: string } }) {
                 </Button>
 
                 <div className="flex items-center gap-2">
-                    <h1 className="text-xl font-semibold">{room?.name}</h1>
+                    <h1 className="text-xl font-semibold">{name}</h1>
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -114,7 +115,7 @@ export default function RoomPage({ params }: { params: { id: string } }) {
                 )}
 
                 <div className="h-full">
-                    <RoomChat roomId={id} />
+                    <PrivateRoomChat roomId={id} />
                 </div>
             </div>
         </div>

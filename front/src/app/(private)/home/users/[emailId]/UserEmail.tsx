@@ -3,13 +3,15 @@
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/lib/auth-provider';
-import { checkSubscription, getFollowersCount, getUserEmail, subscribeToUser, unsubscribeFromUser } from './api';
+import { checkSubscription, createPrivateRoom, createRoom, getFollowersCount, getUserEmail, subscribeToUser, unsubscribeFromUser } from './api';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Mail, User, Key, MoreHorizontal, MessageSquare, Bell, Share2, Home, MessageCircle, Users, Settings, Bookmark, Video } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import OnlineStatus from '../../profile/status/online.status';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 interface UserProfile {
     id: string;
@@ -24,12 +26,13 @@ interface UserProfile {
     lastSeenAt?: string;
 }
 
-function UserEmail({ emailId }: { emailId: string }) {
-    const [user, setUser] = useState<UserProfile | null>(null);
+function UserEmail({ emailId, userId }: { emailId: string, userId: string }) {
+    const [users, setUser] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const { token } = useAuth();
+    const { token, user } = useAuth();
     const [profile, setProfile] = useState<UserProfile | null>(null);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -64,10 +67,10 @@ function UserEmail({ emailId }: { emailId: string }) {
     }, [emailId, token]);
 
     const handleSubscribe = async () => {
-        if (!user || !token) return;
+        if (!users || !token) return;
 
         try {
-            if (user.isSubscribed) {
+            if (users.isSubscribed) {
                 await unsubscribeFromUser(emailId, token);
             } else {
                 await subscribeToUser(emailId, token);
@@ -89,6 +92,27 @@ function UserEmail({ emailId }: { emailId: string }) {
             setError('Ошибка при изменении подписки');
         }
     };
+
+    const handleStartChat = async () => {
+        // if (!token || !user?.userId) {
+        //     toast.error('Требуется авторизация');
+        //     return;
+        // }
+
+        try {
+            // Создаем комнату с текущим пользователем и владельцем профиля
+            const room = await createPrivateRoom(token, user?.userId, users?.id)
+
+            // Перенаправляем в чат
+            router.push(`/home/room/private/${room.id}`);
+
+            toast.success('Чат создан');
+        } catch (err) {
+            console.error('Ошибка при создании чата:', err);
+            toast.error('Не удалось создать чат');
+        }
+    };
+
 
     if (loading) return (
         <div className="flex justify-center min-h-screen p-4">
@@ -117,7 +141,7 @@ function UserEmail({ emailId }: { emailId: string }) {
     );
 
     if (error) return <div className="text-red-500">{error}</div>;
-    if (!user) return <div>Пользователь не найден</div>;
+    if (!users) return <div>Пользователь не найден</div>;
 
     return (
         <div className="flex justify-center min-h-screen p-4 bg-gray-50">
@@ -138,13 +162,13 @@ function UserEmail({ emailId }: { emailId: string }) {
 
                             <div className="flex items-start space-x-6">
                                 <Avatar className="h-24 w-24 border-4 border-white shadow-md">
-                                    <AvatarImage src={user.avatar} />
-                                    <AvatarFallback>{user.username.charAt(0).toUpperCase()}</AvatarFallback>
+                                    <AvatarImage src={users.avatar} />
+                                    <AvatarFallback>{users.userId.charAt(0).toUpperCase()}</AvatarFallback>
                                 </Avatar>
 
                                 <div className="flex-1 pt-2">
                                     <div className="flex items-center space-x-3">
-                                        <h2 className="text-2xl font-bold">{user.username}</h2>
+                                        <h2 className="text-2xl font-bold">{users.userId}</h2>
                                         <Badge variant="outline" className="flex items-center space-x-1">
                                             <div className="h-2 w-2 rounded-full bg-green-500"></div>
                                             <OnlineStatus
@@ -156,11 +180,11 @@ function UserEmail({ emailId }: { emailId: string }) {
 
                                     <div className="mt-3 flex space-x-4">
                                         <div className="flex items-center space-x-1 text-sm text-gray-600">
-                                            <span className="font-semibold">{user.followers}</span>
+                                            <span className="font-semibold">{users.followers}</span>
                                             <span>подписчиков</span>
                                         </div>
                                         <div className="flex items-center space-x-1 text-sm text-gray-600">
-                                            <span className="font-semibold">{user.following}</span>
+                                            <span className="font-semibold">{users.following}</span>
                                             <span>подписок</span>
                                         </div>
                                     </div>
@@ -174,8 +198,8 @@ function UserEmail({ emailId }: { emailId: string }) {
                                     <Mail className="h-5 w-5 text-blue-500" />
                                     <div>
                                         <p className="text-sm text-gray-500">Email</p>
-                                        <a href={`mailto:${user.email}`} className="font-medium text-blue-600 hover:underline">
-                                            {user.email}
+                                        <a href={`mailto:${users.username}`} className="font-medium text-blue-600 hover:underline">
+                                            {users.username}
                                         </a>
                                     </div>
                                 </div>
@@ -184,7 +208,7 @@ function UserEmail({ emailId }: { emailId: string }) {
                                     <Key className="h-5 w-5 text-purple-500" />
                                     <div>
                                         <p className="text-sm text-gray-500">ID пользователя</p>
-                                        <p className="font-medium">{user.id}</p>
+                                        <p className="font-medium">{users.id}</p>
                                     </div>
                                 </div>
                             </div>
@@ -192,7 +216,7 @@ function UserEmail({ emailId }: { emailId: string }) {
                             <div className="rounded-lg bg-gray-50 p-4">
                                 <h3 className="mb-2 text-sm font-semibold text-gray-700">О себе</h3>
                                 <p className="text-gray-600">
-                                    Привет! Я {user.username}. Рад видеть вас на моей странице.
+                                    Привет! Я {users.username}. Рад видеть вас на моей странице.
                                     Здесь вы можете найти мои контактные данные и другую информацию.
                                 </p>
                             </div>
@@ -200,16 +224,16 @@ function UserEmail({ emailId }: { emailId: string }) {
 
                         <CardFooter className="flex justify-between border-t pt-4">
                             <div className="flex space-x-2">
-                                <Button variant="default" className="bg-blue-600 hover:bg-blue-700">
+                                <Button variant="default" className="bg-blue-600 hover:bg-blue-700" onClick={handleStartChat}>
                                     <MessageSquare className="mr-2 h-4 w-4" />
                                     Написать
                                 </Button>
                                 <Button
-                                    variant={user.isSubscribed ? "outline" : "default"}
+                                    variant={users.isSubscribed ? "outline" : "default"}
                                     onClick={handleSubscribe}
                                 >
                                     <Bell className="mr-2 h-4 w-4" />
-                                    {user.isSubscribed ? "Отписаться" : "Подписаться"}
+                                    {users.isSubscribed ? "Отписаться" : "Подписаться"}
                                 </Button>
                             </div>
                             <Button variant="ghost">

@@ -128,11 +128,11 @@ function ProfilePage() {
     };
 
     useEffect(() => {
-        if (token) fetchProfile();
+        fetchProfile();
 
         const savedPos = localStorage.getItem('navPosition');
         if (savedPos) setNavPosition(JSON.parse(savedPos));
-    }, [token]);
+    }, []);
 
     /**
      * Handles user logout
@@ -266,7 +266,6 @@ function ProfilePage() {
                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                         <div className="flex items-center space-x-6">
                             <Avatar className="h-20 w-20 border-4 border-white shadow-md">
-                                <AvatarImage src="https://github.com/shadcn.png" alt="Profile picture" />
                                 <AvatarFallback className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
                                     {user?.firstname?.[0]}{user?.lastname?.[0]}
                                 </AvatarFallback>

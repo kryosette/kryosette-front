@@ -12,6 +12,7 @@ import { formatDistanceToNow, format, isToday, isYesterday } from "date-fns";
 import { ru } from "date-fns/locale";
 import Link from "next/link";
 import { useTypingStatus } from "@/lib/hooks/use_typing_status";
+import { toast } from "sonner";
 
 interface Message {
     id: number;
@@ -55,6 +56,8 @@ export default function RoomChat({ roomId }: { roomId: string }) {
     const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const { typingStatus, sendTypingStatus } = useTypingStatus(roomId, token);
+    const [remainingRequests, setRemainingRequests] = useState(5);
+    const [error, setError] = useState(null);
 
     /**
      * Loads messages for the current room
@@ -177,6 +180,11 @@ export default function RoomChat({ roomId }: { roomId: string }) {
                 userId: user?.id || ""
             };
 
+            const remaining = response.headers['x-ratelimit-remaining']
+            if (remaining) {
+                setRemainingRequests(parseInt(remaining));
+            }
+
             setMessages(prev => [...prev, newMsg]);
             setNewMessage("");
 
@@ -184,8 +192,20 @@ export default function RoomChat({ roomId }: { roomId: string }) {
             if (typingTimeoutRef.current) {
                 clearTimeout(typingTimeoutRef.current);
             }
-        } catch (error) {
-            console.error("Error sending message:", error);
+            toast.success("Message sent successfully");
+            setError(null);
+        } catch (err) {
+            if (err.response?.status === 429) {
+                alert(`Превышен лимит запросов! Попробуйте через ${err.response?.data?.retryAfter || 60} секунд`);
+            } else {
+                alert(err.response?.data?.message || "Ошибка при отправке сообщения");
+            }
+
+            // Обновляем счетчик даже при ошибке
+            const remaining = err.response?.headers['x-ratelimit-remaining'];
+            if (remaining) {
+                setRemainingRequests(parseInt(remaining));
+            }
         }
     };
 
@@ -339,6 +359,7 @@ export default function RoomChat({ roomId }: { roomId: string }) {
                     >
                         <SendHorizonal className="h-5 w-5" />
                     </Button>
+
                 </div>
             </div>
         </div>

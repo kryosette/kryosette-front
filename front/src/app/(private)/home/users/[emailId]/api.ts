@@ -1,7 +1,17 @@
 import { useAuth } from '@/lib/auth-provider';
 import axios from 'axios';
 
-export const getUserEmail = async (emailId: string, token: string): Promise<UserProfile> => { // UserProfile
+interface PrivateRoom {
+    id: number;
+    name: string;
+    description: string | null;
+    createdAt: string;
+    createdBy: string;
+    type: string;
+    participantIds: string[];
+}
+
+export const getUserEmail = async (emailId: string, token: string): Promise<UserProfile> => {
     try {
         const response = await axios.get(`http://localhost:8088/api/v1/user/email/${emailId}`, {
             headers: {
@@ -9,7 +19,13 @@ export const getUserEmail = async (emailId: string, token: string): Promise<User
                 'Content-Type': 'application/json',
             },
         });
-        return response.data; // Return the entire user object
+
+        // Возвращаем данные, где email - это userId
+        return {
+            ...response.data,
+            id: response.data.email, // Вот здесь берем email как id
+            userId: response.data.email // И дублируем в userId
+        };
     } catch (error) {
         console.error('Error fetching user:', error);
         throw new Error('Не удалось загрузить пользователя');
@@ -71,5 +87,31 @@ export const getFollowersCount = async (emailId: string, token: string): Promise
     } catch (error) {
         console.error('Error getting followers count:', error);
         throw new Error('Не удалось получить количество подписчиков');
+    }
+};
+
+export const createPrivateRoom = async (
+    token: string,
+    participant1Id: string,
+    participant2Id: string
+): Promise<PrivateRoom> => {
+    try {
+        const response = await axios.post(
+            'http://localhost:8092/api/rooms/private',
+            {
+                participant1Id,
+                participant2Id
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error creating private room:', error);
+        throw new Error('Не удалось создать приватный чат');
     }
 };
