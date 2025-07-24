@@ -46,13 +46,13 @@ const features = [
 
 export function MainMenu() {
     return (
-        <div className="bg-gradient-to-b from-white to-gray-50 min-h-screen pt-32 pb-20">
+        <div className="bg-gradient-to-b from-white to-gray-50 min-h-screen pt-32 pb-20 relative overflow-hidden">
             {/* Анимированный фон */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 {[...Array(20)].map((_, i) => (
                     <motion.div
                         key={i}
-                        className="absolute rounded-full bg-gray-100"
+                        className="absolute rounded-full bg-gray-100/50"
                         initial={{
                             x: Math.random() * 100,
                             y: Math.random() * 100,
@@ -63,7 +63,7 @@ export function MainMenu() {
                         animate={{
                             x: [null, (Math.random() - 0.5) * 40],
                             y: [null, (Math.random() - 0.5) * 40],
-                            opacity: [0, 0.2, 0]
+                            opacity: [0, 0.1, 0]
                         }}
                         transition={{
                             duration: Math.random() * 15 + 10,
@@ -79,7 +79,7 @@ export function MainMenu() {
                 {/* Герой секция */}
                 <div className="max-w-4xl mx-auto text-center mb-20 px-4">
                     <motion.span
-                        className="inline-block px-4 py-2 rounded-full bg-gray-100 text-gray-600 text-sm font-medium mb-6"
+                        className="inline-block px-4 py-2 rounded-full bg-gray-100/50 text-gray-600 text-sm font-medium mb-6"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
@@ -119,10 +119,10 @@ export function MainMenu() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 * index }}
                             whileHover={{ y: -5 }}
-                            className="bg-white border border-gray-100 rounded-xl p-6 shadow-xs hover:shadow-sm transition-all mx-auto w-full max-w-md"
+                            className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-xl p-6 shadow-xs hover:shadow-sm transition-all mx-auto w-full max-w-md"
                         >
                             <div className="flex items-center gap-4 mb-4">
-                                <div className="p-3 rounded-lg bg-gray-50 text-gray-700">
+                                <div className="p-3 rounded-lg bg-gray-50/50 text-gray-700">
                                     {feature.icon}
                                 </div>
                                 <h3 className="text-xl font-medium text-gray-900">
@@ -137,14 +137,7 @@ export function MainMenu() {
                                 className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-gray-900 group"
                             >
                                 Learn more
-                                <svg
-                                    className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                </svg>
+                                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                             </Link>
                         </motion.div>
                     ))}
@@ -152,7 +145,7 @@ export function MainMenu() {
 
                 {/* CTA секция */}
                 <motion.div
-                    className="bg-white border border-gray-100 rounded-2xl p-8 md:p-12 shadow-sm max-w-4xl mx-auto px-6"
+                    className="bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-8 md:p-12 shadow-sm max-w-4xl mx-auto px-6"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.8 }}
@@ -166,19 +159,23 @@ export function MainMenu() {
                             Join the most exclusive network of individuals who value their digital sovereignty above all else.
                         </p>
                         <div className="flex flex-col sm:flex-row justify-center gap-4">
-                            <Button
-                                size="lg"
-                                className="bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white shadow mx-auto sm:mx-0"
-                            >
-                                Request Invitation
-                            </Button>
-                            <Button
-                                variant="outline"
-                                size="lg"
-                                className="border-gray-300 text-gray-700 hover:border-gray-400 hover:text-gray-900 mx-auto sm:mx-0"
-                            >
-                                Speak to Advisor
-                            </Button>
+                            <motion.div whileHover={{ scale: 1.03 }}>
+                                <Button
+                                    size="lg"
+                                    className="bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white shadow"
+                                >
+                                    Request Invitation
+                                </Button>
+                            </motion.div>
+                            <motion.div whileHover={{ scale: 1.03 }}>
+                                <Button
+                                    variant="outline"
+                                    size="lg"
+                                    className="border-gray-300 text-gray-700 hover:border-gray-400 hover:text-gray-900"
+                                >
+                                    Speak to Advisor
+                                </Button>
+                            </motion.div>
                         </div>
                     </div>
                 </motion.div>

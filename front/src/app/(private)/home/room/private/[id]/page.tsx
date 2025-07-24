@@ -92,7 +92,7 @@ export default function RoomPage({ params }: { params: { id: string } }) {
                 </Button>
 
                 <div className="flex items-center gap-2">
-                    <h1 className="text-xl font-semibold">{name}</h1>
+                    <h1 className="text-xl font-semibold">{room?.name}</h1>
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>

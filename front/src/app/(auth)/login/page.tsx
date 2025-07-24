@@ -6,8 +6,27 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Toaster, toast } from 'sonner';
+import { X } from 'lucide-react';
 
 const LOGIN_ENDPOINT = "http://localhost:8088/api/v1/auth/authenticate";
+
+const LockedAccountError = () => (
+    <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+        <div className="flex">
+            <div className="flex-shrink-0">
+                <X className="h-5 w-5 text-red-500" />
+            </div>
+            <div className="ml-3">
+                <p className="text-sm text-red-700">
+                    Your account has been locked. Please contact support at
+                    <a href="mailto:support@manuo.com" className="font-medium text-red-700 underline ml-1">
+                        support@manuo.com
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+);
 
 /**
  * LoginPage Component
@@ -100,9 +119,22 @@ function LoginPage() {
                 setError(data.message || 'Login failed. Please check your credentials.');
                 toast.error('Login failed');
             }
-        } catch (err: any) {
-            setError(err.response?.data?.message || 'An error occurred. Please try again later.');
-            toast.error('Login error');
+        } catch (error: any) {
+            if (error.response) {
+                // if (error.response.status === 403 &&
+                //     error.response.data?.message?.includes("locked")) {
+                //     toast.error("Your account is locked. Please contact support.");
+                if (error.response.status === 403) {
+                    toast.warning("Your account is locked. Please contact support. admin@manuo.com");
+                } else {
+                    toast.error(error.response.data?.message ||
+                        "Registration failed. Please try again.");
+                }
+            } else if (error.request) {
+                toast.error("Network error. Please check your connection.");
+            } else {
+                toast.error("Registration error. Please try again.");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -231,6 +263,8 @@ function LoginPage() {
                         </Button>
                     </div>
                 </form>
+
+                {error === 'locked' && <LockedAccountError />}
 
                 <div className="text-center text-sm text-gray-500">
                     <p>© {new Date().getFullYear()} Kryosette. All rights reserved.</p>
