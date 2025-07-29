@@ -1,5 +1,6 @@
 'use client';
 
+// import { encryptWithPublicKey } from '@/lib/crypto'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
@@ -9,6 +10,7 @@ import { Toaster, toast } from 'sonner';
 import { X } from 'lucide-react';
 
 const LOGIN_ENDPOINT = "http://localhost:8088/api/v1/auth/authenticate";
+const BACKEND_URL = "http://localhost:8088/api/v1";
 
 const LockedAccountError = () => (
     <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
@@ -95,6 +97,10 @@ function LoginPage() {
         setError('');
 
         try {
+            // const { data: { publicKey } } = await axios.get(`${BACKEND_URL}/key/generate/public`);
+
+            // const encryptedPassword = await encryptWithPublicKey(publicKey, password);
+
             const response = await axios.post(
                 LOGIN_ENDPOINT,
                 {

@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { FriendsList } from '@/components/communication/friend/friend_list';
 
 interface UserProfile {
     id: string;
@@ -357,41 +358,7 @@ function UserEmail({ emailId, userId }: { emailId: string, userId: string }) {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
                         >
-                            <Card className="border border-gray-200/50 bg-white/80 backdrop-blur-sm shadow-sm">
-                                <CardHeader>
-                                    <div className="flex items-center space-x-2">
-                                        <Users className="h-5 w-5 text-indigo-500" />
-                                        <h3 className="text-xl font-semibold">Друзья</h3>
-                                    </div>
-                                    <p className="text-sm text-gray-500">123 друга</p>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                        {[1, 2, 3, 4, 5, 6].map((_, i) => (
-                                            <motion.div
-                                                key={i}
-                                                whileHover={{ y: -5 }}
-                                                className="flex flex-col items-center space-y-2"
-                                            >
-                                                <Avatar className="h-20 w-20 border border-gray-200/50">
-                                                    <AvatarImage src={`https://i.pravatar.cc/150?img=${i + 10}`} />
-                                                    <AvatarFallback className="bg-gray-100">F</AvatarFallback>
-                                                </Avatar>
-                                                <p className="text-sm font-medium">Friend {i + 1}</p>
-                                            </motion.div>
-                                        ))}
-                                        <motion.div
-                                            whileHover={{ scale: 1.05 }}
-                                            className="flex flex-col items-center justify-center space-y-2"
-                                        >
-                                            <Button variant="outline" className="h-20 w-20 rounded-full border border-gray-200/50">
-                                                <span className="text-2xl">+</span>
-                                            </Button>
-                                            <p className="text-sm font-medium">Показать всех</p>
-                                        </motion.div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                            <FriendsList />
                         </motion.div>
                     </div>
                 </div>

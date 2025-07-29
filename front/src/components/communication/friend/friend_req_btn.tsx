@@ -1,40 +1,35 @@
-'use client'
+'use client';
+
 import { Button } from '@/components/ui/button';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
-import { sendFriendRequest } from './api';
+import { useFriendRequests } from '@/lib/hooks/use_friend_req';
 
 interface FriendRequestButtonProps {
     receiverId: number;
 }
 
 export function FriendRequestButton({ receiverId }: FriendRequestButtonProps) {
-    const queryClient = useQueryClient();
+    const { sendRequest, isSending, outgoingRequests } = useFriendRequests();
 
-    const { mutate, isLoading } = useMutation({
-        mutationFn: () => sendFriendRequest(receiverId),
-        onSuccess: () => {
-            toast({
-                title: 'Friend request sent',
-                description: 'Your friend request has been sent successfully',
-            });
-            queryClient.invalidateQueries(['users']);
-        },
-        onError: () => {
-            toast({
-                title: 'Error',
-                description: 'Failed to send friend request',
-                variant: 'destructive',
-            });
-        },
-    });
+    // Проверяем, есть ли уже исходящая заявка к этому пользователю
+    const hasOutgoingRequest = outgoingRequests.some(
+        request => request.receiverId === receiverId
+    );
+
+    const handleClick = () => {
+        if (hasOutgoingRequest) {
+            return;
+        }
+        sendRequest(receiverId);
+    };
 
     return (
         <Button
-            onClick={() => mutate()}
-            disabled={isLoading}
+            onClick={handleClick}
+            disabled={isSending || hasOutgoingRequest}
+            variant={hasOutgoingRequest ? 'outline' : 'default'}
         >
-            {isLoading ? 'Sending...' : 'Add Friend'}
+            {isSending ? 'Отправка...' :
+                hasOutgoingRequest ? 'Заявка отправлена' : 'Добавить в друзья'}
         </Button>
     );
 }

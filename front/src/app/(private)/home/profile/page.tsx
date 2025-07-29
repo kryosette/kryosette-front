@@ -47,6 +47,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { cn } from '@/lib/utils';
+import { FriendsList } from '@/components/communication/friend/friend_list';
 
 interface UserDto {
     id: number;
@@ -323,10 +324,12 @@ function ProfilePage() {
                                     </SendFriendRequest>
 
                                     <motion.div whileHover={{ y: -2 }}>
-                                        <Button variant="outline" className="bg-white/80 backdrop-blur-sm">
-                                            <MessageSquare className="h-4 w-4 mr-2" />
-                                            Message
-                                        </Button>
+                                        <Link href={"/home/chat/chats"}>
+                                            <Button variant="outline" className="bg-white/80 backdrop-blur-sm">
+                                                <MessageSquare className="h-4 w-4 mr-2" />
+                                                Message
+                                            </Button>
+                                        </Link>
                                     </motion.div>
 
                                     <DropdownMenu>
@@ -435,42 +438,9 @@ function ProfilePage() {
                             </Card>
                         </motion.div>
 
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.6 }}
-                        >
-                            <Card className="rounded-lg shadow-sm border border-gray-200/50 bg-white/80 backdrop-blur-sm">
-                                <CardHeader className="border-b border-gray-200/50">
-                                    <div className="flex items-center justify-between">
-                                        <CardTitle className="text-lg">Friends</CardTitle>
-                                        <span className="text-sm text-gray-500">123</span>
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="p-4">
-                                    <div className="grid grid-cols-3 gap-2">
-                                        {[1, 2, 3, 4, 5, 6].map((_, i) => (
-                                            <motion.div
-                                                key={i}
-                                                whileHover={{ y: -3 }}
-                                                className="flex flex-col items-center"
-                                            >
-                                                <Avatar className="h-20 w-20 mb-1 border border-gray-200">
-                                                    <AvatarImage src={`https://i.pravatar.cc/150?img=${i + 10}`} />
-                                                    <AvatarFallback>F</AvatarFallback>
-                                                </Avatar>
-                                                <p className="text-xs text-center truncate w-full">Friend {i + 1}</p>
-                                            </motion.div>
-                                        ))}
-                                    </div>
-                                    <motion.div whileHover={{ scale: 1.01 }}>
-                                        <Button variant="ghost" className="w-full mt-3 text-indigo-600">
-                                            See All Friends
-                                        </Button>
-                                    </motion.div>
-                                </CardContent>
-                            </Card>
-                        </motion.div>
+
+                        <FriendsList />
+
                     </div>
 
                     {/* Центральная колонка - Посты */}

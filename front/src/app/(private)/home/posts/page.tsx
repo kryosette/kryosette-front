@@ -127,7 +127,7 @@ export default function PostList() {
                         Community Feed
                     </h1>
                 </div>
-                <CreatePostForm />
+
             </motion.div>
 
             {/* Delete confirmation dialog */}
@@ -160,7 +160,7 @@ export default function PostList() {
                                 <div className="flex justify-between items-start mb-4 gap-4">
                                     <div className="flex items-center space-x-3">
                                         <Avatar className="h-10 w-10 border border-indigo-100">
-                                            <AvatarImage src={`https://i.pravatar.cc/150?u=${post.authorName}`} />
+                                            {/* <AvatarImage src={`https://i.pravatar.cc/150?u=${post.authorName}`} /> */}
                                             <AvatarFallback className="bg-indigo-100 text-indigo-600">
                                                 {post.authorName.charAt(0).toUpperCase()}
                                             </AvatarFallback>

@@ -15,7 +15,6 @@ function UserProfile({ params }: Props) {  // Get params as props
 
     return (
         <div>
-            <h1>User Profile</h1>
             <UserEmail emailId={emailId} />
         </div>
     );

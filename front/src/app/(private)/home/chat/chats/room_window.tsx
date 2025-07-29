@@ -58,6 +58,7 @@ export function RoomList() {
     const [rooms, setRooms] = useState<Room[]>([])
     const [privateRooms, setPrivateRooms] = useState<PrivateRoom[]>([])
     const [newRoomName, setNewRoomName] = useState("")
+    const [newRoomDesc, setNewRoomDesc] = useState("")
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [activeTab, setActiveTab] = useState("group")
@@ -107,6 +108,7 @@ export function RoomList() {
 
     const createRoom = async () => {
         if (!newRoomName.trim()) return
+        if (!newRoomDesc.trim()) return
 
         try {
             setIsLoading(true)
@@ -114,7 +116,7 @@ export function RoomList() {
                 `${BACKEND_URL_CHAT}/api/rooms`,
                 {
                     name: newRoomName,
-                    description: ""
+                    description: newRoomDesc
                 },
                 {
                     headers: {
@@ -126,6 +128,7 @@ export function RoomList() {
             toast.success("Room created successfully")
             await fetchRooms()
             setNewRoomName("")
+            setNewRoomDesc("")
             setIsDialogOpen(false)
         } catch (error: any) {
             console.error("Error creating room:", error)
@@ -195,10 +198,19 @@ export function RoomList() {
                                             disabled={isLoading}
                                             className="bg-white/80"
                                         />
+
+                                        <Input
+                                            placeholder="Room desc"
+                                            value={newRoomDesc}
+                                            onChange={(e) => setNewRoomDesc(e.target.value)}
+                                            onKeyDown={(e) => e.key === 'Enter' && createRoom()}
+                                            disabled={isLoading}
+                                            className="bg-white/80"
+                                        />
                                         <motion.div whileHover={{ scale: 1.02 }}>
                                             <Button
                                                 onClick={createRoom}
-                                                disabled={!newRoomName.trim() || isLoading}
+                                                disabled={!newRoomName.trim() && !newRoomDesc.trim() || isLoading}
                                                 className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
                                             >
                                                 {isLoading ? "Creating..." : "Create Room"}
@@ -327,12 +339,13 @@ export function RoomList() {
                                                         </div>
                                                         <div className="flex-1 min-w-0">
                                                             <div className="flex items-center space-x-2">
-                                                                <p className="font-medium truncate">{room.name}</p>
+                                                                <p className="font-medium truncate text-lg">{room.name}</p>
                                                                 <Badge variant="secondary" className="text-xs">
                                                                     Group
                                                                 </Badge>
                                                             </div>
                                                             <p className="text-sm text-gray-500 truncate">
+                                                                <p className="font-medium text-gray-400 truncate">{room.description}</p>
                                                                 {room.lastMessage || "No messages yet"}
                                                             </p>
                                                         </div>
