@@ -48,6 +48,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { cn } from '@/lib/utils';
 import { FriendsList } from '@/components/communication/friend/friend_list';
+import SettingsPage from '../settings/page';
 
 interface UserDto {
     id: number;
@@ -201,7 +202,7 @@ function ProfilePage() {
                                     <Button variant="ghost" className="flex items-center space-x-2 px-2">
                                         <Avatar className="h-8 w-8 border border-indigo-200">
                                             <AvatarFallback className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
-                                                {user?.firstname?.[0]}{user?.lastname?.[0]}
+                                                {user?.email}
                                             </AvatarFallback>
                                         </Avatar>
                                     </Button>
@@ -300,10 +301,9 @@ function ProfilePage() {
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                 <div>
                                     <h1 className="text-3xl font-bold text-gray-800 drop-shadow-sm">
-                                        {user?.firstname || 'User'} {user?.lastname}
+                                        {user?.username}
                                     </h1>
                                     <p className="text-gray-600 flex items-center mt-1">
-                                        <Mail className="h-4 w-4 mr-2" />
                                         {user?.email}
                                     </p>
                                 </div>
@@ -382,9 +382,9 @@ function ProfilePage() {
                                     />
                                 )}
                             </TabsTrigger>
-                            <TabsTrigger value="friends" className="relative h-full px-0">
-                                <span className="px-4 py-2">Friends</span>
-                                {activeTab === 'friends' && (
+                            <TabsTrigger value="settings" className="relative h-full px-0">
+                                <span className="px-4 py-2">Settings</span>
+                                {activeTab === 'settings' && (
                                     <motion.div
                                         layoutId="profileTabIndicator"
                                         className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-500 rounded-t"
@@ -462,6 +462,16 @@ function ProfilePage() {
                                     transition={{ duration: 0.3 }}
                                 >
                                     <PostList />
+                                </motion.div>
+                            )}
+                            {activeTab === 'settings' && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <SettingsPage />
                                 </motion.div>
                             )}
                         </AnimatePresence>

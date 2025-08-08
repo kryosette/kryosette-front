@@ -219,61 +219,6 @@ export default function RoomChat({ roomId }: { roomId: string }) {
         }
     };
 
-    // /**
-    //  * Sends a new message to the chat
-    //  * @async
-    //  */
-    // const handleSendMessage = async () => {
-    //     if (!newMessage.trim()) return;
-
-    //     try {
-    //         const response = await axios.post(
-    //             `${BACKEND_URL_CHAT}/api/rooms/${roomId}/messages`,
-    //             { content: newMessage },
-    //             {
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}`
-    //                 }
-    //             }
-    //         );
-
-    //         const newMsg = {
-    //             id: response.data.id,
-    //             content: response.data.content,
-    //             createdAt: response.data.createdAt,
-    //             sender: user?.username || "You",
-    //             userId: user?.id || ""
-    //         };
-
-    //         const remaining = response.headers['x-ratelimit-remaining']
-    //         if (remaining) {
-    //             setRemainingRequests(parseInt(remaining));
-    //         }
-
-    //         setMessages(prev => [...prev, newMsg]);
-    //         setNewMessage("");
-
-    //         await sendTypingStatus(false);
-    //         if (typingTimeoutRef.current) {
-    //             clearTimeout(typingTimeoutRef.current);
-    //         }
-    //         toast.success("Message sent successfully");
-    //         setError(null);
-    //     } catch (err) {
-    //         if (err.response?.status === 429) {
-    //             alert(`Превышен лимит запросов! Попробуйте через ${err.response?.data?.retryAfter || 60} секунд`);
-    //         } else {
-    //             alert(err.response?.data?.message || "Ошибка при отправке сообщения");
-    //         }
-
-    //         // Обновляем счетчик даже при ошибке
-    //         const remaining = err.response?.headers['x-ratelimit-remaining'];
-    //         if (remaining) {
-    //             setRemainingRequests(parseInt(remaining));
-    //         }
-    //     }
-    // };
-
     /**
      * Formats message timestamp
      * @param {string} dateString - ISO date string
@@ -366,7 +311,7 @@ export default function RoomChat({ roomId }: { roomId: string }) {
                                     </div>
                                     {dayMessages.map((message) => (
                                         <div
-                                            key={`message-${message.id}-${message.createdAt}`}
+                                            // key={`${message.id}_${message.createdAt}_${message.sender}`}
                                             className={`flex gap-3 ${message.userId === user?.id ? "justify-end" : "justify-start"}`}
                                         >
                                             {message.userId !== user?.id && (

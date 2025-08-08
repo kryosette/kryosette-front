@@ -73,7 +73,7 @@ export function SendFriendRequest() {
                     <Input
                         value={userId}
                         onChange={(e) => setUserId(e.target.value)}
-                        placeholder="Введите ID пользователя"
+                        placeholder="Введите email пользователя"
                         onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
                     />
                     <Button

@@ -8,7 +8,7 @@ const API_URL = 'http://localhost:8091/posts';
 
 /**
  * Custom hook for managing posts with infinite scrolling
- * @returns An object containing posts data and related functions
+ * @returns An object containing posts data and related fu      nctions
  */
 export const usePosts = () => {
     const { token } = useAuth();
@@ -66,6 +66,58 @@ export const usePosts = () => {
     });
 
     /**
+   * Mutation for voting in a poll
+   */
+    const votePollMutation = useMutation({
+        mutationFn: async ({ postId, optionIds }: { postId: number; optionIds: number[] }) => {
+            await axios.post(
+                `${API_URL}/${postId}/polls/vote`,
+                { optionIds },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+        },
+        onSuccess: (_, variables) => {
+            // Оптимистичное обновление
+            queryClient.setQueryData(['posts'], (oldData: any) => {
+                if (!oldData) return oldData;
+
+                return {
+                    ...oldData,
+                    pages: oldData.pages.map((page: any) => ({
+                        ...page,
+                        content: page.content.map((post: any) => {
+                            if (post.id === variables.postId && post.poll) {
+                                const updatedOptions = post.poll.options.map((option: any) => ({
+                                    ...option,
+                                    voteCount: variables.optionIds.includes(option.id)
+                                        ? option.voteCount + 1
+                                        : option.voteCount,
+                                    voted: variables.optionIds.includes(option.id),
+                                }));
+
+                                return {
+                                    ...post,
+                                    poll: {
+                                        ...post.poll,
+                                        options: updatedOptions,
+                                        voted: true,
+                                        totalVotes: post.poll.totalVotes + variables.optionIds.length,
+                                    },
+                                };
+                            }
+                            return post;
+                        }),
+                    })),
+                };
+            });
+        },
+    });
+
+    /**
      * Infinite query for loading posts with pagination
      * queryKey - Unique identifier for this query
      * queryFn - Function to fetch posts
@@ -114,6 +166,8 @@ export const usePosts = () => {
         refetch, // Function to manually refetch all data
         deletePost: deletePostMutation.mutate, // Function to delete a post
         isDeleting: deletePostMutation.isPending, // Loading state for delete operation
-        recordView: recordViewMutation.mutate // Function to record a post view
+        recordView: recordViewMutation.mutate, // Function to record a post view
+        votePoll: votePollMutation.mutate,
+        isVoting: votePollMutation.isPending,
     };
 };

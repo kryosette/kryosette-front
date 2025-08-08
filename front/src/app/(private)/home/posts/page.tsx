@@ -22,6 +22,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sparkles, MessageSquare, Trash2, MoreHorizontal } from 'lucide-react'
+import { PollComponent } from "./poll/poll"
+import { usePostPolls } from "@/lib/hooks/use_posts_polls"
 
 const BASE_BACKEND_URL = "http://localhost:8091/posts"
 
@@ -34,14 +36,22 @@ export default function PostList() {
         hasNextPage,
         isFetchingNextPage,
         deletePost,
-        isDeleting
+        isDeleting,
+        votePoll,
+        isVoting
     } = usePosts()
+
+    const {
+        getPoll
+    } = usePostPolls()
     const { token, user } = useAuth();
     const [expandedComments, setExpandedComments] = useState<Record<number, boolean>>({})
     const [confirmOpen, setConfirmOpen] = useState(false)
     const [postToDelete, setPostToDelete] = useState<number | null>(null)
+    const isExpired = posts.expiresAt && new Date(posts.expiresAt) < new Date();
 
-    // Infinite scroll handler
+    if (isExpired) return null;
+
     useEffect(() => {
         const handleScroll = () => {
             if (
@@ -199,6 +209,15 @@ export default function PostList() {
                                     <h2 className="text-xl font-bold text-gray-800 mt-1 mb-3">
                                         {post.title}
                                     </h2>
+                                )}
+
+                                {post.poll && (
+                                    <PollComponent
+                                        poll={post.poll}
+                                        onVote={(optionIds) => votePoll({ postId: post.id, optionIds })}
+                                        isVoting={isVoting}
+                                        currentUserId={user?.userId}
+                                    />
                                 )}
 
                                 <div className="prose prose-sm max-w-none mb-4">
