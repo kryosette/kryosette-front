@@ -130,7 +130,7 @@ export default function RoomChat({ roomId }: { roomId: string }) {
             }
         };
     }, [roomId]);
-    // Загрузка истории сообщений
+
     useEffect(() => {
         const loadMessages = async () => {
             try {
@@ -159,7 +159,6 @@ export default function RoomChat({ roomId }: { roomId: string }) {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    // Отправка сообщения через WebSocket
     const handleSendMessage = () => {
         if (!newMessage.trim() || !stompClient || !user) return;
 

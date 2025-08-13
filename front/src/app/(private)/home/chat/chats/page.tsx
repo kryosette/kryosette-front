@@ -26,8 +26,6 @@ import WebSocketManager from '@/lib/ws/websocket_,manager';
  * - ChatWindow: Displays messages for the selected room
  */
 export default function Home() {
-    const { currentRoom } = useChatStore();
-
     return (
         <div className="flex h-screen bg-background">
             {/* WebSocket connection manager (hidden) */}
