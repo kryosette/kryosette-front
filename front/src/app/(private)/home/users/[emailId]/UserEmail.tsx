@@ -352,14 +352,7 @@ function UserEmail({ emailId, userId }: { emailId: string, userId: string }) {
                             </Card>
                         </motion.div>
 
-                        {/* Блок друзей */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                        >
-                            <FriendsList />
-                        </motion.div>
+
                     </div>
                 </div>
             </div>
@@ -367,7 +360,6 @@ function UserEmail({ emailId, userId }: { emailId: string, userId: string }) {
     );
 }
 
-// Компонент бокового меню
 function Sidebar({ loading }: { loading?: boolean }) {
     const menuItems = [
         { icon: Home, label: "Моя страница" },
