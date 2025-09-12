@@ -40,7 +40,8 @@
     ".next/types/**/*.ts",
     "src/app/(private)/home/page.jsx",
     "src/components/auth/private-router.jsx",
-    "src/lib/auth-provider.jsx"
+    "src/lib/auth-provider.jsx",
+    "tests/**/*"
   ],
   "exclude": [
     "node_modules"
