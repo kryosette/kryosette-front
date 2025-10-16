@@ -1,7 +1,6 @@
 'use client'
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Shield, Banknote, Network, ChevronDown, Menu, X, Gem, LockKeyhole, Cpu, Eye, Code, ArrowRight } from 'lucide-react'
 
@@ -76,186 +75,132 @@ export function Navbar() {
     const [mobileOpen, setMobileOpen] = useState(false)
 
     return (
-        <header className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-sm border-b border-gray-200/50 shadow-sm">
-            <div className="container flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
-                {/* Логотип и навигация */}
-                <div className="flex items-center w-full justify-between md:justify-center md:gap-16">
-                    {/* Логотип */}
-                    <Link href="/" className="flex items-center gap-3 group shrink-0">
-                        <motion.div
-                            className="p-2 rounded-lg bg-white/80 backdrop-blur-sm border border-gray-200/50 shadow-xs"
-                            whileHover={{ rotate: 15, scale: 1.1 }}
-                            transition={{ type: 'spring', stiffness: 400 }}
-                        >
-                            <Gem className="h-6 w-6 text-gray-700" strokeWidth={1.5} />
-                        </motion.div>
-                        <motion.span
-                            className="text-2xl font-light tracking-tight text-gray-800 hidden md:block"
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.2 }}
-                        >
-                            KRYO<span className="font-medium">SETTE</span>
-                        </motion.span>
-                    </Link>
+        <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-200/50">
+            <div className="container flex h-14 items-center justify-between px-4 sm:px-6 lg:px-8">
+                {/* Логотип */}
+                <Link href="/" className="flex items-center gap-2 shrink-0">
+                    <div className="p-1.5 rounded-lg bg-white/50 backdrop-blur-sm">
 
-                    {/* Центрированная навигация */}
-                    <nav className="hidden md:flex items-center">
-                        <div className="flex space-x-1">
-                            {NAV_ITEMS.map((item, idx) => (
-                                <motion.div
-                                    key={item.name}
-                                    onHoverStart={() => setActiveHover(idx)}
-                                    onHoverEnd={() => setActiveHover(null)}
-                                    className="relative px-1 py-1"
-                                >
-                                    <Button
-                                        variant="ghost"
-                                        className="flex items-center gap-2 text-gray-600 hover:text-gray-900 group px-4 py-3"
-                                    >
-                                        <span className="text-gray-400 group-hover:text-gray-600 transition-colors">
-                                            {item.icon}
-                                        </span>
-                                        <span>{item.name}</span>
-                                    </Button>
-
-                                    <AnimatePresence>
-                                        {activeHover === idx && (
-                                            <motion.div
-                                                className="absolute left-1/2 transform -translate-x-1/2 top-full mt-1 w-56 origin-top"
-                                                initial={{ opacity: 0, y: -5 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, y: -5 }}
-                                                transition={{ type: 'spring', stiffness: 500 }}
-                                            >
-                                                <div className="rounded-xl bg-white/90 backdrop-blur-sm border border-gray-200/50 shadow-lg p-2 space-y-1">
-                                                    {item.submenu.map((subItem) => (
-                                                        <Link
-                                                            key={subItem.title}
-                                                            href={subItem.href}
-                                                            className="flex w-full items-center px-4 py-3 text-sm text-gray-600 hover:bg-gray-50/50 hover:text-gray-900 rounded-lg transition-all"
-                                                        >
-                                                            {subItem.title}
-                                                        </Link>
-                                                    ))}
-                                                </div>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </nav>
-
-                    {/* Кнопки авторизации */}
-                    <div className="flex items-center gap-3">
-                        <Link href={"/login"}>
-                            <motion.div whileHover={{ scale: 1.03 }}>
-                                <Button
-                                    variant="outline"
-                                    className="border-gray-300 text-gray-600 hover:border-gray-400 hover:text-gray-900"
-                                >
-                                    Sign In
-                                </Button>
-                            </motion.div>
-                        </Link>
-                        <motion.div whileHover={{ scale: 1.03 }}>
-                            <Button className="hidden md:flex bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white shadow-sm">
-                                Get Access
-                            </Button>
-                        </motion.div>
                     </div>
+                    <span className="text-lg font-black text-black lowercase">
+                        kryosette
+                    </span>
+                </Link>
+
+                {/* Центрированная навигация */}
+                <nav className="hidden md:flex items-center absolute left-1/2 transform -translate-x-1/2">
+                    <div className="flex space-x-0">
+                        {NAV_ITEMS.map((item, idx) => (
+                            <div
+                                key={item.name}
+                                onMouseEnter={() => setActiveHover(idx)}
+                                onMouseLeave={() => setActiveHover(null)}
+                                className="relative"
+                            >
+                                <Button
+                                    variant="ghost"
+                                    className="flex items-center gap-1.5 text-gray-600 hover:text-black hover:bg-white/50 px-3 py-1.5 text-sm"
+                                >
+                                    <span>{item.icon}</span>
+                                    <span>{item.name}</span>
+                                </Button>
+
+                                {activeHover === idx && (
+                                    <div className="absolute left-1/2 transform -translate-x-1/2 top-full mt-1 w-48">
+                                        <div className="rounded-lg bg-white/90 backdrop-blur-md border border-gray-200/50 shadow-lg p-1 space-y-0.5">
+                                            {item.submenu.map((subItem) => (
+                                                <Link
+                                                    key={subItem.title}
+                                                    href={subItem.href}
+                                                    className="flex w-full items-center px-3 py-2 text-sm text-gray-600 hover:bg-gray-50/50 hover:text-black rounded-md transition-colors"
+                                                >
+                                                    {subItem.title}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </nav>
+
+                {/* Кнопки авторизации - сдвинуты вправо */}
+                <div className="flex items-center gap-2 ml-auto">
+                    <Link href={"/login"}>
+                        <Button
+                            variant="ghost"
+                            className="text-gray-600 hover:text-black hover:bg-white/50 text-sm px-3 py-1.5"
+                        >
+                            Sign In
+                        </Button>
+                    </Link>
+                    <Button className="bg-black text-white hover:bg-gray-800 text-sm px-3 py-1.5">
+                        Get Access
+                    </Button>
                 </div>
 
                 {/* Кнопка мобильного меню */}
-                <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    className="md:hidden p-2 rounded-lg hover:bg-gray-50/50 text-gray-500"
+                <button
+                    className="md:hidden p-1.5 rounded-lg hover:bg-white/50 text-gray-600 ml-2"
                     onClick={() => setMobileOpen(!mobileOpen)}
                 >
-                    {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-                </motion.button>
+                    {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+                </button>
             </div>
 
             {/* Мобильное меню */}
-            <AnimatePresence>
-                {mobileOpen && (
-                    <motion.div
-                        className="md:hidden bg-white/95 backdrop-blur-sm border-t border-gray-200/50 shadow-inner"
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ type: 'spring', damping: 25 }}
-                    >
-                        <div className="container px-6 py-6 space-y-6">
-                            <div className="flex flex-col space-y-4">
-                                <Link href={"/login"}>
-                                    <motion.div whileHover={{ scale: 1.02 }}>
-                                        <Button
-                                            variant="outline"
-                                            className="w-full border-gray-300 text-gray-600 hover:border-gray-400 hover:text-gray-900"
-                                        >
-                                            Sign In
-                                        </Button>
-                                    </motion.div>
-                                </Link>
-                                <motion.div whileHover={{ scale: 1.02 }}>
-                                    <Button className="w-full bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white shadow-sm">
-                                        Get Access
-                                    </Button>
-                                </motion.div>
-                            </div>
-
-                            <div className="space-y-4">
-                                {NAV_ITEMS.map((item, idx) => (
-                                    <div key={item.name} className="space-y-2">
-                                        <motion.button
-                                            whileTap={{ scale: 0.98 }}
-                                            className="flex w-full items-center justify-between py-2 text-gray-600"
-                                            onClick={() => setActiveHover(activeHover === idx ? null : idx)}
-                                        >
-                                            <div className="flex items-center gap-3">
-                                                <span className="text-gray-400">
-                                                    {item.icon}
-                                                </span>
-                                                <span>{item.name}</span>
-                                            </div>
-                                            <motion.div
-                                                animate={{ rotate: activeHover === idx ? 180 : 0 }}
-                                                transition={{ type: 'spring' }}
-                                            >
-                                                <ChevronDown className="h-4 w-4 text-gray-400" />
-                                            </motion.div>
-                                        </motion.button>
-
-                                        <AnimatePresence>
-                                            {activeHover === idx && (
-                                                <motion.div
-                                                    initial={{ opacity: 0, height: 0 }}
-                                                    animate={{ opacity: 1, height: 'auto' }}
-                                                    exit={{ opacity: 0, height: 0 }}
-                                                    className="ml-11 space-y-2 pl-2 border-l border-gray-200/50 overflow-hidden"
-                                                >
-                                                    {item.submenu.map((subItem) => (
-                                                        <Link
-                                                            key={subItem.title}
-                                                            href={subItem.href}
-                                                            className="block py-2 text-sm text-gray-500 hover:text-gray-900"
-                                                            onClick={() => setMobileOpen(false)}
-                                                        >
-                                                            {subItem.title}
-                                                        </Link>
-                                                    ))}
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    </div>
-                                ))}
-                            </div>
+            {mobileOpen && (
+                <div className="md:hidden bg-white/95 backdrop-blur-md border-t border-gray-200/50">
+                    <div className="container px-4 py-4 space-y-4">
+                        <div className="flex flex-col space-y-2">
+                            <Link href={"/login"}>
+                                <Button
+                                    variant="ghost"
+                                    className="w-full text-gray-600 hover:text-black hover:bg-gray-50/50 justify-start"
+                                >
+                                    Sign In
+                                </Button>
+                            </Link>
+                            <Button className="w-full bg-black text-white hover:bg-gray-800 justify-start">
+                                Get Access
+                            </Button>
                         </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+
+                        <div className="space-y-3">
+                            {NAV_ITEMS.map((item, idx) => (
+                                <div key={item.name} className="space-y-1">
+                                    <button
+                                        className="flex w-full items-center justify-between py-1.5 text-gray-600 text-sm"
+                                        onClick={() => setActiveHover(activeHover === idx ? null : idx)}
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            {item.icon}
+                                            <span>{item.name}</span>
+                                        </div>
+                                        <ChevronDown className="h-3 w-3 text-gray-400" />
+                                    </button>
+
+                                    {activeHover === idx && (
+                                        <div className="ml-6 space-y-1 pl-2 border-l border-gray-200/50">
+                                            {item.submenu.map((subItem) => (
+                                                <Link
+                                                    key={subItem.title}
+                                                    href={subItem.href}
+                                                    className="block py-1.5 text-sm text-gray-500 hover:text-black"
+                                                    onClick={() => setMobileOpen(false)}
+                                                >
+                                                    {subItem.title}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
         </header>
     )
 }

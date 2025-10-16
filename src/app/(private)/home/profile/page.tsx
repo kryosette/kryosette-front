@@ -153,7 +153,7 @@ function ProfilePage() {
                 <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="h-12 w-12 rounded-full border-2 border-indigo-500 border-t-transparent"
+                    className="h-12 w-12 rounded-full border-2 border-gray-800 border-t-transparent"
                 />
             </div>
         );
@@ -170,7 +170,7 @@ function ProfilePage() {
                 }}
                 className={cn(
                     "fixed top-0 z-50 w-full transition-all duration-300",
-                    isScrolled ? "bg-white/80 border-b border-gray-200/50 shadow-sm" : "bg-transparent"
+                    isScrolled ? "bg-white/90 border-b border-gray-300 shadow-sm" : "bg-transparent"
                 )}
             >
                 <div className="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -179,8 +179,8 @@ function ProfilePage() {
                         whileTap={{ scale: 0.95 }}
                         className="flex items-center space-x-2"
                     >
-                        <Sparkles className="h-5 w-5 text-indigo-500" />
-                        <Link href="/home" className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                        <Sparkles className="h-5 w-5 text-gray-800" />
+                        <Link href="/home" className="text-xl font-bold text-gray-900">
                             kryosette
                         </Link>
                     </motion.div>
@@ -189,9 +189,9 @@ function ProfilePage() {
                         <NotificationList />
                         <FriendRequestsDropdown>
                             <motion.div whileHover={{ scale: 1.05 }}>
-                                <Button variant="ghost" size="icon" className="relative">
+                                <Button variant="ghost" size="icon" className="relative text-gray-700 hover:text-gray-900">
                                     <Bell className="h-5 w-5" />
-                                    <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                                    <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-gray-600"></span>
                                 </Button>
                             </motion.div>
                         </FriendRequestsDropdown>
@@ -199,9 +199,9 @@ function ProfilePage() {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <motion.div whileHover={{ scale: 1.03 }}>
-                                    <Button variant="ghost" className="flex items-center space-x-2 px-2">
-                                        <Avatar className="h-8 w-8 border border-indigo-200">
-                                            <AvatarFallback className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
+                                    <Button variant="ghost" className="flex items-center space-x-2 px-2 text-gray-700 hover:text-gray-900">
+                                        <Avatar className="h-8 w-8 border border-gray-300">
+                                            <AvatarFallback className="bg-gray-800 text-white">
                                                 {user?.email}
                                             </AvatarFallback>
                                         </Avatar>
@@ -228,12 +228,12 @@ function ProfilePage() {
             </motion.header>
 
             {/* Анимированный фон профиля */}
-            <div className="relative h-96 overflow-hidden">
+            <div className="relative h-80 overflow-hidden">
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 1.5 }}
-                    className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20"
+                    className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300"
                 />
 
                 <motion.div
@@ -241,7 +241,7 @@ function ProfilePage() {
                         backgroundPosition: ['0% 0%', '100% 100%'],
                     }}
                     transition={{
-                        duration: 15,
+                        duration: 20,
                         repeat: Infinity,
                         repeatType: 'reverse',
                         ease: 'linear',
@@ -249,21 +249,21 @@ function ProfilePage() {
                     style={{
                         backgroundImage: `
               linear-gradient(45deg, 
-                rgba(99, 102, 241, 0.2) 0%, 
-                rgba(168, 85, 247, 0.2) 20%, 
-                rgba(236, 72, 153, 0.2) 40%, 
-                rgba(239, 68, 68, 0.2) 60%, 
-                rgba(234, 179, 8, 0.2) 80%, 
-                rgba(99, 102, 241, 0.2) 100%)
+                rgba(0, 0, 0, 0.05) 0%, 
+                rgba(255, 255, 255, 0.1) 20%, 
+                rgba(0, 0, 0, 0.05) 40%, 
+                rgba(255, 255, 255, 0.1) 60%, 
+                rgba(0, 0, 0, 0.05) 80%, 
+                rgba(255, 255, 255, 0.1) 100%)
             `,
                         backgroundSize: '300% 300%',
                     }}
                     className="absolute inset-0"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent" />
 
-                <div className="container mx-auto px-4 relative h-full flex flex-col justify-end pb-12">
+                <div className="container mx-auto px-4 relative h-full flex flex-col justify-end pb-8">
                     <motion.div
                         initial={{ y: 50, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
@@ -275,17 +275,17 @@ function ProfilePage() {
                             whileTap={{ scale: 0.98 }}
                             className="relative"
                         >
-                            <Avatar className="h-32 w-32 border-4 border-white shadow-xl">
-                                <AvatarFallback className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-4xl">
+                            <Avatar className="h-28 w-28 border-4 border-white shadow-lg">
+                                <AvatarFallback className="bg-gray-800 text-white text-2xl">
                                     {user?.firstname?.[0]}{user?.lastname?.[0]}
                                 </AvatarFallback>
                             </Avatar>
                             <motion.div
                                 animate={{
                                     boxShadow: [
-                                        '0 0 0 0 rgba(99, 102, 241, 0.4)',
-                                        '0 0 0 10px rgba(99, 102, 241, 0)',
-                                        '0 0 0 0 rgba(99, 102, 241, 0)'
+                                        '0 0 0 0 rgba(0, 0, 0, 0.2)',
+                                        '0 0 0 8px rgba(0, 0, 0, 0)',
+                                        '0 0 0 0 rgba(0, 0, 0, 0)'
                                     ],
                                 }}
                                 transition={{
@@ -300,10 +300,10 @@ function ProfilePage() {
                         <div className="md:ml-6 mt-4 md:mt-0 flex-1">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                 <div>
-                                    <h1 className="text-3xl font-bold text-gray-800 drop-shadow-sm">
+                                    <h1 className="text-2xl font-bold text-gray-900">
                                         {user?.username}
                                     </h1>
-                                    <p className="text-gray-600 flex items-center mt-1">
+                                    <p className="text-gray-600 flex items-center mt-1 text-sm">
                                         {user?.email}
                                     </p>
                                 </div>
@@ -316,7 +316,7 @@ function ProfilePage() {
                                 >
                                     <SendFriendRequest>
                                         <motion.div whileHover={{ y: -2 }}>
-                                            <Button variant="outline" className="flex items-center bg-white/80 backdrop-blur-sm">
+                                            <Button variant="outline" className="flex items-center bg-white/90 backdrop-blur-sm border-gray-300 text-gray-700 hover:bg-gray-50">
                                                 <UserPlus className="h-4 w-4 mr-2" />
                                                 Add Friend
                                             </Button>
@@ -325,7 +325,7 @@ function ProfilePage() {
 
                                     <motion.div whileHover={{ y: -2 }}>
                                         <Link href={"/home/chat/chats"}>
-                                            <Button variant="outline" className="bg-white/80 backdrop-blur-sm">
+                                            <Button variant="outline" className="bg-white/90 backdrop-blur-sm border-gray-300 text-gray-700 hover:bg-gray-50">
                                                 <MessageSquare className="h-4 w-4 mr-2" />
                                                 Message
                                             </Button>
@@ -335,7 +335,7 @@ function ProfilePage() {
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <motion.div whileHover={{ y: -2 }}>
-                                                <Button variant="outline" size="icon" className="bg-white/80 backdrop-blur-sm">
+                                                <Button variant="outline" size="icon" className="bg-white/90 backdrop-blur-sm border-gray-300 text-gray-700 hover:bg-gray-50">
                                                     <MoreHorizontal className="h-4 w-4" />
                                                 </Button>
                                             </motion.div>
@@ -354,49 +354,40 @@ function ProfilePage() {
             </div>
 
             {/* Основной контент */}
-            <div className="container mx-auto px-4 pb-12 -mt-8 relative z-10">
+            <div className="container mx-auto px-4 pb-12 -mt-6 relative z-10">
                 {/* Навигация профиля */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
-                    className="border-b border-gray-200"
+                    className="border-b border-gray-300"
                 >
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                        <TabsList className="w-full justify-start space-x-8 bg-transparent p-0 h-14">
-                            <TabsTrigger value="posts" className="relative h-full px-0">
+                        <TabsList className="w-full justify-start space-x-8 bg-transparent p-0 h-12">
+                            <TabsTrigger value="posts" className="relative h-full px-0 text-gray-600 data-[state=active]:text-gray-900">
                                 <span className="px-4 py-2">Posts</span>
                                 {activeTab === 'posts' && (
                                     <motion.div
                                         layoutId="profileTabIndicator"
-                                        className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-500 rounded-t"
+                                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900"
                                     />
                                 )}
                             </TabsTrigger>
-                            <TabsTrigger value="about" className="relative h-full px-0">
+                            <TabsTrigger value="about" className="relative h-full px-0 text-gray-600 data-[state=active]:text-gray-900">
                                 <span className="px-4 py-2">About</span>
                                 {activeTab === 'about' && (
                                     <motion.div
                                         layoutId="profileTabIndicator"
-                                        className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-500 rounded-t"
+                                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900"
                                     />
                                 )}
                             </TabsTrigger>
-                            <TabsTrigger value="settings" className="relative h-full px-0">
+                            <TabsTrigger value="settings" className="relative h-full px-0 text-gray-600 data-[state=active]:text-gray-900">
                                 <span className="px-4 py-2">Settings</span>
                                 {activeTab === 'settings' && (
                                     <motion.div
                                         layoutId="profileTabIndicator"
-                                        className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-500 rounded-t"
-                                    />
-                                )}
-                            </TabsTrigger>
-                            <TabsTrigger value="photos" className="relative h-full px-0">
-                                <span className="px-4 py-2">Photos</span>
-                                {activeTab === 'photos' && (
-                                    <motion.div
-                                        layoutId="profileTabIndicator"
-                                        className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-500 rounded-t"
+                                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900"
                                     />
                                 )}
                             </TabsTrigger>
@@ -412,23 +403,23 @@ function ProfilePage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.5 }}
                         >
-                            <Card className="rounded-lg shadow-sm border border-gray-200/50 bg-white/80 backdrop-blur-sm">
-                                <CardHeader className="border-b border-gray-200/50">
-                                    <CardTitle className="text-lg">About</CardTitle>
+                            <Card className="rounded-lg shadow-sm border border-gray-300 bg-white">
+                                <CardHeader className="border-b border-gray-300 pb-3">
+                                    <CardTitle className="text-base font-semibold">About</CardTitle>
                                 </CardHeader>
-                                <CardContent className="p-4 space-y-4">
+                                <CardContent className="p-4 space-y-3">
                                     <div>
-                                        <h3 className="text-sm font-medium text-gray-500">Username</h3>
-                                        <p className="mt-1 text-sm">{user?.username}</p>
+                                        <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide">Username</h3>
+                                        <p className="mt-1 text-sm text-gray-900">{user?.username}</p>
                                     </div>
                                     <div>
-                                        <h3 className="text-sm font-medium text-gray-500">Email</h3>
-                                        <p className="mt-1 text-sm">{user?.email}</p>
+                                        <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wide">Email</h3>
+                                        <p className="mt-1 text-sm text-gray-900">{user?.email}</p>
                                     </div>
                                     <motion.div whileHover={{ scale: 1.01 }}>
                                         <Button
                                             variant="outline"
-                                            className="w-full bg-white/80"
+                                            className="w-full bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
                                             onClick={() => setIsEditing(true)}
                                         >
                                             Edit Details
@@ -438,9 +429,7 @@ function ProfilePage() {
                             </Card>
                         </motion.div>
 
-
                         <FriendsList />
-
                     </div>
 
                     {/* Центральная колонка - Посты */}
@@ -484,33 +473,33 @@ function ProfilePage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.6 }}
                         >
-                            <Card className="rounded-lg shadow-sm border border-gray-200/50 bg-white/80 backdrop-blur-sm">
-                                <CardHeader className="border-b border-gray-200/50">
-                                    <CardTitle className="text-lg">Activity</CardTitle>
+                            <Card className="rounded-lg shadow-sm border border-gray-300 bg-white">
+                                <CardHeader className="border-b border-gray-300 pb-3">
+                                    <CardTitle className="text-base font-semibold">Recent Activity</CardTitle>
                                 </CardHeader>
-                                <CardContent className="p-4 space-y-4">
+                                <CardContent className="p-4 space-y-3">
                                     <motion.div
-                                        whileHover={{ x: 3 }}
-                                        className="flex items-start space-x-3"
+                                        whileHover={{ x: 2 }}
+                                        className="flex items-start space-x-3 py-2"
                                     >
-                                        <Avatar className="h-10 w-10 border border-indigo-100">
-                                            <AvatarFallback className="bg-indigo-100 text-indigo-600">Y</AvatarFallback>
+                                        <Avatar className="h-8 w-8 border border-gray-300">
+                                            <AvatarFallback className="bg-gray-200 text-gray-700 text-xs">Y</AvatarFallback>
                                         </Avatar>
                                         <div>
-                                            <p className="text-sm font-medium">You posted an update</p>
+                                            <p className="text-sm font-medium text-gray-900">Posted an update</p>
                                             <p className="text-xs text-gray-500">3 hours ago</p>
                                         </div>
                                     </motion.div>
-                                    <Separator className="bg-gray-200/50" />
+                                    <Separator className="bg-gray-300" />
                                     <motion.div
-                                        whileHover={{ x: 3 }}
-                                        className="flex items-start space-x-3"
+                                        whileHover={{ x: 2 }}
+                                        className="flex items-start space-x-3 py-2"
                                     >
-                                        <Avatar className="h-10 w-10 border border-pink-100">
-                                            <AvatarFallback className="bg-pink-100 text-pink-600">F</AvatarFallback>
+                                        <Avatar className="h-8 w-8 border border-gray-300">
+                                            <AvatarFallback className="bg-gray-200 text-gray-700 text-xs">F</AvatarFallback>
                                         </Avatar>
                                         <div>
-                                            <p className="text-sm font-medium">Friend liked your post</p>
+                                            <p className="text-sm font-medium text-gray-900">Friend liked your post</p>
                                             <p className="text-xs text-gray-500">5 hours ago</p>
                                         </div>
                                     </motion.div>
@@ -528,23 +517,23 @@ function ProfilePage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
+                        className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
                     >
                         <motion.div
                             initial={{ y: 20, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             exit={{ y: 20, opacity: 0 }}
-                            className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden border border-gray-200/50"
+                            className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden border border-gray-300"
                         >
                             <div className="p-6">
-                                <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
+                                <h2 className="text-lg font-bold mb-4 text-gray-900">Edit Profile</h2>
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                                         <Input
                                             value={newFirstname}
                                             onChange={(e) => setNewFirstname(e.target.value)}
-                                            className="w-full bg-gray-50/50"
+                                            className="w-full bg-gray-50 border-gray-300 focus:border-gray-500"
                                         />
                                     </div>
                                     <div>
@@ -552,22 +541,29 @@ function ProfilePage() {
                                         <Input
                                             value={newLastname}
                                             onChange={(e) => setNewLastname(e.target.value)}
-                                            className="w-full bg-gray-50/50"
+                                            className="w-full bg-gray-50 border-gray-300 focus:border-gray-500"
                                         />
                                     </div>
                                     {updateError && (
-                                        <p className="text-sm text-red-500">{updateError}</p>
+                                        <p className="text-sm text-red-600">{updateError}</p>
                                     )}
                                 </div>
                             </div>
-                            <div className="bg-gray-50/50 px-6 py-3 flex justify-end space-x-3 border-t border-gray-200/50">
+                            <div className="bg-gray-50 px-6 py-3 flex justify-end space-x-3 border-t border-gray-300">
                                 <motion.div whileHover={{ scale: 1.03 }}>
-                                    <Button variant="outline" onClick={() => setIsEditing(false)}>
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => setIsEditing(false)}
+                                        className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                                    >
                                         Cancel
                                     </Button>
                                 </motion.div>
                                 <motion.div whileHover={{ scale: 1.03 }}>
-                                    <Button onClick={handleUpdateProfile} className="bg-gradient-to-r from-indigo-600 to-purple-600">
+                                    <Button
+                                        onClick={handleUpdateProfile}
+                                        className="bg-gray-900 text-white hover:bg-gray-800"
+                                    >
                                         Save Changes
                                     </Button>
                                 </motion.div>

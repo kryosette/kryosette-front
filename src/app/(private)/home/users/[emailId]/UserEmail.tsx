@@ -7,7 +7,7 @@ import { checkSubscription, createPrivateRoom, createRoom, getFollowersCount, ge
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Mail, User, Key, MoreHorizontal, MessageSquare, Bell, Share2, Home, MessageCircle, Users, Settings, Bookmark, Video, Sparkles } from 'lucide-react';
+import { Mail, User, Key, MoreHorizontal, MessageSquare, Bell, Share2, Home, MessageCircle, Users, Settings, Bookmark, Video, Sparkles, Ban } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import OnlineStatus from '../../profile/status/online.status';
 import { useRouter } from 'next/navigation';
@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { FriendsList } from '@/components/communication/friend/friend_list';
+import Link from 'next/link';
 
 interface UserProfile {
     id: string;
@@ -27,6 +28,7 @@ interface UserProfile {
     isSubscribed?: boolean;
     isOnline: boolean;
     lastSeenAt?: string;
+    accountLocked?: boolean;
 }
 
 function UserEmail({ emailId, userId }: { emailId: string, userId: string }) {
@@ -41,6 +43,22 @@ function UserEmail({ emailId, userId }: { emailId: string, userId: string }) {
         const fetchUser = async () => {
             try {
                 const userData = await getUserEmail(emailId, token);
+
+                if (userData.accountLocked) {
+                    setUser({
+                        ...userData,
+                        avatar: userData.avatar || `https://i.pravatar.cc/150?u=${userData.id}`,
+                        status: "Заблокирован",
+                        followers: 0,
+                        following: 0,
+                        isSubscribed: false,
+                        isOnline: false,
+                        accountLocked: true
+                    });
+                    setLoading(false);
+                    return;
+                }
+
                 const [isSubscribed, followersCount] = await Promise.all([
                     checkSubscription(emailId, token),
                     getFollowersCount(emailId, token)
@@ -52,7 +70,8 @@ function UserEmail({ emailId, userId }: { emailId: string, userId: string }) {
                     followers: followersCount,
                     following: 0,
                     isSubscribed,
-                    isOnline: true
+                    isOnline: true,
+                    accountLocked: false
                 });
             } catch (err: any) {
                 setError('Не удалось загрузить пользователя: ' + (err.message || ''));
@@ -69,6 +88,108 @@ function UserEmail({ emailId, userId }: { emailId: string, userId: string }) {
             setLoading(false);
         }
     }, [emailId, token]);
+
+    if (users?.accountLocked) {
+        return (
+            <div className="min-h-screen bg-white pt-28 pb-20">
+                {/* Header */}
+                <div className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-200/50">
+                    <div className="container flex h-14 items-center justify-between px-4 sm:px-6 lg:px-8">
+                        <Link href="/home/profile" className="flex items-center gap-2 shrink-0">
+                            <span className="text-lg font-black text-black lowercase">
+                                kryosette
+                            </span>
+                        </Link>
+                    </div>
+                </div>
+
+                {/* Main Content */}
+                <div className="container px-4 sm:px-6 lg:px-8 mx-auto">
+                    <div className="max-w-2xl mx-auto">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            <Card className="border border-gray-200 bg-white rounded-lg">
+                                <CardContent className="p-8">
+                                    <div className="flex items-center space-x-6 mb-6">
+                                        <Avatar className="h-20 w-20 border-2 border-gray-300">
+                                            <AvatarImage src={users.avatar} />
+                                            <AvatarFallback className="bg-gray-100 text-gray-600 text-xl">
+                                                {users.username?.charAt(0).toUpperCase()}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex-1">
+                                            <h2 className="text-2xl font-medium text-black mb-2">
+                                                {users.username}
+                                            </h2>
+                                            <div className="flex items-center space-x-2 text-gray-600">
+                                                <Mail className="h-4 w-4" />
+                                                <span className="text-sm">{users.email}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                                        <div className="flex items-center space-x-3">
+                                            <Ban className="h-5 w-5 text-red-600" />
+                                            <div>
+                                                <p className="text-sm font-medium text-red-800">
+                                                    Account suspended
+                                                </p>
+                                                <p className="text-xs text-red-700 mt-1">
+                                                    This profile is temporarily unavailable due to violation of community rules
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                        <div className="text-center">
+                                            <p className="text-gray-500 text-sm mb-3">
+                                                Profile information is hidden
+                                            </p>
+                                            <div className="flex justify-center space-x-4 text-gray-400">
+                                                <div className="text-center">
+                                                    <div className="text-lg font-medium">—</div>
+                                                    <div className="text-xs">followers</div>
+                                                </div>
+                                                <div className="text-center">
+                                                    <div className="text-lg font-medium">—</div>
+                                                    <div className="text-xs">following</div>
+                                                </div>
+                                                <div className="text-center">
+                                                    <div className="text-lg font-medium">—</div>
+                                                    <div className="text-xs">posts</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex space-x-3 mt-6">
+                                        <Button
+                                            onClick={() => router.push('/home/profile')}
+                                            className="flex-1 bg-black text-white hover:bg-gray-800 text-sm"
+                                        >
+                                            Back to Home
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => router.back()}
+                                            className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 text-sm"
+                                        >
+                                            Go Back
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     const handleSubscribe = async () => {
         if (!users || !token) return;
@@ -351,8 +472,6 @@ function UserEmail({ emailId, userId }: { emailId: string, userId: string }) {
                                 </CardFooter>
                             </Card>
                         </motion.div>
-
-
                     </div>
                 </div>
             </div>

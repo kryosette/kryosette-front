@@ -130,7 +130,7 @@ function LoginPage() {
                 // if (error.response.status === 403 &&
                 //     error.response.data?.message?.includes("locked")) {
                 //     toast.error("Your account is locked. Please contact support.");
-                if (error.response.status === 403) {
+                if (error.response.status === 401) {
                     toast.warning("Your account is locked. Please contact support. admin@manuo.com");
                 } else {
                     toast.error(error.response.data?.message ||
