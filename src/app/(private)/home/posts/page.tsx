@@ -21,7 +21,7 @@ import usePostViews from "@/lib/hooks/views/use_post_views"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Sparkles, MessageSquare, Trash2, MoreHorizontal } from 'lucide-react'
+import { Sparkles, MessageSquare, Trash2, MoreHorizontal, Eye } from 'lucide-react'
 import { PollComponent } from "./poll/poll"
 import { usePostPolls } from "@/lib/hooks/use_posts_polls"
 
@@ -106,7 +106,7 @@ export default function PostList() {
             <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="h-12 w-12 rounded-full border-2 border-indigo-500 border-t-transparent"
+                className="h-8 w-8 rounded-full border-2 border-black/20 border-t-black/80"
             />
         </div>
     )
@@ -115,28 +115,22 @@ export default function PostList() {
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6"
+            className="bg-red-500/10 border border-black/10 text-black p-4 rounded-2xl mb-6"
             role="alert"
         >
-            <p className="font-bold">Error loading posts</p>
-            <p>{error}</p>
+            <p className="font-medium">Error loading posts</p>
+            <p className="text-sm opacity-80 mt-1">{error}</p>
         </motion.div>
     )
 
     return (
-        <div className="max-w-3xl mx-auto px-4 py-6 relative">
+        <div className="max-w-3xl mx-auto relative">
             {/* Header with post creation */}
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex justify-between items-center mb-8"
+                className="flex justify-between items-center -mb-3"
             >
-                <div className="flex items-center space-x-2">
-                    <Sparkles className="h-5 w-5 text-indigo-500" />
-                    <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                        Community Feed
-                    </h1>
-                </div>
 
             </motion.div>
 
@@ -154,50 +148,50 @@ export default function PostList() {
 
             {/* Posts list */}
             <div className="space-y-6">
-
                 {posts.map(post => (
                     <motion.div
                         key={post.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3 }}
-                        whileHover={{ scale: 1.005 }}
-                        className="rounded-xl overflow-hidden"
+                        whileHover={{ y: -2 }}
+                        className="rounded-2xl overflow-hidden"
                         onViewportEnter={() => handleRecordView(post.id)}
                     >
-                        <Card className="border border-gray-200/50 bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all">
-                            {/* <Link href={`/home/posts/${post.id}`} > */}
+                        <Card className="border border-black/10 bg-white shadow-sm hover:shadow-md transition-all duration-300">
                             <CardContent className="p-6">
                                 {/* Post header */}
                                 <div className="flex justify-between items-start mb-4 gap-4">
                                     <div className="flex items-center space-x-3">
-                                        <Avatar className="h-10 w-10 border border-indigo-100">
-                                            {/* <AvatarImage src={`https://i.pravatar.cc/150?u=${post.authorName}`} /> */}
-                                            <AvatarFallback className="bg-indigo-100 text-indigo-600">
+                                        <Avatar className="h-9 w-9 border border-black/10 bg-white">
+                                            <AvatarFallback className="bg-white text-black/80 text-sm font-normal border border-black/10">
                                                 {post.authorName.charAt(0).toUpperCase()}
                                             </AvatarFallback>
                                         </Avatar>
                                         <div>
                                             <Link
                                                 href={`/home/users/${post.authorName}`}
-                                                className="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors hover:underline"
+                                                className="text-sm font-normal text-black hover:text-black/80 transition-colors"
                                             >
                                                 {post.authorName}
                                             </Link>
-                                            <p className="text-xs text-gray-500">
+                                            <p className="text-xs text-black/50 font-light">
                                                 {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
                                             </p>
                                         </div>
                                     </div>
 
                                     <div className="flex items-center gap-3">
-                                        <ViewCounter postId={post.id} initialCount={post.viewsCount || 0} />
+                                        <div className="flex items-center gap-1 text-black/40">
+
+                                            <ViewCounter postId={post.id} initialCount={post.viewsCount || 0} />
+                                        </div>
                                         {user?.userId === post.authorName && (
                                             <motion.button
                                                 whileHover={{ scale: 1.1 }}
                                                 whileTap={{ scale: 0.9 }}
                                                 onClick={() => handleDeleteClick(post.id)}
-                                                className="text-gray-400 hover:text-red-500 transition-colors"
+                                                className="text-black/30 hover:text-red-600 transition-colors p-1 rounded-lg hover:bg-black/5"
                                                 disabled={isDeleting}
                                                 aria-label="Delete post"
                                             >
@@ -209,30 +203,22 @@ export default function PostList() {
 
                                 {/* Post content */}
                                 {post.title && (
-                                    <h2 className="text-xl font-bold text-gray-800 mt-1 mb-3">
+                                    <h2 className="text-lg font-normal text-black mt-1 mb-3 leading-relaxed">
                                         {post.title}
                                     </h2>
                                 )}
 
-                                {post.poll && (
-                                    <PollComponent
-                                        poll={post.poll}
-                                        onVote={(optionIds) => votePoll({ postId: post.id, optionIds })}
-                                        isVoting={isVoting}
-                                        currentUserId={user?.userId}
-                                    />
-                                )}
+
 
                                 <div className="prose prose-sm max-w-none mb-4">
                                     <ReactMarkdown
                                         rehypePlugins={[rehypeHighlight]}
                                         remarkPlugins={[remarkGfm]}
                                         components={{
-                                            // Стили для ссылок
                                             a: ({ href, children }) => (
                                                 <Link
                                                     href={href || '#'}
-                                                    className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                                                    className="text-blue-600 hover:text-blue-800 hover:underline transition-colors font-normal"
                                                     target={href?.startsWith('http') ? '_blank' : undefined}
                                                     rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
                                                 >
@@ -242,8 +228,8 @@ export default function PostList() {
                                             code: ({ node, inline, className, children, ...props }) => {
                                                 const match = /language-(\w+)/.exec(className || '')
                                                 return !inline && match ? (
-                                                    <div className="relative rounded-lg overflow-hidden mb-4">
-                                                        <div className="absolute right-3 top-2 text-xs text-gray-400">
+                                                    <div className="relative rounded-xl overflow-hidden mb-4 border border-black/10 bg-white">
+                                                        <div className="absolute right-3 top-2 text-xs text-black/40 font-light">
                                                             {match[1]}
                                                         </div>
                                                         <code
@@ -252,7 +238,7 @@ export default function PostList() {
                                                                 display: 'block',
                                                                 padding: '1.25rem 1rem',
                                                                 overflowX: 'auto',
-                                                                backgroundColor: '#0d1117'
+                                                                backgroundColor: 'white'
                                                             }}
                                                             {...props}
                                                         >
@@ -261,7 +247,7 @@ export default function PostList() {
                                                     </div>
                                                 ) : (
                                                     <code
-                                                        className="bg-gray-100 px-2 py-1 rounded-md text-sm font-mono text-indigo-600"
+                                                        className="bg-black/5 px-2 py-1 rounded-lg text-sm font-mono text-black/80 font-normal border border-black/10"
                                                         {...props}
                                                     >
                                                         {children}
@@ -274,17 +260,30 @@ export default function PostList() {
                                     </ReactMarkdown>
                                 </div>
 
+                                {post.poll && (
+                                    <PollComponent
+                                        poll={post.poll}
+                                        onVote={(optionIds) => votePoll({ postId: post.id, optionIds })}
+                                        isVoting={isVoting}
+                                        currentUserId={user?.userId}
+                                    />
+                                )}
+
+                                {(post.poll && post.hashtags && post.hashtags.length > 0) && (
+                                    <div className="mb-4" />
+                                )}
+
                                 {/* Hashtags */}
                                 {post.hashtags && post.hashtags.length > 0 && (
                                     <div className="flex flex-wrap gap-2 mb-4">
                                         {post.hashtags.map((tag, index) => (
                                             <motion.div
                                                 key={index}
-                                                whileHover={{ y: -2 }}
+                                                whileHover={{ y: -1 }}
                                             >
                                                 <HashtagLink
                                                     tag={tag}
-                                                    className="px-3 py-1 bg-gray-100/70 rounded-full text-sm hover:bg-gray-200/70 transition-colors"
+                                                    className="px-3 py-1 bg-black/5 rounded-full text-sm text-black/70 hover:bg-black/10 hover:text-black/90 transition-colors font-normal border border-black/10"
                                                 />
                                             </motion.div>
                                         ))}
@@ -292,22 +291,21 @@ export default function PostList() {
                                 )}
 
                                 {/* Post actions */}
-                                <div className="flex items-center justify-between border-t border-gray-200/50 pt-4">
+                                <div className="flex items-center justify-between border-t border-black/10 pt-4">
                                     <div className="flex items-center space-x-4">
                                         <LikeButton postId={post.id} />
 
-                                        <motion.button
-                                            whileHover={{ scale: 1.05 }}
-                                            className="flex items-center space-x-1 text-gray-500 hover:text-indigo-600 transition-colors"
+                                        <button
+                                            className="flex items-center space-x-2 text-black/50 hover:text-black/80 transition-colors p-1.5 rounded-lg hover:bg-black/5 border border-transparent hover:border-black/10 text-sm font-normal"
                                             onClick={() => toggleComments(post.id)}
                                             aria-expanded={expandedComments[post.id]}
                                             aria-controls={`comments-${post.id}`}
                                         >
-                                            <MessageSquare className="h-5 w-5" />
-                                            <span className="text-sm">
+                                            <MessageSquare className="h-3.5 w-3.5" />
+                                            <span>
                                                 {expandedComments[post.id] ? 'Hide' : 'Comments'}
                                             </span>
-                                        </motion.button>
+                                        </button>
                                     </div>
                                 </div>
 
@@ -319,7 +317,7 @@ export default function PostList() {
                                             animate={{ opacity: 1, height: 'auto' }}
                                             exit={{ opacity: 0, height: 0 }}
                                             transition={{ duration: 0.2 }}
-                                            className="mt-4 pt-4 border-t border-gray-200/50 overflow-hidden"
+                                            className="mt-4 pt-4 border-t border-black/10 overflow-hidden"
                                             id={`comments-${post.id}`}
                                         >
                                             <CommentSection postId={post.id} />
@@ -333,49 +331,41 @@ export default function PostList() {
             </div>
 
             {/* Loading indicator */}
-            {
-                isFetchingNextPage && (
+            {isFetchingNextPage && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex justify-center items-center my-8"
+                >
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="flex justify-center items-center my-8"
-                    >
-                        <motion.div
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            className="h-8 w-8 rounded-full border-2 border-indigo-500 border-t-transparent"
-                        />
-                    </motion.div>
-                )
-            }
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="h-6 w-6 rounded-full border-2 border-black/20 border-t-black/80"
+                    />
+                </motion.div>
+            )}
 
             {/* End of posts */}
-            {
-                !hasNextPage && posts.length > 0 && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="text-center text-gray-500 my-8 py-4 border-t border-gray-200/50"
-                    >
-                        You've reached the end of posts
-                    </motion.div>
-                )
-            }
+            {!hasNextPage && posts.length > 0 && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-center text-black/40 my-8 py-4 border-t border-black/10 font-light text-sm"
+                >
+                    You've reached the end of posts
+                </motion.div>
+            )}
 
             {/* Empty state */}
-            {
-                !isLoading && posts.length === 0 && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="text-center py-12 text-gray-500"
-                    >
-                        No posts found. Be the first to create one!
-                    </motion.div>
-                )
-            }
-
-        </div >
-
+            {!isLoading && posts.length === 0 && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-center py-12 text-black/50 font-light"
+                >
+                    No posts found. Be the first to create one!
+                </motion.div>
+            )}
+        </div>
     )
 }

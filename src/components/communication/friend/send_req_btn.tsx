@@ -62,7 +62,7 @@ export function SendFriendRequest() {
             <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
                     <PlusCircle className="w-4 h-4 mr-2" />
-                    Добавить друга
+                    Add Friend
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">

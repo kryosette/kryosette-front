@@ -304,7 +304,7 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
                     >
                         <motion.div animate={textControls}>
                             <Avatar className="h-10 w-10">
-                                <AvatarFallback className="bg-gradient-to-r from-primary to-purple-500 text-white">
+                                <AvatarFallback className="bg-gradient-to-r from-primary to-black text-white">
                                     Y
                                 </AvatarFallback>
                             </Avatar>
@@ -325,7 +325,7 @@ const CreatePostForm = ({ onPostCreated }: CreatePostFormProps) => {
                                     <div className="flex items-center justify-between mb-4">
                                         <motion.div animate={textControls} className="flex items-center gap-3">
                                             <Avatar className="h-10 w-10">
-                                                <AvatarFallback className="bg-gradient-to-r from-primary to-purple-500 text-white">
+                                                <AvatarFallback className="bg-gradient-to-r from-primary to-black text-white">
                                                     Y
                                                 </AvatarFallback>
                                             </Avatar>

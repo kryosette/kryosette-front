@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/lib/auth-provider';
-import { checkSubscription, createPrivateRoom, createRoom, getFollowersCount, getUserEmail, subscribeToUser, unsubscribeFromUser } from './api';
+import { checkSubscription, createPrivateRoom, getFollowersCount, getUserEmail, subscribeToUser, unsubscribeFromUser } from './api';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,6 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { FriendsList } from '@/components/communication/friend/friend_list';
 import Link from 'next/link';
 
 interface UserProfile {

@@ -10,7 +10,7 @@ export const LikeButton = ({ postId }: { postId: number }) => {
                 onClick={() => toggleLike()}
                 disabled={isLoading}
                 className={`p-2 rounded-full transition-colors ${isLiked
-                    ? 'text-red-500 hover:bg-red-50'
+                    ? 'text-black hover:bg-red-50'
                     : 'text-gray-500 hover:bg-gray-100'
                     }`}
             >

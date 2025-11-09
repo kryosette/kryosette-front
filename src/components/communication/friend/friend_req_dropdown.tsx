@@ -95,7 +95,7 @@ export function FriendRequestsDropdown() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="relative">
+                <Button variant="outline" size="sm" className="relative border-black hover:bg-indigo-50">
                     Friend Requests
                     {pendingRequests.length > 0 && (
                         <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-primary text-xs flex items-center justify-center text-white">
