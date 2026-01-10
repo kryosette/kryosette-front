@@ -55,6 +55,8 @@ const BACKEND_URL = "http://localhost:8088";
 function ProfilePage() {
     const [user, setUser] = useState<UserDto | null>(null);
     const [loading, setLoading] = useState(true);
+    const storedToken = sessionStorage.getItem('token');
+    console.log("DEBUG: AUTH:", storedToken);
     const { token, logout } = useAuth();
     const router = useRouter();
     const [newFirstname, setNewFirstname] = useState('');
@@ -78,10 +80,12 @@ function ProfilePage() {
 
     const fetchProfile = async () => {
         setLoading(true);
+        console.log("DEBUG [fetchProfile]: storedToken =", storedToken);
+        console.log("DEBUG [fetchProfile]: typeof storedToken =", typeof storedToken);
         try {
             const response = await fetch(`${BACKEND_URL}/api/v1/user/me`, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${storedToken}`,
                     'Content-Type': 'application/json',
                 },
             });

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Toaster, toast } from 'sonner';
 import { X } from 'lucide-react';
+import { useAuth } from '@/lib/auth-provider';
 
 const LOGIN_ENDPOINT = "http://localhost:8088/api/v1/auth/authenticate";
 const BACKEND_URL = "http://localhost:8088/api/v1";
@@ -74,6 +75,7 @@ function LoginPage() {
     const domain = '@manuo.com';
 
     const router = useRouter();
+    const { login } = useAuth();
 
     /**
      * Handles form submission for login
