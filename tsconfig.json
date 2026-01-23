@@ -42,7 +42,7 @@
     "src/components/auth/private-router.jsx",
     "src/lib/auth-provider.jsx",
     "tests/**/*"
-  ],
+, "src/utils/websockets.js"  ],
   "exclude": [
     "node_modules"
   ]

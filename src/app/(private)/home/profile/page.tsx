@@ -40,6 +40,7 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from '@/lib/utils';
 import { FriendsList } from '@/components/communication/friend/friend_list';
 import SettingsPage from '../settings/page';
+import LogMonitor from "/Users/dimaeremin/kryosette-front/src/components/logs/logs_monitor.jsx"
 
 interface UserDto {
     id: number;
@@ -207,6 +208,8 @@ function ProfilePage() {
                     </div>
                 </div>
             </motion.header>
+
+            <LogMonitor />
 
             {/* Чистый фон профиля */}
             <div className="relative h-64 overflow-hidden">
