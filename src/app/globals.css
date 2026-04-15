@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+/* In v4, you can apply directly to elements without @layer base */
+body {
+  @apply bg-white text-black antialiased;
+}
+
+/* For your custom utilities */
+@utility no-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+html {
+  scroll-behavior: smooth;
+}
