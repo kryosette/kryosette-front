@@ -75,7 +75,7 @@ function LoginPage() {
     const domain = '@manuo.com';
 
     const router = useRouter();
-    const { login } = useAuth();
+    // const { login: any } = useAuth();
 
     /**
      * Handles form submission for login
