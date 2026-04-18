@@ -173,74 +173,282 @@ export default function Home() {
         <GraphBackground />
       </div>
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center text-center overflow-hidden">
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
-          className="relative z-10 max-w-5xl px-4 py-20"
+     {/* Hero Section */}
+<section className="relative min-h-screen flex items-center justify-center text-center overflow-hidden">
+  <motion.div 
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
+    className="relative z-10 max-w-5xl px-4 py-20"
+  >
+    {/* Желейный заголовок с тонким мерцанием */}
+    <motion.h1 
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ 
+        duration: 1.2, 
+        delay: 0.2, 
+        type: "spring", 
+        stiffness: 80, 
+        damping: 18 
+      }}
+      className="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tight text-white mb-6"
+    >
+      <motion.span
+        animate={{ 
+          scale: [1, 1.008, 1, 0.996, 1],
+        }}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="inline-block"
+      >
+        {/* k - двигается вверх-вниз + мерцает */}
+        <motion.span
+          animate={{ 
+            y: [0, -3, 0, 2, 0],
+            textShadow: [
+              "0 0 20px rgba(255,255,255,0)",
+              "0 0 25px rgba(255,255,255,0.15)",
+              "0 0 20px rgba(255,255,255,0)",
+            ],
+          }}
+          transition={{
+            y: { duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0 },
+            textShadow: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0 },
+          }}
+          className="inline-block"
         >
-          <motion.h1 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-            className="text-6xl md:text-8xl font-extrabold tracking-tight text-white mb-6 [text-shadow:_0_0_15px_rgb(0_0_0_/_80%),_0_0_30px_rgb(0_0_0_/_60%),_0_0_45px_rgb(0_0_0_/_40%)]"
-          >
-            kryosette
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-            className="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto [text-shadow:_0_0_8px_rgb(0_0_0_/_90%),_0_0_16px_rgb(0_0_0_/_70%),_0_0_24px_rgb(0_0_0_/_50%)]"
-          >
-            A social network built from the ground up for security, resilience,
-            and true ownership. <br className="hidden sm:block" />
-            Desktop only · Linux x86 · C/ASM core.
-          </motion.p>
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <Link
-              href="#tech-stack"
-              className="group inline-flex items-center justify-center px-8 py-4 text-base font-medium text-black bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-all shadow-lg hover:shadow-xl hover:scale-105"
-            >
-              Discover the tech
-              <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <Link
-              href="/self-university"
-              className="group inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white bg-black/30 backdrop-blur-md border border-white/20 rounded-full hover:bg-black/50 hover:border-white/40 transition-all shadow-lg hover:scale-105"
-            >
-              Self University
-              <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </motion.div>
-        </motion.div>
+          k
+        </motion.span>
+        
+        {/* r - двигается вниз-вверх + мерцает */}
+        <motion.span
+          animate={{ 
+            y: [0, 2, 0, -3, 0],
+            textShadow: [
+              "0 0 20px rgba(255,255,255,0)",
+              "0 0 25px rgba(255,255,255,0.12)",
+              "0 0 20px rgba(255,255,255,0)",
+            ],
+          }}
+          transition={{
+            y: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.15 },
+            textShadow: { duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.2 },
+          }}
+          className="inline-block"
+        >
+          r
+        </motion.span>
+        
+        {/* y - растягивается + мерцает */}
+        <motion.span
+          animate={{ 
+            scale: [1, 1.04, 1, 0.98, 1],
+            textShadow: [
+              "0 0 20px rgba(255,255,255,0)",
+              "0 0 25px rgba(255,255,255,0.1)",
+              "0 0 20px rgba(255,255,255,0)",
+            ],
+          }}
+          transition={{
+            scale: { duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: 0.3 },
+            textShadow: { duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 0.4 },
+          }}
+          className="inline-block"
+        >
+          y
+        </motion.span>
+        
+        {/* o - поворачивается + мерцает */}
+        <motion.span
+          animate={{ 
+            rotate: [0, 2, 0, -2, 0],
+            textShadow: [
+              "0 0 20px rgba(255,255,255,0)",
+              "0 0 25px rgba(255,255,255,0.18)",
+              "0 0 20px rgba(255,255,255,0)",
+            ],
+          }}
+          transition={{
+            rotate: { duration: 4.8, repeat: Infinity, ease: "easeInOut", delay: 0.45 },
+            textShadow: { duration: 5.2, repeat: Infinity, ease: "easeInOut", delay: 0.6 },
+          }}
+          className="inline-block"
+        >
+          o
+        </motion.span>
+        
+        {/* s - двигается по диагонали + мерцает */}
+        <motion.span
+          animate={{ 
+            x: [0, 1, 0, -1, 0],
+            y: [0, -2, 0, 2, 0],
+            textShadow: [
+              "0 0 20px rgba(255,255,255,0)",
+              "0 0 25px rgba(255,255,255,0.13)",
+              "0 0 20px rgba(255,255,255,0)",
+            ],
+          }}
+          transition={{
+            x: { duration: 3.9, repeat: Infinity, ease: "easeInOut", delay: 0.6 },
+            y: { duration: 3.9, repeat: Infinity, ease: "easeInOut", delay: 0.6 },
+            textShadow: { duration: 4.3, repeat: Infinity, ease: "easeInOut", delay: 0.8 },
+          }}
+          className="inline-block"
+        >
+          s
+        </motion.span>
+        
+        {/* e - прыгает + мерцает */}
+        <motion.span
+          animate={{ 
+            y: [0, -4, 0, 3, 0],
+            textShadow: [
+              "0 0 20px rgba(255,255,255,0)",
+              "0 0 25px rgba(255,255,255,0.11)",
+              "0 0 20px rgba(255,255,255,0)",
+            ],
+          }}
+          transition={{
+            y: { duration: 3.3, repeat: Infinity, ease: "easeInOut", delay: 0.75 },
+            textShadow: { duration: 4.7, repeat: Infinity, ease: "easeInOut", delay: 1.0 },
+          }}
+          className="inline-block"
+        >
+          e
+        </motion.span>
+        
+        {/* t - сжимается и растягивается + мерцает */}
+        <motion.span
+          animate={{ 
+            scaleX: [1, 0.96, 1, 1.04, 1],
+            scaleY: [1, 1.04, 1, 0.96, 1],
+            textShadow: [
+              "0 0 20px rgba(255,255,255,0)",
+              "0 0 25px rgba(255,255,255,0.16)",
+              "0 0 20px rgba(255,255,255,0)",
+            ],
+          }}
+          transition={{
+            scaleX: { duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.9 },
+            scaleY: { duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.9 },
+            textShadow: { duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 1.2 },
+          }}
+          className="inline-block"
+        >
+          t
+        </motion.span>
+        
+        {/* t - двигается волной + мерцает */}
+        <motion.span
+          animate={{ 
+            y: [0, 3, 0, -2, 0],
+            textShadow: [
+              "0 0 20px rgba(255,255,255,0)",
+              "0 0 25px rgba(255,255,255,0.14)",
+              "0 0 20px rgba(255,255,255,0)",
+            ],
+          }}
+          transition={{
+            y: { duration: 3.7, repeat: Infinity, ease: "easeInOut", delay: 1.05 },
+            textShadow: { duration: 4.1, repeat: Infinity, ease: "easeInOut", delay: 1.4 },
+          }}
+          className="inline-block"
+        >
+          t
+        </motion.span>
+        
+        {/* e - поворачивается в другую сторону + мерцает */}
+        <motion.span
+          animate={{ 
+            rotate: [0, -2, 0, 3, 0],
+            textShadow: [
+              "0 0 20px rgba(255,255,255,0)",
+              "0 0 25px rgba(255,255,255,0.12)",
+              "0 0 20px rgba(255,255,255,0)",
+            ],
+          }}
+          transition={{
+            rotate: { duration: 4.1, repeat: Infinity, ease: "easeInOut", delay: 1.2 },
+            textShadow: { duration: 4.8, repeat: Infinity, ease: "easeInOut", delay: 1.6 },
+          }}
+          className="inline-block"
+        >
+          e
+        </motion.span>
+      </motion.span>
+    </motion.h1>
+    
+    <motion.p 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+      className="text-xl md:text-2xl text-gray-200/90 mb-8 max-w-3xl mx-auto"
+    >
+      A social network built from the ground up for security, resilience,
+      and true ownership. <br className="hidden sm:block" />
+      Desktop only · Linux x86 · C/ASM core.
+    </motion.p>
+    
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 1.0, ease: [0.25, 0.1, 0.25, 1] }}
+      className="flex flex-col sm:flex-row gap-4 justify-center"
+    >
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.99 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      >
+        <Link
+          href="#tech-stack"
+          className="group inline-flex items-center justify-center px-8 py-4 text-base font-medium text-black bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-300 shadow-lg hover:shadow-xl"
+        >
+          Discover the tech
+          <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+        </Link>
+      </motion.div>
+      
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.99 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      >
+        <Link
+          href="/self-university"
+          className="group inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white/90 bg-white/5 backdrop-blur-md border border-white/15 rounded-full hover:bg-white/10 hover:border-white/25 transition-all duration-300 shadow-lg"
+        >
+          Self University
+          <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+        </Link>
+      </motion.div>
+    </motion.div>
+  </motion.div>
 
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.8, duration: 0.8 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <motion.div 
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-            className="w-6 h-10 border border-white/20 rounded-full flex justify-center backdrop-blur-sm"
-          >
-            <motion.div 
-              animate={{ y: [0, 12, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-              className="w-1 h-2 bg-white/80 rounded-full mt-2"
-            />
-          </motion.div>
-        </motion.div>
-      </section>
+  {/* Scroll indicator */}
+  <motion.div 
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ delay: 2.0, duration: 0.8 }}
+    className="absolute bottom-8 left-1/2 -translate-x-1/2"
+  >
+    <motion.div 
+      animate={{ y: [0, 6, 0] }}
+      transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+      className="w-6 h-10 border border-white/15 rounded-full flex justify-center backdrop-blur-sm"
+    >
+      <motion.div 
+        animate={{ y: [0, 10, 0] }}
+        transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+        className="w-1 h-2 bg-white/50 rounded-full mt-2"
+      />
+    </motion.div>
+  </motion.div>
+</section>
 
       {/* Tech Stack Scroll Sections */}
       <div id="tech-stack" className="relative">
