@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Cpu, Network, Shield, Lock, Database, BrainCircuit, Edit3, Globe } from "lucide-react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 import GraphBackground from "@/components/GraphBackground";
 
 // Данные технологий
@@ -99,22 +99,16 @@ const techStack = [
   },
 ];
 
-// RGB-частицы
+// RGB-частицы с оптимизацией
 const RGBParticles = () => {
-  const [particles, setParticles] = useState<Array<{ x: number; y: number; size: number; delay: number; duration: number }>>([]);
-  
-  useEffect(() => {
-    const newParticles = [];
-    for (let i = 0; i < 40; i++) {
-      newParticles.push({
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        size: 1 + Math.random() * 3,
-        delay: Math.random() * 5,
-        duration: 2 + Math.random() * 6,
-      });
-    }
-    setParticles(newParticles);
+  const particles = useMemo(() => {
+    return Array.from({ length: 25 }, () => ({
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: 1 + Math.random() * 3,
+      delay: Math.random() * 5,
+      duration: 3 + Math.random() * 5,
+    }));
   }, []);
 
   return (
@@ -128,25 +122,26 @@ const RGBParticles = () => {
             top: `${p.y}%`,
             width: p.size,
             height: p.size,
+            willChange: "transform",
           }}
           animate={{
             backgroundColor: [
-              "rgb(255, 0, 0)",
-              "rgb(255, 255, 0)",
-              "rgb(0, 255, 0)",
-              "rgb(0, 255, 255)",
-              "rgb(0, 0, 255)",
-              "rgb(255, 0, 255)",
-              "rgb(255, 0, 0)",
+              "rgb(255,0,0)",
+              "rgb(255,255,0)",
+              "rgb(0,255,0)",
+              "rgb(0,255,255)",
+              "rgb(0,0,255)",
+              "rgb(255,0,255)",
+              "rgb(255,0,0)",
             ],
-            opacity: [0, 0.5, 0.5, 0],
+            opacity: [0, 0.4, 0.4, 0],
             scale: [0.5, 1.5, 1.5, 0.5],
           }}
           transition={{
             duration: p.duration,
             delay: p.delay,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: "linear",
           }}
         />
       ))}
@@ -162,8 +157,8 @@ export default function Home() {
   });
 
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
+    stiffness: 80,
+    damping: 25,
     restDelta: 0.001
   });
 
@@ -173,282 +168,285 @@ export default function Home() {
         <GraphBackground />
       </div>
 
-     {/* Hero Section */}
-<section className="relative min-h-screen flex items-center justify-center text-center overflow-hidden">
-  <motion.div 
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
-    className="relative z-10 max-w-5xl px-4 py-20"
-  >
-    {/* Желейный заголовок с тонким мерцанием */}
-    <motion.h1 
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ 
-        duration: 1.2, 
-        delay: 0.2, 
-        type: "spring", 
-        stiffness: 80, 
-        damping: 18 
-      }}
-      className="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tight text-white mb-6"
-    >
-      <motion.span
-        animate={{ 
-          scale: [1, 1.008, 1, 0.996, 1],
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="inline-block"
-      >
-        {/* k - двигается вверх-вниз + мерцает */}
-        <motion.span
-          animate={{ 
-            y: [0, -3, 0, 2, 0],
-            textShadow: [
-              "0 0 20px rgba(255,255,255,0)",
-              "0 0 25px rgba(255,255,255,0.15)",
-              "0 0 20px rgba(255,255,255,0)",
-            ],
-          }}
-          transition={{
-            y: { duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0 },
-            textShadow: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0 },
-          }}
-          className="inline-block"
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center text-center overflow-hidden">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
+          className="relative z-10 max-w-5xl px-4 py-20"
         >
-          k
-        </motion.span>
-        
-        {/* r - двигается вниз-вверх + мерцает */}
-        <motion.span
-          animate={{ 
-            y: [0, 2, 0, -3, 0],
-            textShadow: [
-              "0 0 20px rgba(255,255,255,0)",
-              "0 0 25px rgba(255,255,255,0.12)",
-              "0 0 20px rgba(255,255,255,0)",
-            ],
-          }}
-          transition={{
-            y: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.15 },
-            textShadow: { duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.2 },
-          }}
-          className="inline-block"
-        >
-          r
-        </motion.span>
-        
-        {/* y - растягивается + мерцает */}
-        <motion.span
-          animate={{ 
-            scale: [1, 1.04, 1, 0.98, 1],
-            textShadow: [
-              "0 0 20px rgba(255,255,255,0)",
-              "0 0 25px rgba(255,255,255,0.1)",
-              "0 0 20px rgba(255,255,255,0)",
-            ],
-          }}
-          transition={{
-            scale: { duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: 0.3 },
-            textShadow: { duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 0.4 },
-          }}
-          className="inline-block"
-        >
-          y
-        </motion.span>
-        
-        {/* o - поворачивается + мерцает */}
-        <motion.span
-          animate={{ 
-            rotate: [0, 2, 0, -2, 0],
-            textShadow: [
-              "0 0 20px rgba(255,255,255,0)",
-              "0 0 25px rgba(255,255,255,0.18)",
-              "0 0 20px rgba(255,255,255,0)",
-            ],
-          }}
-          transition={{
-            rotate: { duration: 4.8, repeat: Infinity, ease: "easeInOut", delay: 0.45 },
-            textShadow: { duration: 5.2, repeat: Infinity, ease: "easeInOut", delay: 0.6 },
-          }}
-          className="inline-block"
-        >
-          o
-        </motion.span>
-        
-        {/* s - двигается по диагонали + мерцает */}
-        <motion.span
-          animate={{ 
-            x: [0, 1, 0, -1, 0],
-            y: [0, -2, 0, 2, 0],
-            textShadow: [
-              "0 0 20px rgba(255,255,255,0)",
-              "0 0 25px rgba(255,255,255,0.13)",
-              "0 0 20px rgba(255,255,255,0)",
-            ],
-          }}
-          transition={{
-            x: { duration: 3.9, repeat: Infinity, ease: "easeInOut", delay: 0.6 },
-            y: { duration: 3.9, repeat: Infinity, ease: "easeInOut", delay: 0.6 },
-            textShadow: { duration: 4.3, repeat: Infinity, ease: "easeInOut", delay: 0.8 },
-          }}
-          className="inline-block"
-        >
-          s
-        </motion.span>
-        
-        {/* e - прыгает + мерцает */}
-        <motion.span
-          animate={{ 
-            y: [0, -4, 0, 3, 0],
-            textShadow: [
-              "0 0 20px rgba(255,255,255,0)",
-              "0 0 25px rgba(255,255,255,0.11)",
-              "0 0 20px rgba(255,255,255,0)",
-            ],
-          }}
-          transition={{
-            y: { duration: 3.3, repeat: Infinity, ease: "easeInOut", delay: 0.75 },
-            textShadow: { duration: 4.7, repeat: Infinity, ease: "easeInOut", delay: 1.0 },
-          }}
-          className="inline-block"
-        >
-          e
-        </motion.span>
-        
-        {/* t - сжимается и растягивается + мерцает */}
-        <motion.span
-          animate={{ 
-            scaleX: [1, 0.96, 1, 1.04, 1],
-            scaleY: [1, 1.04, 1, 0.96, 1],
-            textShadow: [
-              "0 0 20px rgba(255,255,255,0)",
-              "0 0 25px rgba(255,255,255,0.16)",
-              "0 0 20px rgba(255,255,255,0)",
-            ],
-          }}
-          transition={{
-            scaleX: { duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.9 },
-            scaleY: { duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.9 },
-            textShadow: { duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 1.2 },
-          }}
-          className="inline-block"
-        >
-          t
-        </motion.span>
-        
-        {/* t - двигается волной + мерцает */}
-        <motion.span
-          animate={{ 
-            y: [0, 3, 0, -2, 0],
-            textShadow: [
-              "0 0 20px rgba(255,255,255,0)",
-              "0 0 25px rgba(255,255,255,0.14)",
-              "0 0 20px rgba(255,255,255,0)",
-            ],
-          }}
-          transition={{
-            y: { duration: 3.7, repeat: Infinity, ease: "easeInOut", delay: 1.05 },
-            textShadow: { duration: 4.1, repeat: Infinity, ease: "easeInOut", delay: 1.4 },
-          }}
-          className="inline-block"
-        >
-          t
-        </motion.span>
-        
-        {/* e - поворачивается в другую сторону + мерцает */}
-        <motion.span
-          animate={{ 
-            rotate: [0, -2, 0, 3, 0],
-            textShadow: [
-              "0 0 20px rgba(255,255,255,0)",
-              "0 0 25px rgba(255,255,255,0.12)",
-              "0 0 20px rgba(255,255,255,0)",
-            ],
-          }}
-          transition={{
-            rotate: { duration: 4.1, repeat: Infinity, ease: "easeInOut", delay: 1.2 },
-            textShadow: { duration: 4.8, repeat: Infinity, ease: "easeInOut", delay: 1.6 },
-          }}
-          className="inline-block"
-        >
-          e
-        </motion.span>
-      </motion.span>
-    </motion.h1>
-    
-    <motion.p 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-      className="text-xl md:text-2xl text-gray-200/90 mb-8 max-w-3xl mx-auto"
-    >
-      A social network built from the ground up for security, resilience,
-      and true ownership. <br className="hidden sm:block" />
-      Desktop only · Linux x86 · C/ASM core.
-    </motion.p>
-    
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 1.0, ease: [0.25, 0.1, 0.25, 1] }}
-      className="flex flex-col sm:flex-row gap-4 justify-center"
-    >
-      <motion.div
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.99 }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
-      >
-        <Link
-          href="#tech-stack"
-          className="group inline-flex items-center justify-center px-8 py-4 text-base font-medium text-black bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-300 shadow-lg hover:shadow-xl"
-        >
-          Discover the tech
-          <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-        </Link>
-      </motion.div>
-      
-      <motion.div
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.99 }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
-      >
-        <Link
-          href="/self-university"
-          className="group inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white/90 bg-white/5 backdrop-blur-md border border-white/15 rounded-full hover:bg-white/10 hover:border-white/25 transition-all duration-300 shadow-lg"
-        >
-          Self University
-          <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-        </Link>
-      </motion.div>
-    </motion.div>
-  </motion.div>
+          <motion.h1 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ 
+              duration: 1.2, 
+              delay: 0.2, 
+              type: "spring", 
+              stiffness: 80, 
+              damping: 18 
+            }}
+            className="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tight text-white mb-6"
+            style={{ willChange: "transform" }}
+          >
+            <motion.span
+              animate={{ scale: [1, 1.005, 1, 0.997, 1] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+              className="inline-block"
+              style={{ willChange: "transform" }}
+            >
+              {/* k */}
+              <motion.span
+                animate={{ 
+                  y: [0, -2, 0, 2, 0],
+                  filter: [
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                    "drop-shadow(0 0 20px rgba(255,255,255,0.15))",
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                  ]
+                }}
+                transition={{
+                  y: { duration: 4, repeat: Infinity, ease: "linear", delay: 0 },
+                  filter: { duration: 5, repeat: Infinity, ease: "linear", delay: 0 },
+                }}
+                className="inline-block"
+                style={{ willChange: "transform, filter" }}
+              >
+                k
+              </motion.span>
+              
+              {/* r */}
+              <motion.span
+                animate={{ 
+                  y: [0, 2, 0, -2, 0],
+                  filter: [
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                    "drop-shadow(0 0 20px rgba(255,255,255,0.12))",
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                  ]
+                }}
+                transition={{
+                  y: { duration: 4.5, repeat: Infinity, ease: "linear", delay: 0.2 },
+                  filter: { duration: 5.5, repeat: Infinity, ease: "linear", delay: 0.2 },
+                }}
+                className="inline-block"
+                style={{ willChange: "transform, filter" }}
+              >
+                r
+              </motion.span>
+              
+              {/* y */}
+              <motion.span
+                animate={{ 
+                  scale: [1, 1.03, 1, 0.98, 1],
+                  filter: [
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                    "drop-shadow(0 0 20px rgba(255,255,255,0.1))",
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                  ]
+                }}
+                transition={{
+                  scale: { duration: 5, repeat: Infinity, ease: "linear", delay: 0.4 },
+                  filter: { duration: 4.5, repeat: Infinity, ease: "linear", delay: 0.4 },
+                }}
+                className="inline-block"
+                style={{ willChange: "transform, filter" }}
+              >
+                y
+              </motion.span>
+              
+              {/* o */}
+              <motion.span
+                animate={{ 
+                  rotate: [0, 1.5, 0, -1.5, 0],
+                  filter: [
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                    "drop-shadow(0 0 20px rgba(255,255,255,0.18))",
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                  ]
+                }}
+                transition={{
+                  rotate: { duration: 5.5, repeat: Infinity, ease: "linear", delay: 0.6 },
+                  filter: { duration: 6, repeat: Infinity, ease: "linear", delay: 0.6 },
+                }}
+                className="inline-block"
+                style={{ willChange: "transform, filter" }}
+              >
+                o
+              </motion.span>
+              
+              {/* s */}
+              <motion.span
+                animate={{ 
+                  x: [0, 1, 0, -1, 0],
+                  y: [0, -1.5, 0, 1.5, 0],
+                  filter: [
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                    "drop-shadow(0 0 20px rgba(255,255,255,0.13))",
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                  ]
+                }}
+                transition={{
+                  x: { duration: 4.5, repeat: Infinity, ease: "linear", delay: 0.8 },
+                  y: { duration: 4.5, repeat: Infinity, ease: "linear", delay: 0.8 },
+                  filter: { duration: 5, repeat: Infinity, ease: "linear", delay: 0.8 },
+                }}
+                className="inline-block"
+                style={{ willChange: "transform, filter" }}
+              >
+                s
+              </motion.span>
+              
+              {/* e */}
+              <motion.span
+                animate={{ 
+                  y: [0, -3, 0, 2, 0],
+                  filter: [
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                    "drop-shadow(0 0 20px rgba(255,255,255,0.11))",
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                  ]
+                }}
+                transition={{
+                  y: { duration: 4, repeat: Infinity, ease: "linear", delay: 1.0 },
+                  filter: { duration: 5.5, repeat: Infinity, ease: "linear", delay: 1.0 },
+                }}
+                className="inline-block"
+                style={{ willChange: "transform, filter" }}
+              >
+                e
+              </motion.span>
+              
+              {/* t */}
+              <motion.span
+                animate={{ 
+                  scaleX: [1, 0.97, 1, 1.03, 1],
+                  scaleY: [1, 1.03, 1, 0.97, 1],
+                  filter: [
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                    "drop-shadow(0 0 20px rgba(255,255,255,0.16))",
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                  ]
+                }}
+                transition={{
+                  scaleX: { duration: 5, repeat: Infinity, ease: "linear", delay: 1.2 },
+                  scaleY: { duration: 5, repeat: Infinity, ease: "linear", delay: 1.2 },
+                  filter: { duration: 6, repeat: Infinity, ease: "linear", delay: 1.2 },
+                }}
+                className="inline-block"
+                style={{ willChange: "transform, filter" }}
+              >
+                t
+              </motion.span>
+              
+              {/* t */}
+              <motion.span
+                animate={{ 
+                  y: [0, 2.5, 0, -2, 0],
+                  filter: [
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                    "drop-shadow(0 0 20px rgba(255,255,255,0.14))",
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                  ]
+                }}
+                transition={{
+                  y: { duration: 4.2, repeat: Infinity, ease: "linear", delay: 1.4 },
+                  filter: { duration: 5, repeat: Infinity, ease: "linear", delay: 1.4 },
+                }}
+                className="inline-block"
+                style={{ willChange: "transform, filter" }}
+              >
+                t
+              </motion.span>
+              
+              {/* e */}
+              <motion.span
+                animate={{ 
+                  rotate: [0, -1.5, 0, 2, 0],
+                  filter: [
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                    "drop-shadow(0 0 20px rgba(255,255,255,0.12))",
+                    "drop-shadow(0 0 15px rgba(255,255,255,0))",
+                  ]
+                }}
+                transition={{
+                  rotate: { duration: 5, repeat: Infinity, ease: "linear", delay: 1.6 },
+                  filter: { duration: 5.5, repeat: Infinity, ease: "linear", delay: 1.6 },
+                }}
+                className="inline-block"
+                style={{ willChange: "transform, filter" }}
+              >
+                e
+              </motion.span>
+            </motion.span>
+          </motion.h1>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+            className="text-xl md:text-2xl text-gray-200/90 mb-8 max-w-3xl mx-auto"
+          >
+            A social network built from the ground up for security, resilience,
+            and true ownership. <br className="hidden sm:block" />
+            Desktop only · Linux x86 · C/ASM core.
+          </motion.p>
+          
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.0, ease: [0.25, 0.1, 0.25, 1] }}
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+          >
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.99 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            >
+              <Link
+                href="#tech-stack"
+                className="group inline-flex items-center justify-center px-8 py-4 text-base font-medium text-black bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                Discover the tech
+                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+              </Link>
+            </motion.div>
+            
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.99 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            >
+              <Link
+                href="/self-university"
+                className="group inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white/90 bg-white/5 backdrop-blur-md border border-white/15 rounded-full hover:bg-white/10 hover:border-white/25 transition-all duration-300 shadow-lg"
+              >
+                Self University
+                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+              </Link>
+            </motion.div>
+          </motion.div>
+        </motion.div>
 
-  {/* Scroll indicator */}
-  <motion.div 
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ delay: 2.0, duration: 0.8 }}
-    className="absolute bottom-8 left-1/2 -translate-x-1/2"
-  >
-    <motion.div 
-      animate={{ y: [0, 6, 0] }}
-      transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-      className="w-6 h-10 border border-white/15 rounded-full flex justify-center backdrop-blur-sm"
-    >
-      <motion.div 
-        animate={{ y: [0, 10, 0] }}
-        transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-        className="w-1 h-2 bg-white/50 rounded-full mt-2"
-      />
-    </motion.div>
-  </motion.div>
-</section>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.0, duration: 0.8 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        >
+          <motion.div 
+            animate={{ y: [0, 6, 0] }}
+            transition={{ repeat: Infinity, duration: 2.5, ease: "linear" }}
+            className="w-6 h-10 border border-white/15 rounded-full flex justify-center backdrop-blur-sm"
+          >
+            <motion.div 
+              animate={{ y: [0, 10, 0] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+              className="w-1 h-2 bg-white/50 rounded-full mt-2"
+            />
+          </motion.div>
+        </motion.div>
+      </section>
 
       {/* Tech Stack Scroll Sections */}
       <div id="tech-stack" className="relative">
@@ -472,7 +470,7 @@ export default function Home() {
       {/* Transition to white */}
       <div className="h-32 bg-gradient-to-b from-transparent to-white" />
 
-      {/* Preview Image Section - БЕЛЫЙ ФОН */}
+      {/* Preview Image Section */}
       <section className="relative py-24 bg-white">
         <div className="max-w-6xl mx-auto px-4">
           <motion.div
@@ -505,7 +503,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Feature Implementation Status - БЕЛЫЙ ФОН */}
+      {/* Feature Implementation Status */}
       <section className="relative py-24 bg-white">
         <div className="max-w-5xl mx-auto px-4">
           <motion.div
