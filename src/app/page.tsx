@@ -7,7 +7,6 @@ import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { useRef, useEffect, useState, useMemo } from "react";
 import GraphBackground from "@/components/GraphBackground";
 
-// Данные технологий
 const techStack = [
   {
     id: "kryo-arch",
