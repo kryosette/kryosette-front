@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
+import "@/styles/globals.css";
+import { AuthProvider } from "@/lib/auth-provider";
+import { ChatProvider } from "./(private)/home/chat/ChatContext";
 import Header from "@/components/Header";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({subsets: ["latin"]});
 
 export const metadata: Metadata = {
   title: "kryosette",
-  description: "Think different.",
+  description: "A social network built from the ground up for security, resilience, and true ownership.",
 };
 
 export default function RootLayout({
@@ -18,8 +20,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Header />
-        <main className="pt-12">{children}</main>
+            <Header />
+            <main>{children}</main>
       </body>
     </html>
   );

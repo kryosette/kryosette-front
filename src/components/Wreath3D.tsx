@@ -4,9 +4,6 @@ import { useRef, useEffect, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-// ---------------------------------------------------------------
-// Жёлтые бусы – спираль из золотых шариков
-// ---------------------------------------------------------------
 const Beads = ({ mouse }: { mouse: { x: number; y: number } }) => {
   const groupRef = useRef<THREE.Group>(null);
 
@@ -19,31 +16,35 @@ const Beads = ({ mouse }: { mouse: { x: number; y: number } }) => {
     }
   });
 
-  // Параметры спирали
-  const beadCount = 64;
-  const radius = 0.55;
-  const height = 2.0;
-  const turns = 2.8; // количество витков
+  // Создаём три нитки бус, обвивающих букву
+  const strands = [
+    { radius: 0.45, height: 1.8, turns: 2.5, count: 50, size: 0.07, yOffset: 0 },
+    { radius: 0.55, height: 1.6, turns: 2.0, count: 40, size: 0.06, yOffset: 0.1 },
+    { radius: 0.5, height: 2.0, turns: 3.0, count: 60, size: 0.05, yOffset: -0.1 },
+  ];
 
-  const beads = [];
-  for (let i = 0; i < beadCount; i++) {
-    const t = i / (beadCount - 1);
-    const angle = t * Math.PI * 2 * turns;
-    const x = Math.cos(angle) * radius;
-    const z = Math.sin(angle) * radius;
-    const y = -height / 2 + t * height;
-    beads.push({ x, y, z });
-  }
+  const allBeads: { x: number; y: number; z: number; size: number }[] = [];
+
+  strands.forEach((strand) => {
+    for (let i = 0; i < strand.count; i++) {
+      const t = i / (strand.count - 1);
+      const angle = t * Math.PI * 2 * strand.turns;
+      const x = Math.cos(angle) * strand.radius;
+      const z = Math.sin(angle) * strand.radius;
+      const y = -strand.height / 2 + t * strand.height + strand.yOffset;
+      allBeads.push({ x, y, z, size: strand.size });
+    }
+  });
 
   return (
     <group ref={groupRef}>
-      {beads.map((b, i) => (
+      {allBeads.map((b, i) => (
         <mesh key={i} position={[b.x, b.y, b.z]}>
-          <sphereGeometry args={[0.08, 12, 12]} />
+          <sphereGeometry args={[b.size, 12, 12]} />
           <meshStandardMaterial
             color="#FFD700"
-            roughness={0.2}
-            metalness={0.9}
+            roughness={0.15}
+            metalness={0.95}
           />
         </mesh>
       ))}
@@ -51,9 +52,6 @@ const Beads = ({ mouse }: { mouse: { x: number; y: number } }) => {
   );
 };
 
-// ---------------------------------------------------------------
-// Отслеживание мыши
-// ---------------------------------------------------------------
 const MouseTracker = () => {
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
 
@@ -71,9 +69,6 @@ const MouseTracker = () => {
   return <Beads mouse={mouse} />;
 };
 
-// ---------------------------------------------------------------
-// Экспорт
-// ---------------------------------------------------------------
 export default function Wreath3D() {
   return (
     <Canvas
@@ -95,6 +90,13 @@ export default function Wreath3D() {
         penumbra={1}
         intensity={1.2}
         color="#FFFDE7"
+      />
+      <spotLight
+        position={[-3, 2, -2]}
+        angle={0.4}
+        penumbra={1}
+        intensity={0.8}
+        color="#FFE082"
       />
       <MouseTracker />
     </Canvas>
