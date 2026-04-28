@@ -44,7 +44,7 @@ const Header = () => {
             alt="kryosette"
             width={80}
             height={50}
-            className="h-5 w-auto"
+            className="h-7 w-auto"
             priority
           />
         </Link>
