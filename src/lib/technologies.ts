@@ -4,7 +4,6 @@ import {
   Shield,
   Database,
   Lock,
-  Eye,
   Edit3,
   BrainCircuit,
   type LucideIcon,
