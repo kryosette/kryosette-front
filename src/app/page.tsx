@@ -130,20 +130,14 @@ const LiquidGlassBackground = () => (
 // ------------------------------------------------------------------------------
 // Liquid Glass Card Component — Apple-style glass effect with color diffusion
 // ------------------------------------------------------------------------------
-const LiquidGlassCard = ({ 
-  tech, 
-  index 
-}: { 
-  tech: typeof techStack[0]; 
-  index: number;
-}) => {
+const LiquidGlassCard = ({ tech, index }: { tech: typeof techStack[0]; index: number }) => {
   const Icon = tech.icon;
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <FadeUp delay={index * 0.055}>
-      <Link 
-        href={`/technology/${tech.id}`} 
+      <Link
+        href={`/technology/${tech.id}`}
         className="block h-full group"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -151,10 +145,10 @@ const LiquidGlassCard = ({
         <div
           className="h-full relative rounded-[28px] p-[1px] aspect-[16/10] transition-all duration-700"
           style={{
-            background: isHovered 
+            background: isHovered
               ? `linear-gradient(135deg, ${tech.accent}60 0%, ${tech.accent}20 30%, rgba(255,255,255,0.2) 50%, ${tech.accent}20 70%, ${tech.accent}60 100%)`
               : 'linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 100%)',
-            boxShadow: isHovered 
+            boxShadow: isHovered
               ? `0 0 0 1px ${tech.accent}15, 0 25px 50px -12px ${tech.accent}30, 0 0 80px ${tech.accent}15, inset 0 0 60px ${tech.accent}05`
               : '0 0 0 1px rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.04)',
           }}
@@ -163,79 +157,48 @@ const LiquidGlassCard = ({
           <div
             className="h-full rounded-[27px] p-7 sm:p-8 relative overflow-hidden transition-all duration-700"
             style={{
-              background: isHovered 
+              background: isHovered
                 ? `linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 50%, rgba(255,255,255,0.9) 100%)`
                 : 'linear-gradient(145deg, rgba(255,255,255,0.8) 0%, rgba(249,249,251,0.95) 100%)',
               backdropFilter: 'blur(40px) saturate(180%)',
               WebkitBackdropFilter: 'blur(40px) saturate(180%)',
             }}
           >
-            {/* Ambient color glow — top-left corner */}
+            {/* Glows */}
             <motion.div
               className="absolute -top-20 -left-20 w-60 h-60 rounded-full pointer-events-none"
               style={{
                 background: `radial-gradient(circle, ${tech.accent}40 0%, ${tech.accent}20 30%, transparent 70%)`,
                 filter: 'blur(40px)',
               }}
-              animate={{
-                opacity: isHovered ? 1 : 0.3,
-                scale: isHovered ? 1.3 : 1,
-                x: isHovered ? 10 : 0,
-                y: isHovered ? 10 : 0,
-              }}
+              animate={{ opacity: isHovered ? 1 : 0.3, scale: isHovered ? 1.3 : 1, x: isHovered ? 10 : 0, y: isHovered ? 10 : 0 }}
               transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
             />
-
-            {/* Secondary glow — bottom-right corner */}
             <motion.div
               className="absolute -bottom-16 -right-16 w-48 h-48 rounded-full pointer-events-none"
               style={{
                 background: `radial-gradient(circle, ${tech.accent}25 0%, ${tech.accent}10 40%, transparent 70%)`,
                 filter: 'blur(35px)',
               }}
-              animate={{
-                opacity: isHovered ? 0.9 : 0.15,
-                scale: isHovered ? 1.4 : 1,
-              }}
+              animate={{ opacity: isHovered ? 0.9 : 0.15, scale: isHovered ? 1.4 : 1 }}
               transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1], delay: 0.05 }}
             />
-
-            {/* Tertiary accent — top-right subtle */}
             <motion.div
               className="absolute -top-10 -right-10 w-32 h-32 rounded-full pointer-events-none"
-              style={{
-                background: `radial-gradient(circle, ${tech.accent}15 0%, transparent 60%)`,
-                filter: 'blur(25px)',
-              }}
-              animate={{
-                opacity: isHovered ? 0.7 : 0,
-                scale: isHovered ? 1.2 : 0.8,
-              }}
+              style={{ background: `radial-gradient(circle, ${tech.accent}15 0%, transparent 60%)`, filter: 'blur(25px)' }}
+              animate={{ opacity: isHovered ? 0.7 : 0, scale: isHovered ? 1.2 : 0.8 }}
               transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1], delay: 0.1 }}
             />
-
-            {/* Glass reflection line */}
             <motion.div
               className="absolute top-0 left-0 right-0 h-[1px] pointer-events-none"
-              style={{
-                background: `linear-gradient(90deg, transparent 0%, ${tech.accent}30 20%, rgba(255,255,255,0.8) 50%, ${tech.accent}30 80%, transparent 100%)`,
-              }}
-              animate={{
-                opacity: isHovered ? 1 : 0.3,
-              }}
+              style={{ background: `linear-gradient(90deg, transparent 0%, ${tech.accent}30 20%, rgba(255,255,255,0.8) 50%, ${tech.accent}30 80%, transparent 100%)` }}
+              animate={{ opacity: isHovered ? 1 : 0.3 }}
               transition={{ duration: 0.5 }}
             />
-
-            {/* Specular highlight */}
             <motion.div
               className="absolute top-2 left-4 right-4 h-16 rounded-full pointer-events-none"
-              style={{
-                background: 'linear-gradient(180deg, rgba(255,255,255,0.6) 0%, transparent 100%)',
-                filter: 'blur(8px)',
-              }}
-              animate={{
-                opacity: isHovered ? 0.8 : 0.4,
-              }}
+              style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.6) 0%, transparent 100%)', filter: 'blur(8px)' }}
+              animate={{ opacity: isHovered ? 0.8 : 0.4 }}
               transition={{ duration: 0.5 }}
             />
 
@@ -247,40 +210,21 @@ const LiquidGlassCard = ({
                     className="w-11 h-11 rounded-2xl flex items-center justify-center relative overflow-hidden"
                     style={{
                       background: `linear-gradient(135deg, ${tech.accent}25 0%, ${tech.accent}10 100%)`,
-                      boxShadow: isHovered 
-                        ? `0 0 20px ${tech.accent}40, inset 0 0 20px ${tech.accent}10`
-                        : `0 2px 8px ${tech.accent}15`,
+                      boxShadow: isHovered ? `0 0 20px ${tech.accent}40, inset 0 0 20px ${tech.accent}10` : `0 2px 8px ${tech.accent}15`,
                       border: `1px solid ${tech.accent}30`,
                     }}
-                    animate={{
-                      scale: isHovered ? 1.08 : 1,
-                    }}
+                    animate={{ scale: isHovered ? 1.08 : 1 }}
                     transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
                   >
-                    {/* Icon inner glow */}
                     <motion.div
                       className="absolute inset-0 rounded-2xl"
-                      style={{
-                        background: `radial-gradient(circle at center, ${tech.accent}30 0%, transparent 70%)`,
-                      }}
-                      animate={{
-                        opacity: isHovered ? 1 : 0,
-                        scale: isHovered ? 1.5 : 1,
-                      }}
+                      style={{ background: `radial-gradient(circle at center, ${tech.accent}30 0%, transparent 70%)` }}
+                      animate={{ opacity: isHovered ? 1 : 0, scale: isHovered ? 1.5 : 1 }}
                       transition={{ duration: 0.5 }}
                     />
-                    <Icon 
-                      className="w-5 h-5 relative z-10 transition-all duration-500" 
-                      style={{ 
-                        color: tech.accent,
-                        filter: isHovered ? `drop-shadow(0 0 8px ${tech.accent}80)` : 'none',
-                      }} 
-                    />
+                    <Icon className="w-5 h-5 relative z-10 transition-all duration-500" style={{ color: tech.accent, filter: isHovered ? `drop-shadow(0 0 8px ${tech.accent}80)` : 'none' }} />
                   </motion.div>
-                  <span 
-                    className="text-[10px] font-semibold tracking-[0.22em] uppercase transition-colors duration-500"
-                    style={{ color: isHovered ? tech.accent : 'rgba(0,0,0,0.4)' }}
-                  >
+                  <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-black/50">
                     {tech.subtitle}
                   </span>
                 </div>
@@ -291,17 +235,12 @@ const LiquidGlassCard = ({
                   {tech.description}
                 </p>
               </div>
-              
-              <div 
-                className="relative z-10 mt-5 pt-5 transition-colors duration-500"
-                style={{
-                  borderTop: `1px solid ${isHovered ? `${tech.accent}25` : 'rgba(0,0,0,0.05)'}`,
-                }}
+
+              <div
+                className="relative z-10 mt-auto pt-5 transition-colors duration-500"
+                style={{ borderTop: `1px solid ${isHovered ? `${tech.accent}25` : 'rgba(0,0,0,0.05)'}` }}
               >
-                <span 
-                  className="inline-flex items-center text-[11px] font-semibold tracking-[0.18em] uppercase transition-all duration-500"
-                  style={{ color: isHovered ? tech.accent : 'rgba(0,0,0,0.35)' }}
-                >
+                <span className="inline-flex items-center text-[11px] font-semibold tracking-[0.18em] uppercase text-black/40">
                   Learn more
                   <ArrowRight className="w-3 h-3 ml-1.5 group-hover:translate-x-1 transition-transform duration-400" />
                 </span>
@@ -317,39 +256,43 @@ const LiquidGlassCard = ({
 // ------------------------------------------------------------------------------
 // Jelly letter
 // ------------------------------------------------------------------------------
-const JellyLetter = ({
-  letter, delay, duration = 7,
-}: { letter: string; delay: number; duration?: number }) => (
-  <motion.span className="inline-block" style={{ willChange: "transform" }}
+const JellyLetter = ({ letter, delay, duration = 7 }: { letter: string; delay: number; duration?: number }) => (
+  <motion.span
+    className="inline-block"
+    style={{ willChange: "transform" }}
     animate={{ y: [0, -2, 0, 2, 0], rotate: [0, 0.9, 0, -0.9, 0], scale: [1, 1.01, 1, 0.99, 1] }}
-    transition={{ duration, repeat: Infinity, ease: "easeInOut", delay }}>{letter}</motion.span>
+    transition={{ duration, repeat: Infinity, ease: "easeInOut", delay }}
+  >
+    {letter}
+  </motion.span>
 );
 
 // ------------------------------------------------------------------------------
 // FadeUp
 // ------------------------------------------------------------------------------
 const FadeUp = ({ children, className, delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => (
-  <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }}
-    transition={{ duration: 0.72, delay, ease: [0.25, 0.1, 0.25, 1] }} className={className}>{children}</motion.div>
+  <motion.div
+    initial={{ opacity: 0, y: 28 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-40px" }}
+    transition={{ duration: 0.72, delay, ease: [0.25, 0.1, 0.25, 1] }}
+    className={className}
+  >
+    {children}
+  </motion.div>
 );
 
 // ------------------------------------------------------------------------------
 // Liquid Glass Slider Card
 // ------------------------------------------------------------------------------
-const LiquidGlassSliderCard = ({ 
-  item, 
-  index 
-}: { 
-  item: typeof sliderItems[0]; 
-  index: number;
-}) => {
+const LiquidGlassSliderCard = ({ item, index }: { item: typeof sliderItems[0]; index: number }) => {
   const Icon = item.icon;
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <Link 
-      href={`/technology/${item.id}`} 
-      className="snap-start shrink-0 group relative block" 
+    <Link
+      href={`/technology/${item.id}`}
+      className="snap-start shrink-0 group relative block"
       style={{ width: 480, height: 290 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -357,10 +300,10 @@ const LiquidGlassSliderCard = ({
       <div
         className="w-full h-full relative rounded-[24px] p-[1px] transition-all duration-700"
         style={{
-          background: isHovered 
+          background: isHovered
             ? `linear-gradient(135deg, ${item.accent}50 0%, ${item.accent}15 35%, rgba(255,255,255,0.3) 50%, ${item.accent}15 65%, ${item.accent}50 100%)`
             : 'linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 100%)',
-          boxShadow: isHovered 
+          boxShadow: isHovered
             ? `0 0 0 1px ${item.accent}20, 0 25px 60px -15px ${item.accent}35, 0 0 100px ${item.accent}15`
             : '0 0 0 1px rgba(0,0,0,0.05), 0 4px 20px rgba(0,0,0,0.03)',
         }}
@@ -368,54 +311,34 @@ const LiquidGlassSliderCard = ({
         <div
           className="w-full h-full rounded-[23px] p-7 relative overflow-hidden transition-all duration-700"
           style={{
-            background: isHovered 
+            background: isHovered
               ? 'linear-gradient(145deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.92) 100%)'
               : 'linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%)',
             backdropFilter: 'blur(40px) saturate(180%)',
             WebkitBackdropFilter: 'blur(40px) saturate(180%)',
           }}
         >
-          {/* Top-left glow */}
           <motion.div
             className="absolute -top-24 -left-24 w-64 h-64 rounded-full pointer-events-none"
-            style={{
-              background: `radial-gradient(circle, ${item.accent}35 0%, ${item.accent}15 35%, transparent 70%)`,
-              filter: 'blur(45px)',
-            }}
-            animate={{
-              opacity: isHovered ? 1 : 0.25,
-              scale: isHovered ? 1.4 : 1,
-            }}
+            style={{ background: `radial-gradient(circle, ${item.accent}35 0%, ${item.accent}15 35%, transparent 70%)`, filter: 'blur(45px)' }}
+            animate={{ opacity: isHovered ? 1 : 0.25, scale: isHovered ? 1.4 : 1 }}
             transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
           />
-
-          {/* Bottom-right glow */}
           <motion.div
             className="absolute -bottom-20 -right-20 w-56 h-56 rounded-full pointer-events-none"
-            style={{
-              background: `radial-gradient(circle, ${item.accent}25 0%, transparent 65%)`,
-              filter: 'blur(40px)',
-            }}
-            animate={{
-              opacity: isHovered ? 0.85 : 0.1,
-              scale: isHovered ? 1.3 : 1,
-            }}
+            style={{ background: `radial-gradient(circle, ${item.accent}25 0%, transparent 65%)`, filter: 'blur(40px)' }}
+            animate={{ opacity: isHovered ? 0.85 : 0.1, scale: isHovered ? 1.3 : 1 }}
             transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1], delay: 0.05 }}
           />
-
-          {/* Glass top reflection */}
           <motion.div
             className="absolute top-0 left-0 right-0 h-[1px]"
-            style={{
-              background: `linear-gradient(90deg, transparent, ${item.accent}40, rgba(255,255,255,0.9), ${item.accent}40, transparent)`,
-            }}
+            style={{ background: `linear-gradient(90deg, transparent, ${item.accent}40, rgba(255,255,255,0.9), ${item.accent}40, transparent)` }}
             animate={{ opacity: isHovered ? 1 : 0.2 }}
             transition={{ duration: 0.5 }}
           />
 
-          {/* Content */}
           <div className="relative z-10 flex items-start gap-6 h-full">
-            <motion.div 
+            <motion.div
               className="flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center mt-0.5 relative overflow-hidden"
               style={{
                 background: `linear-gradient(135deg, ${item.accent}22, ${item.accent}11)`,
@@ -431,13 +354,7 @@ const LiquidGlassSliderCard = ({
                 animate={{ opacity: isHovered ? 1 : 0 }}
                 transition={{ duration: 0.4 }}
               />
-              <Icon 
-                className="w-7 h-7 relative z-10 transition-all duration-500" 
-                style={{ 
-                  color: item.accent,
-                  filter: isHovered ? `drop-shadow(0 0 10px ${item.accent}90)` : 'none',
-                }} 
-              />
+              <Icon className="w-7 h-7 relative z-10 transition-all duration-500" style={{ color: item.accent, filter: isHovered ? `drop-shadow(0 0 10px ${item.accent}90)` : 'none' }} />
             </motion.div>
             <div className="flex-1 min-w-0">
               <h3 className="text-[1.1rem] font-semibold text-black tracking-tight truncate mb-1.5 group-hover:opacity-80 transition-opacity duration-300">
@@ -446,10 +363,7 @@ const LiquidGlassSliderCard = ({
               <p className="text-[13px] text-black/50 leading-relaxed truncate group-hover:text-black/65 transition-colors duration-300">
                 {item.description}
               </p>
-              <span 
-                className="inline-flex items-center text-[11px] font-semibold tracking-[0.18em] uppercase mt-5 transition-all duration-500"
-                style={{ color: isHovered ? item.accent : 'rgba(0,0,0,0.4)' }}
-              >
+              <span className="inline-flex items-center text-[11px] font-semibold tracking-[0.18em] uppercase mt-5 text-black/40">
                 Learn more
                 <ArrowRight className="w-3 h-3 ml-1.5 group-hover:translate-x-1 transition-transform duration-400" />
               </span>
@@ -497,31 +411,21 @@ const TechnologySlider = () => {
     el.scrollBy({ left: direction === "left" ? -cardWidth * 1.2 : cardWidth * 1.2, behavior: "smooth" });
   };
 
-  const onMouseDown = (e: React.MouseEvent) => { 
-    setIsDragging(true); 
-    startX.current = e.clientX; 
-    scrollLeftPos.current = sliderRef.current?.scrollLeft ?? 0; 
-  };
+  const onMouseDown = (e: React.MouseEvent) => { setIsDragging(true); startX.current = e.clientX; scrollLeftPos.current = sliderRef.current?.scrollLeft ?? 0; };
   const onMouseUp = () => setIsDragging(false);
-  const onMouseMove = (e: React.MouseEvent) => { 
-    if (!isDragging || !sliderRef.current) return; 
-    sliderRef.current.scrollLeft = scrollLeftPos.current - (e.clientX - startX.current); 
-  };
+  const onMouseMove = (e: React.MouseEvent) => { if (!isDragging || !sliderRef.current) return; sliderRef.current.scrollLeft = scrollLeftPos.current - (e.clientX - startX.current); };
 
   return (
     <section className="py-24 lg:py-32 px-4 lg:px-8 bg-[#f5f5f7] border-t border-black/[0.04]">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-end justify-between mb-12">
           <div>
-            <p className="text-[11px] font-semibold tracking-[0.35em] text-black/40 uppercase mb-4">Explore more</p>
+            <p className="text-[11px] font-semibold tracking-[0.35em] text-black/50 uppercase mb-4">Explore more</p>
             <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-[-0.025em] text-black leading-tight">Dive into the stack</h2>
           </div>
           <div className="hidden sm:flex gap-2.5">
             {(["left", "right"] as const).map(dir => (
-              <button 
-                key={dir} 
-                onClick={() => scroll(dir)} 
-                disabled={dir === "left" ? !canScrollLeft : !canScrollRight}
+              <button key={dir} onClick={() => scroll(dir)} disabled={dir === "left" ? !canScrollLeft : !canScrollRight}
                 className="w-9 h-9 rounded-full bg-black/[0.05] border border-black/[0.08] flex items-center justify-center disabled:opacity-25 hover:bg-black/10 transition-all duration-300"
                 aria-label={`Scroll ${dir}`}
               >
@@ -530,13 +434,10 @@ const TechnologySlider = () => {
             ))}
           </div>
         </div>
-        <div 
-          ref={sliderRef} 
+        <div
+          ref={sliderRef}
           className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar px-1 pb-2"
-          onMouseDown={onMouseDown} 
-          onMouseUp={onMouseUp} 
-          onMouseLeave={onMouseUp} 
-          onMouseMove={onMouseMove}
+          onMouseDown={onMouseDown} onMouseUp={onMouseUp} onMouseLeave={onMouseUp} onMouseMove={onMouseMove}
         >
           {sliderItems.map((item, index) => (
             <LiquidGlassSliderCard key={item.id} item={item} index={index} />
@@ -561,17 +462,18 @@ const Footer = () => (
           { title: "Explore", links: [{ href: "/#technologies", label: "Technologies" }, { href: "/self-university", label: "Self University" }, { href: "/#status", label: "Status" }] },
           { title: "kryosette", links: [{ href: "/manifesto", label: "Manifesto" }, { href: "/threat-model", label: "Threat Model" }, { href: "/warrant-canary", label: "Warrant Canary" }] },
           { title: "Contact", links: [{ href: "mailto:contact@kryosette.net", label: "Email (PGP)" }, { href: "/assets/pgp-key.asc", label: "PGP Key" }, { href: "http://kryosettexxxxxxxx.onion", label: ".onion mirror", external: true }] },
-          { title: "Legal", links: [{ href: "/privacy", label: "Privacy Policy" }, { href: "/terms", label: "Terms of Use" }] }
+          { title: "Legal", links: [{ href: "/privacy", label: "Privacy Policy" }, { href: "/terms", label: "Terms of Use" }] },
         ].map(col => (
           <div key={col.title}>
             <h4 className="text-black text-[13px] font-semibold mb-3">{col.title}</h4>
             <ul className="space-y-2">
               {col.links.map(link => (
                 <li key={link.label}>
-                  {"external" in link && link.external 
-                    ? <a href={link.href} target="_blank" rel="noopener noreferrer" className="hover:text-black transition-colors duration-200">{link.label}</a> 
-                    : <Link href={link.href} className="hover:text-black transition-colors duration-200">{link.label}</Link>
-                  }
+                  {"external" in link && link.external ? (
+                    <a href={link.href} target="_blank" rel="noopener noreferrer" className="hover:text-black transition-colors duration-200">{link.label}</a>
+                  ) : (
+                    <Link href={link.href} className="hover:text-black transition-colors duration-200">{link.label}</Link>
+                  )}
                 </li>
               ))}
               {col.title === "Legal" && <li><span className="cursor-default">© 2026 kryosette</span></li>}
@@ -597,9 +499,9 @@ export default function Home() {
 
   return (
     <div ref={containerRef} className="relative bg-white text-black overflow-x-hidden">
-      <motion.div 
+      <motion.div
         className="fixed top-0 left-0 right-0 h-[1.5px] z-50 origin-left"
-        style={{ scaleX: progressBarScale, background: "linear-gradient(90deg, rgba(79,126,255,0.6), rgba(168,85,247,0.6), rgba(244,63,142,0.6))" }} 
+        style={{ scaleX: progressBarScale, background: "linear-gradient(90deg, rgba(79,126,255,0.6), rgba(168,85,247,0.6), rgba(244,63,142,0.6))" }}
       />
 
       {/* Hero */}
@@ -608,7 +510,7 @@ export default function Home() {
         <div className="w-full max-w-6xl mx-auto relative z-10">
           <div className="max-w-3xl">
             <FadeUp delay={0.05}>
-              <p className="text-[11px] font-semibold tracking-[0.38em] text-black/40 uppercase mb-10">Desktop only · Linux x86 · C/ASM core</p>
+              <p className="text-[11px] font-semibold tracking-[0.38em] text-black/50 uppercase mb-10">Desktop only · Linux x86 · C/ASM core</p>
             </FadeUp>
             <FadeUp delay={0.12}>
               <h1 className="text-[4.5rem] sm:text-[7rem] lg:text-[10rem] xl:text-[12rem] font-extrabold tracking-[-0.035em] leading-[0.82] text-black mb-10 -translate-x-2">
@@ -620,7 +522,7 @@ export default function Home() {
               </h1>
             </FadeUp>
             <FadeUp delay={0.25}>
-              <p className="text-xl sm:text-2xl lg:text-[1.65rem] font-light text-black/60 max-w-2xl leading-relaxed mb-12 tracking-[-0.01em]">
+              <p className="text-xl sm:text-2xl lg:text-[1.65rem] font-light text-black/70 max-w-2xl leading-relaxed mb-12 tracking-[-0.01em]">
                 A social network built from the ground up for security, resilience, and true ownership.
               </p>
             </FadeUp>
@@ -630,7 +532,7 @@ export default function Home() {
                   <span>Discover the tech</span>
                   <ArrowRight className="w-4 h-4 ml-2.5 group-hover:translate-x-0.5 transition-transform duration-400" />
                 </Link>
-                <Link href="/self-university" className="group inline-flex items-center justify-center px-8 py-3.5 text-[13px] font-semibold tracking-[0.02em] text-black bg-white/60 backdrop-blur-sm border border-black/12 rounded-full hover:bg-white/80 hover:border-black/20 transition-all duration-400 shadow-sm">
+                <Link href="/self-university" className="group inline-flex items-center justify-center px-8 py-3.5 text-[13px] font-semibold tracking-[0.02em] text-black/80 bg-white/60 backdrop-blur-sm border border-black/12 rounded-full hover:bg-white/80 hover:border-black/20 transition-all duration-400 shadow-sm">
                   <span>Self University</span>
                   <ArrowRight className="w-4 h-4 ml-2.5 group-hover:translate-x-0.5 transition-transform duration-400" />
                 </Link>
@@ -638,18 +540,13 @@ export default function Home() {
             </FadeUp>
           </div>
         </div>
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10">
-          <motion.div animate={{ y: [0, 7, 0] }} transition={{ repeat: Infinity, duration: 2.8, ease: "easeInOut" }} className="flex flex-col items-center gap-2">
-            <div className="w-[1px] h-8 bg-gradient-to-b from-black/20 to-transparent" />
-          </motion.div>
-        </div>
       </section>
 
-      {/* Tech Grid — Core Systems with Liquid Glass Cards */}
+      {/* Tech Grid */}
       <section id="tech-stack" className="py-32 lg:py-40 px-6 lg:px-16 bg-white">
         <div className="max-w-7xl mx-auto">
           <FadeUp className="mb-20">
-            <p className="text-[11px] font-semibold tracking-[0.38em] text-black/35 uppercase mb-5">Technology</p>
+            <p className="text-[11px] font-semibold tracking-[0.38em] text-black/40 uppercase mb-5">Technology</p>
             <h2 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-[-0.03em] text-black leading-tight">Core systems</h2>
           </FadeUp>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -664,20 +561,12 @@ export default function Home() {
       <section className="py-32 lg:py-40 px-6 lg:px-16 bg-[#f5f5f7]">
         <div className="max-w-6xl mx-auto">
           <FadeUp className="mb-16 text-center">
-            <p className="text-[11px] font-semibold tracking-[0.38em] text-black/35 uppercase mb-5">Preview</p>
+            <p className="text-[11px] font-semibold tracking-[0.38em] text-black/40 uppercase mb-5">Preview</p>
             <h2 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-[-0.03em] text-black leading-tight">See it in action</h2>
           </FadeUp>
           <FadeUp delay={0.1}>
             <div className="bg-white border border-black/[0.05] rounded-3xl p-3 sm:p-5 overflow-hidden shadow-2xl shadow-black/[0.06]">
-              <Image 
-                src="https://github.com/user-attachments/assets/93610fa8-71f6-448a-85c4-08d9f96ab8f0" 
-                alt="kryosette preview interface" 
-                width={2940} 
-                height={1786} 
-                className="w-full h-auto rounded-2xl" 
-                priority 
-                unoptimized 
-              />
+              <Image src="https://github.com/user-attachments/assets/93610fa8-71f6-448a-85c4-08d9f96ab8f0" alt="kryosette preview interface" width={2940} height={1786} className="w-full h-auto rounded-2xl" priority unoptimized />
             </div>
             <p className="text-center text-[11px] font-semibold tracking-[0.2em] text-black/30 mt-6 uppercase">Early preview · work in progress</p>
           </FadeUp>
@@ -688,21 +577,19 @@ export default function Home() {
       <section className="py-32 lg:py-40 px-6 lg:px-16 bg-white">
         <div className="max-w-5xl mx-auto">
           <FadeUp className="mb-20 text-center">
-            <p className="text-[11px] font-semibold tracking-[0.38em] text-black/35 uppercase mb-5">Progress</p>
+            <p className="text-[11px] font-semibold tracking-[0.38em] text-black/40 uppercase mb-5">Progress</p>
             <h2 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-[-0.03em] text-black leading-tight">Current Status</h2>
           </FadeUp>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FadeUp delay={0.1}>
               <div className="h-full bg-[#f9f9fb] border border-black/[0.05] rounded-3xl p-8 sm:p-10 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500">
                 <h3 className="text-[1.05rem] font-bold tracking-[-0.015em] mb-8 flex items-center gap-3 text-black">
-                  <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
-                  Implemented
+                  <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" /> Implemented
                 </h3>
                 <ul className="space-y-3.5">
                   {implemented.map((item, i) => (
                     <li key={i} className="text-[13px] font-light text-black/65 flex items-start gap-3">
-                      <span className="w-1 h-1 rounded-full bg-green-400/60 mt-2 shrink-0" />
-                      {item}
+                      <span className="w-1 h-1 rounded-full bg-green-400/60 mt-2 shrink-0" /> {item}
                     </li>
                   ))}
                 </ul>
@@ -711,14 +598,12 @@ export default function Home() {
             <FadeUp delay={0.2}>
               <div className="h-full bg-[#f9f9fb] border border-black/[0.05] rounded-3xl p-8 sm:p-10 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500">
                 <h3 className="text-[1.05rem] font-bold tracking-[-0.015em] mb-8 flex items-center gap-3 text-black">
-                  <span className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
-                  In Development
+                  <span className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(234,179,8,0.5)]" /> In Development
                 </h3>
                 <ul className="space-y-3.5">
                   {inDevelopment.map((item, i) => (
                     <li key={i} className="text-[13px] font-light text-black/65 flex items-start gap-3">
-                      <span className="w-1 h-1 rounded-full bg-yellow-400/60 mt-2 shrink-0" />
-                      {item}
+                      <span className="w-1 h-1 rounded-full bg-yellow-400/60 mt-2 shrink-0" /> {item}
                     </li>
                   ))}
                 </ul>
@@ -738,7 +623,7 @@ export default function Home() {
             <blockquote className="text-2xl sm:text-3xl lg:text-[2.1rem] font-light italic text-black/70 leading-relaxed tracking-[-0.015em]">
               &ldquo;There will be features that have never existed or have never been implemented in this way.&rdquo;
             </blockquote>
-            <p className="mt-8 text-[11px] font-semibold tracking-[0.38em] text-black/30 uppercase">kryosette</p>
+            <p className="mt-8 text-[11px] font-semibold tracking-[0.38em] text-black/40 uppercase">kryosette</p>
           </FadeUp>
         </div>
       </section>
@@ -751,7 +636,7 @@ export default function Home() {
               <span>Explore Self University</span>
               <ArrowRight className="w-4 h-4 ml-3 group-hover:translate-x-0.5 transition-transform duration-400" />
             </Link>
-            <p className="mt-8 text-[11px] font-semibold tracking-[0.38em] text-black/25 uppercase">Production only when ready</p>
+            <p className="mt-8 text-[11px] font-semibold tracking-[0.38em] text-black/40 uppercase">Production only when ready</p>
           </FadeUp>
         </div>
       </section>

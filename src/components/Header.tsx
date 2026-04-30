@@ -169,9 +169,9 @@ const Header = () => {
             <button className="hover:text-gray-600 transition-colors">
               <Search className="w-5 h-5" />
             </button>
-            <button className="hover:text-gray-600 transition-colors">
+            {/* <button className="hover:text-gray-600 transition-colors">
               <ShoppingBag className="w-5 h-5" />
-            </button>
+            </button> */}
           </div>
         </nav>
 

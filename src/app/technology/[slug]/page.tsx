@@ -3,13 +3,11 @@ import Link from "next/link";
 import { ArrowLeft, CheckCircle2, Clock, Wrench, FlaskConical } from "lucide-react";
 import { getTechnologyBySlug, getAllTechnologySlugs } from "@/lib/technologies";
 
-// Generate static paths at build time
 export async function generateStaticParams() {
   const slugs = getAllTechnologySlugs();
   return slugs.map((slug) => ({ slug }));
 }
 
-// Dynamic metadata for SEO
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const tech = getTechnologyBySlug(params.slug);
   if (!tech) return { title: "Technology Not Found" };
@@ -54,7 +52,8 @@ export default function TechnologyPage({ params }: { params: { slug: string } })
   const StatusBadge = statusConfig[tech.status];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pt-14">
+      {/* ⬆ добавлен pt-14 – отступ под фиксированную шапку */}
       {/* Back navigation */}
       <div className="max-w-5xl mx-auto px-4 pt-8 pb-4">
         <Link

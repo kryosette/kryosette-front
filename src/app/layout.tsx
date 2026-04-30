@@ -20,9 +20,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} relative`}>
-        {/* Точки на весь экран */}
-        
- <DotsBackground />
         <Header />
         {/* Основной контент с белым фоном */}
         <main className="relative z-10 bg-white min-h-screen">{children}</main>
