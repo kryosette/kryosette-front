@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Warrant Canary – kryosette",
   description: "Our public statement regarding secret government requests.",
 };

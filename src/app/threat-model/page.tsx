@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Threat Model – kryosette",
   description: "What kryosette protects against and what it does not.",
 };

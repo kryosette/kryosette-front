@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import type { Metadata } from "next"; 
 import { ArrowLeft, CheckCircle2, Clock, Wrench, FlaskConical, Info } from "lucide-react";
 import { getTechnologyBySlug, getAllTechnologySlugs } from "@/lib/technologies";
 
@@ -8,8 +9,9 @@ export async function generateStaticParams() {
   return slugs.map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const tech = getTechnologyBySlug(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const tech = getTechnologyBySlug(slug);
   if (!tech) return { title: "Technology Not Found" };
   return {
     title: `${tech.title} – kryosette`,
@@ -17,8 +19,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default function TechnologyPage({ params }: { params: { slug: string } }) {
-  const tech = getTechnologyBySlug(params.slug);
+export default async function TechnologyPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const tech = getTechnologyBySlug(slug);
 
   if (!tech) {
     notFound();

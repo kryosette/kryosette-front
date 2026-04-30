@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Manifesto – kryosette",
   description: "The principles and vision behind kryosette.",
 };
