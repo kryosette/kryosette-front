@@ -461,7 +461,9 @@ const Footer = () => (
         {[
           { title: "Explore", links: [{ href: "/#technologies", label: "Technologies" }, { href: "/self-university", label: "Self University" }, { href: "/#status", label: "Status" }] },
           { title: "kryosette", links: [{ href: "/manifesto", label: "Manifesto" }, { href: "/threat-model", label: "Threat Model" }, { href: "/warrant-canary", label: "Warrant Canary" }] },
-          { title: "Contact", links: [{ href: "mailto:contact@kryosette.net", label: "Email (PGP)" }, { href: "/assets/pgp-key.asc", label: "PGP Key" }, { href: "http://kryosettexxxxxxxx.onion", label: ".onion mirror", external: true }] },
+          { title: "Contact", links: [{ href: "mailto:kryosette@gmail.com", label: "Email" },
+    { href: "https://github.com/kryosette", label: "GitHub", external: true },
+    { href: "https://t.me/kryosette", label: "Telegram", external: true },] },
           { title: "Legal", links: [{ href: "/privacy", label: "Privacy Policy" }, { href: "/terms", label: "Terms of Use" }] },
         ].map(col => (
           <div key={col.title}>

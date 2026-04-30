@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "/Users/dimaeremin/kryosette-front/src/app/globals.css";
-import { AuthProvider } from "@/lib/auth-provider";
-import { ChatProvider } from "./(private)/home/chat/ChatContext";
 import Header from "@/components/Header";
-import DotsBackground from "@/components/DotsBackground";
 
 const inter = Inter({ subsets: ["latin"] });
 
