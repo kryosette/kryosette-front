@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, Clock, Wrench, FlaskConical } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Clock, Wrench, FlaskConical, Info } from "lucide-react";
 import { getTechnologyBySlug, getAllTechnologySlugs } from "@/lib/technologies";
 
 export async function generateStaticParams() {
@@ -45,20 +45,29 @@ export default function TechnologyPage({ params }: { params: { slug: string } })
     planned: {
       label: "Planned",
       icon: Clock,
-      color: "text-gray-600 bg-gray-50",
+      color: "text-black/70 bg-gray-50",
     },
   };
 
   const StatusBadge = statusConfig[tech.status];
 
   return (
-    <div className="min-h-screen bg-white pt-14">
-      {/* ⬆ добавлен pt-14 – отступ под фиксированную шапку */}
+    <div className="min-h-screen bg-white pt-12.5">
+      {/* Apple-style informational banner – сразу под шапкой, без отступов */}
+      <div className="bg-[#f5f5f7]">
+        <div className="max-w-5xl mx-auto px-4 py-2.5">
+          <p className="text-[12px] text-black/55 font-normal text-center whitespace-nowrap overflow-hidden text-ellipsis">
+            <Info className="inline-block w-3.5 h-3.5 mr-1.5 -mt-0.5 text-black/40" />
+            Information on this page is not fully accurate and reflects the current state of development. Specifications and features are subject to change as the project evolves.
+          </p>
+        </div>
+      </div>
+
       {/* Back navigation */}
       <div className="max-w-5xl mx-auto px-4 pt-8 pb-4">
         <Link
           href="/#technologies"
-          className="inline-flex items-center text-sm text-gray-500 hover:text-black transition-colors"
+          className="inline-flex items-center text-sm text-black/60 hover:text-black transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-1" />
           Back to technologies
@@ -69,9 +78,9 @@ export default function TechnologyPage({ params }: { params: { slug: string } })
       <section className="max-w-5xl mx-auto px-4 pb-16">
         <div className="flex items-center gap-4 mb-6">
           <div className="p-3 bg-gray-100 rounded-2xl">
-            <IconComponent className="w-8 h-8 text-gray-800" />
+            <IconComponent className="w-8 h-8 text-black/80" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-black">
             {tech.title}
           </h1>
         </div>
@@ -85,22 +94,22 @@ export default function TechnologyPage({ params }: { params: { slug: string } })
           </span>
         </div>
 
-        <p className="text-xl text-gray-600 mb-8 max-w-3xl">{tech.shortDescription}</p>
+        <p className="text-xl text-black/65 mb-8 max-w-3xl font-normal">{tech.shortDescription}</p>
 
-        <div className="prose prose-lg max-w-none text-gray-700">
-          <p>{tech.longDescription}</p>
+        <div className="prose prose-lg max-w-none text-black/75">
+          <p className="font-normal">{tech.longDescription}</p>
         </div>
       </section>
 
       {/* Features grid */}
       <section className="bg-gray-50 py-16">
         <div className="max-w-5xl mx-auto px-4">
-          <h2 className="text-2xl font-semibold mb-8">Key Features</h2>
+          <h2 className="text-2xl font-semibold mb-8 text-black">Key Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {tech.features.map((feature, idx) => (
               <div key={idx} className="flex items-start gap-3">
                 <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700">{feature}</span>
+                <span className="text-black/70 font-normal">{feature}</span>
               </div>
             ))}
           </div>
@@ -111,9 +120,9 @@ export default function TechnologyPage({ params }: { params: { slug: string } })
       {tech.technicalDetails && (
         <section className="py-16">
           <div className="max-w-5xl mx-auto px-4">
-            <h2 className="text-2xl font-semibold mb-6">Technical Details</h2>
+            <h2 className="text-2xl font-semibold mb-6 text-black">Technical Details</h2>
             <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
-              <p className="text-gray-700 leading-relaxed">{tech.technicalDetails}</p>
+              <p className="text-black/70 leading-relaxed font-normal">{tech.technicalDetails}</p>
             </div>
           </div>
         </section>
@@ -122,7 +131,7 @@ export default function TechnologyPage({ params }: { params: { slug: string } })
       {/* Navigation to other technologies */}
       <section className="py-16 border-t border-gray-100">
         <div className="max-w-5xl mx-auto px-4">
-          <h2 className="text-xl font-semibold mb-6">Explore other technologies</h2>
+          <h2 className="text-xl font-semibold mb-6 text-black">Explore other technologies</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {getAllTechnologySlugs()
               .filter((slug) => slug !== tech.slug)
@@ -136,9 +145,9 @@ export default function TechnologyPage({ params }: { params: { slug: string } })
                     href={`/technology/${slug}`}
                     className="group p-4 rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all"
                   >
-                    <OtherIcon className="w-6 h-6 text-gray-600 mb-2 group-hover:text-black" />
-                    <h3 className="font-medium text-gray-900">{otherTech.title}</h3>
-                    <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                    <OtherIcon className="w-6 h-6 text-black/60 mb-2 group-hover:text-black" />
+                    <h3 className="font-medium text-black">{otherTech.title}</h3>
+                    <p className="text-sm text-black/55 mt-1 line-clamp-2 font-normal">
                       {otherTech.shortDescription}
                     </p>
                   </Link>

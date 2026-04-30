@@ -33,11 +33,11 @@ export const technologies: Technology[] = [
       "Local‑first data storage",
       "Fine‑grained visibility controls",
       "No central servers to attack or censor",
-      "Peer‑to‑peer synchronization without intermediaries",
+      "Improved peer-to-peer",
     ],
     status: "prototype",
     technicalDetails:
-      "Built on a custom distributed hash table (DHT) with encrypted payloads. Data replication uses a novel quorum‑free consensus algorithm optimized for social graphs.",
+      "Technical details will be partially available later.",
   },
   {
     slug: "transcendent-bridge",
@@ -45,16 +45,16 @@ export const technologies: Technology[] = [
     shortDescription: "Extends beyond L2 – a new network layer.",
     icon: Network,
     longDescription:
-      "The Transcendent Bridge is a proprietary network extension that operates across all OSI layers, not just L2. It allows kryosette to establish direct, secure channels even in hostile network environments, bypassing DPI and other interference techniques.",
+      "The Transcendent Bridge is a proprietary network extension that operates across all OSI layers, not just L2. It allows us to establish direct, secure channels even in hostile network environments, bypassing DPI and other interference techniques.",
     features: [
       "Cross‑layer packet manipulation",
       "Bypasses deep packet inspection",
       "Dynamic routing around censorship",
       "End‑to‑end encrypted at bridge level",
     ],
-    status: "prototype",
+    status: "in-development",
     technicalDetails:
-      "The bridge uses a custom frame encapsulation protocol that can masquerade as benign traffic (e.g., DNS over HTTPS) while carrying kryosette data. The full specification will be published after security audits.",
+      "Technical details will be partially available later.",
   },
   {
     slug: "security-scanners",
@@ -67,9 +67,9 @@ export const technologies: Technology[] = [
       "Heuristic analysis of network patterns",
       "Memory integrity verification",
       "Encrypted traffic anomaly detection",
-      "Zero‑day exploit mitigation",
+      "Zero‑day exploit mitigation (partially)",
     ],
-    status: "implemented",
+    status: "in-development",
     technicalDetails:
       "Scanners are written in hand‑optimized C and ASM for minimal overhead. They operate in kernel space with a custom security module for Linux.",
   },
@@ -79,16 +79,16 @@ export const technologies: Technology[] = [
     shortDescription: "Anonymous, multi‑layered communication.",
     icon: Lock,
     longDescription:
-      "kryosette implements its own onion routing protocol, independent of Tor. It provides stronger anonymity guarantees and is optimized for the social network's traffic patterns. Nodes are selected based on trust and performance metrics unique to the kryosette ecosystem.",
+      "We are developing our own onion routing protocol, independent of Tor. It provides stronger anonymity guarantees and is optimized for the social network's traffic patterns. Nodes are selected based on trust and performance metrics unique to our ecosystem.",
     features: [
       "Multi‑hop encryption",
       "Perfect forward secrecy",
       "Resistant to traffic analysis",
       "Integrated with Transcendent Bridge",
     ],
-    status: "implemented",
+    status: "in-development",
     technicalDetails:
-      "Uses a modified version of the Sphinx packet format with additional padding to thwart timing attacks. Path selection algorithm avoids common exit nodes and employs a reputation system.",
+      "Technical details will be partially available later.",
   },
   {
     slug: "in-memory-db",
@@ -103,27 +103,27 @@ export const technologies: Technology[] = [
       "Snapshotting with zero downtime",
       "Built‑in checksum verification",
     ],
-    status: "prototype",
+    status: "in-development",
     technicalDetails:
       "Written in C with a custom memory allocator to prevent fragmentation. Uses AES‑256‑GCM for encryption and BLAKE3 for checksums.",
   },
-  {
-    slug: "rpki-validator",
-    title: "RPKI Validator",
-    shortDescription: "Secure BGP route origin validation.",
-    icon: Shield,
-    longDescription:
-      "An integrated Resource Public Key Infrastructure validator that ensures the kryosette network only communicates with legitimate peers. It prevents BGP hijacking and route leaks, adding an extra layer of trust to the underlying internet routing.",
-    features: [
-      "Real‑time ROA validation",
-      "Automatic cache management",
-      "Alerts on suspicious route changes",
-      "Integration with local routing table",
-    ],
-    status: "in-development",
-    technicalDetails:
-      "Will implement RFC 8210 (RPKI‑to‑Router protocol) with a custom lightweight validator written in Rust for safety and performance.",
-  },
+//   {
+//     slug: "rpki-validator",
+//     title: "RPKI Validator",
+//     shortDescription: "Secure BGP route origin validation.",
+//     icon: Shield,
+//     longDescription:
+//       "An integrated Resource Public Key Infrastructure validator that ensures the kryosette network only communicates with legitimate peers. It prevents BGP hijacking and route leaks, adding an extra layer of trust to the underlying internet routing.",
+//     features: [
+//       "Real‑time ROA validation",
+//       "Automatic cache management",
+//       "Alerts on suspicious route changes",
+//       "Integration with local routing table",
+//     ],
+//     status: "in-development",
+//     technicalDetails:
+//       "Will implement RFC 8210 (RPKI‑to‑Router protocol) with a custom lightweight validator written in Rust for safety and performance.",
+//   },
   {
     slug: "transparent-editor",
     title: "Transparent Editor",
@@ -139,7 +139,7 @@ export const technologies: Technology[] = [
     ],
     status: "in-development",
     technicalDetails:
-      "Built with a reactive UI framework (custom) that subscribes to a high‑performance event bus from the core daemon.",
+      "Technical details will be partially available later.",
   },
   {
     slug: "truth-engine",
@@ -150,13 +150,13 @@ export const technologies: Technology[] = [
       "A local, offline analyzer that uses a proprietary truth‑inference engine to flag potential misinformation, manipulated media, or coordinated inauthentic behavior. It runs entirely on your machine and never shares your data.",
     features: [
       "On‑device machine learning models",
-      "Image forensics and deepfake detection",
+      "Real-time detection and prevention of violence, self-harm, and other harmful activities",
       "Network graph analysis for bot detection",
       "Transparent scoring and explanations",
     ],
     status: "planned",
     technicalDetails:
-      "Models will be trained on public datasets and distributed as encrypted blobs. Inference uses CPU‑optimized ONNX runtime with quantization.",
+      "Technical details will be partially available later.",
   },
 ];
 

@@ -30,13 +30,13 @@ const techStack = [
 
 const implemented = [
   "User profile system", "Friend adding mechanism", "Posts with comments & polls",
-  "Public / private chats", "Transcendent bridge (prototype)", "Security scanners & detectors",
-  "Proprietary onion routing", "In‑memory DB (base)",
+  "Public / private chats", "Transcendent bridge (partially)", "Security scanners & detectors (partially)",
+  "Proprietary onion routing (partially)", "In‑memory DB (base)",
 ];
 
 const inDevelopment = [
-  "RPKI validator", "Additional network security tools", "Secure private chats",
-  "Transparent Editor", "Translator", "Replication & more",
+  "Kryo arch", "Additional network security tools", "Secure private chats",
+  "Transparent Editor", "Translator & editor", "Replication & more",
   "Local truth‑engine analyzer", "Advanced DPI bypass",
 ];
 
