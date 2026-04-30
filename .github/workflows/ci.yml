@@ -26,12 +26,9 @@ jobs:
 
       - name: 🔍 Lint
         run: npm run lint
-        # если у тебя нет скрипта lint — добавь в package.json:
-        # "lint": "next lint"
 
       - name: ✅ TypeScript check
         run: npx tsc --noEmit
-        # проверяет типы без генерации файлов
 
       - name: 🏗️ Build
         run: npm run build
