@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: "kryosette",
   description:
     "A social network built from the ground up for security, resilience, and true ownership.",
+  icons: {
+    icon: "/favicon.ico"
+  }
 };
 
 export default function RootLayout({
