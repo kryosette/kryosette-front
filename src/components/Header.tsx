@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { Search, ChevronDown } from "lucide-react";
+import { Search, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
@@ -42,6 +42,29 @@ const dropdownColumns = [
       { href: "/#roadmap", label: "Development Status" },
     ],
   },
+];
+
+// All searchable items
+const allSearchItems = [
+  // Pages
+  { href: "/", label: "Home", category: "Pages" },
+  { href: "/#technologies", label: "Technologies", category: "Pages" },
+  { href: "/self-university", label: "Self University", category: "Pages" },
+  { href: "/#roadmap", label: "Roadmap", category: "Pages" },
+  { href: "/manifesto", label: "Manifesto", category: "Pages" },
+  { href: "/threat-model", label: "Threat Model", category: "Pages" },
+  { href: "/warrant-canary", label: "Warrant Canary", category: "Pages" },
+  { href: "/privacy", label: "Privacy Policy", category: "Pages" },
+  { href: "/terms", label: "Terms of Use", category: "Pages" },
+  // Technologies
+  { href: "/technology/kryo-arch", label: "Kryo Arch", category: "Technology" },
+  { href: "/technology/transcendent-bridge", label: "Transcendent Bridge", category: "Technology" },
+  { href: "/technology/in-memory-db", label: "In‑Memory DB", category: "Technology" },
+  { href: "/technology/security-scanners", label: "Security Scanners", category: "Technology" },
+  { href: "/technology/onion-routing", label: "Onion Routing", category: "Technology" },
+  { href: "/technology/rpki-validator", label: "RPKI Validator", category: "Technology" },
+  { href: "/technology/transparent-editor", label: "Transparent Editor", category: "Technology" },
+  { href: "/technology/truth-engine", label: "Truth Engine", category: "Technology" },
 ];
 
 // Stagger container variant
@@ -91,7 +114,10 @@ const itemVariants = {
 
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Close on outside click
   useEffect(() => {
@@ -107,15 +133,37 @@ const Header = () => {
   // Close on Escape
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsDropdownOpen(false);
+      if (e.key === "Escape") {
+        setIsDropdownOpen(false);
+        setIsSearchOpen(false);
+      }
     };
     document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
   }, []);
 
+  // Focus search input when opened
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+    if (!isSearchOpen) {
+      setSearchQuery("");
+    }
+  }, [isSearchOpen]);
+
+  // Filtered search results
+  const filteredResults = searchQuery.trim()
+    ? allSearchItems.filter(
+        (item) =>
+          item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
+
   return (
     <>
-      {/* Full-page blur overlay */}
+      {/* Full-page blur overlay for dropdown */}
       <AnimatePresence>
         {isDropdownOpen && (
           <motion.div
@@ -126,6 +174,21 @@ const Header = () => {
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="fixed inset-0 top-12 z-40 bg-black/[0.08] backdrop-blur-[2px]"
             onClick={() => setIsDropdownOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Search modal overlay */}
+      <AnimatePresence>
+        {isSearchOpen && (
+          <motion.div
+            key="search-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm"
+            onClick={() => setIsSearchOpen(false)}
           />
         )}
       </AnimatePresence>
@@ -166,12 +229,12 @@ const Header = () => {
 
           {/* Icons */}
           <div className="flex items-center gap-4">
-            <button className="hover:text-gray-600 transition-colors">
+            <button
+              onClick={() => setIsSearchOpen(true)}
+              className="hover:text-gray-600 transition-colors"
+            >
               <Search className="w-5 h-5" />
             </button>
-            {/* <button className="hover:text-gray-600 transition-colors">
-              <ShoppingBag className="w-5 h-5" />
-            </button> */}
           </div>
         </nav>
 
@@ -221,6 +284,73 @@ const Header = () => {
           )}
         </AnimatePresence>
       </header>
+
+      {/* Search Modal */}
+      <AnimatePresence>
+        {isSearchOpen && (
+          <motion.div
+            key="search-modal"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4"
+          >
+            <div className="bg-white/95 backdrop-blur-xl border border-gray-200/60 rounded-2xl shadow-2xl shadow-black/10 w-full max-w-xl overflow-hidden">
+              {/* Search input */}
+              <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
+                <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder="Search technologies, pages..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1 text-base text-black placeholder:text-gray-400 bg-transparent outline-none"
+                />
+                <button
+                  onClick={() => setIsSearchOpen(false)}
+                  className="text-gray-400 hover:text-black transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Results */}
+              <div className="max-h-80 overflow-y-auto p-3">
+                {searchQuery.trim() === "" ? (
+                  <p className="text-sm text-gray-400 text-center py-6">
+                    Start typing to search...
+                  </p>
+                ) : filteredResults.length === 0 ? (
+                  <p className="text-sm text-gray-400 text-center py-6">
+                    No results found
+                  </p>
+                ) : (
+                  <ul className="space-y-1">
+                    {filteredResults.map((item) => (
+                      <li key={item.href + item.label}>
+                        <Link
+                          href={item.href}
+                          onClick={() => setIsSearchOpen(false)}
+                          className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors"
+                        >
+                          <span className="text-sm font-medium text-black">
+                            {item.label}
+                          </span>
+                          <span className="text-[11px] text-gray-400 uppercase tracking-wider">
+                            {item.category}
+                          </span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
