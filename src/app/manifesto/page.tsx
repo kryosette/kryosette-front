@@ -23,7 +23,7 @@ export default function ManifestoPage() {
         </h1>
 
         <div className="prose prose-neutral max-w-none text-black/75 space-y-6">
-          <p className="text-xl font-medium text-black/80">
+          {/* <p className="text-xl font-medium text-black/80">
             We believe in a digital world where individuals – not corporations, not governments –
             control their own data, identity, and communication.
           </p>
@@ -79,7 +79,7 @@ export default function ManifestoPage() {
 
           <p className="text-lg italic text-black/60 pt-4">
             — The kryosette team
-          </p>
+          </p>  */}
         </div>
       </div>
     </div>

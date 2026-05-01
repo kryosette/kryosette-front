@@ -24,7 +24,7 @@ export default function ThreatModelPage() {
         <p className="text-sm text-black/50 mb-10">Last updated: May 2026</p>
 
         <div className="prose prose-neutral max-w-none text-black/75 space-y-6">
-          <section>
+          {/* <section>
             <h2 className="text-xl font-semibold text-black">What kryosette protects against</h2>
             <ul className="list-disc pl-5 space-y-2">
               <li><strong>Mass surveillance:</strong> No central server collects metadata or message contents.</li>
@@ -55,7 +55,7 @@ export default function ThreatModelPage() {
               guides every feature we build – if a potential addition weakens the guarantees
               above, we won’t implement it.
             </p>
-          </section>
+          </section> */}
         </div>
       </div>
     </div>

@@ -26,7 +26,7 @@ export default function WarrantCanaryPage() {
         <p className="text-sm text-black/50 mb-10">Last updated: {currentDate}</p>
 
         <div className="prose prose-neutral max-w-none text-black/75 space-y-6">
-          <p>
+          {/* <p>
             This page serves as a public declaration that the developers of kryosette have not
             received certain types of secret government requests. This is known as a “warrant
             canary.” If this page is removed or stops being updated, you may infer that we have
@@ -68,7 +68,7 @@ export default function WarrantCanaryPage() {
 
           <p className="italic text-black/50">
             “If a canary dies, you must leave the coal mine.”
-          </p>
+          </p> */}
         </div>
       </div>
     </div>
