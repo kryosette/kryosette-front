@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/#technologies", label: "Technologies" },
+  { href: "/docs", label: "Docs" }, 
   { href: "/self-university", label: "Self University" },
 ];
 
@@ -193,7 +193,13 @@ const Header = () => {
         )}
       </AnimatePresence>
 
-      <header className="fixed top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-200/50">
+      <header className="fixed top-0 z-50 w-full bg-white/30 backdrop-blur-xl">
+       <div 
+  className="absolute bottom-0 left-0 right-0 h-[1px]"
+  style={{
+    background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.08) 30%, transparent 70%)',
+  }}
+/>
         <nav className="mx-auto flex h-12 max-w-5xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* Logo */}
           <Link href="/" className="text-xl font-semibold tracking-tight">

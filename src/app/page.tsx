@@ -491,6 +491,147 @@ const Footer = () => (
   </footer>
 );
 
+const BlogSlider = () => {
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const [posts, setPosts] = useState<Array<{
+    title: string;
+    slug: string;
+    date: string;
+    summary: string;
+    path: string;
+    images?: string[];
+  }>>([]);
+  const [loading, setLoading] = useState(true);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
+  const startX = useRef(0);
+  const scrollLeftPos = useRef(0);
+
+  // Загружаем посты
+  useEffect(() => {
+    fetch('https://selfuniversity.vercel.app/api/posts')
+      .then(res => res.json())
+      .then(data => {
+        // Только английские посты, убираем дубликаты по slug
+        const enPosts = data
+          .filter((p: any) => p.language === 'en')
+          .filter((p: any, i: number, arr: any[]) => arr.findIndex((x: any) => x.slug === p.slug) === i);
+        setPosts(enPosts);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  const checkScroll = useCallback(() => {
+    const el = sliderRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 10);
+    setCanScrollRight(el.scrollLeft + el.offsetWidth < el.scrollWidth - 10);
+  }, []);
+
+  useEffect(() => {
+    const el = sliderRef.current;
+    if (!el) return;
+    checkScroll();
+    el.addEventListener("scroll", checkScroll, { passive: true });
+    return () => el.removeEventListener("scroll", checkScroll);
+  }, [checkScroll]);
+
+  const scroll = (direction: "left" | "right") => {
+    const el = sliderRef.current;
+    if (!el) return;
+    const cardWidth = 500 + 20;
+    el.scrollBy({ left: direction === "left" ? -cardWidth * 1.2 : cardWidth * 1.2, behavior: "smooth" });
+  };
+
+  const onMouseDown = (e: React.MouseEvent) => { setIsDragging(true); startX.current = e.clientX; scrollLeftPos.current = sliderRef.current?.scrollLeft ?? 0; };
+  const onMouseUp = () => setIsDragging(false);
+  const onMouseMove = (e: React.MouseEvent) => { if (!isDragging || !sliderRef.current) return; sliderRef.current.scrollLeft = scrollLeftPos.current - (e.clientX - startX.current); };
+
+  return (
+    <section className="py-24 lg:py-32 px-4 lg:px-8 bg-[#f5f5f7] border-t border-black/[0.04]">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-end justify-between mb-12">
+          <div>
+            <p className="text-[11px] font-semibold tracking-[0.35em] text-black/50 uppercase mb-4">
+              From Self University
+            </p>
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-[-0.025em] text-black leading-tight">
+              Latest articles
+            </h2>
+          </div>
+          <div className="hidden sm:flex gap-2.5">
+            {(["left", "right"] as const).map(dir => (
+              <button key={dir} onClick={() => scroll(dir)} disabled={dir === "left" ? !canScrollLeft : !canScrollRight}
+                className="w-9 h-9 rounded-full bg-black/[0.05] border border-black/[0.08] flex items-center justify-center disabled:opacity-25 hover:bg-black/10 transition-all duration-300"
+                aria-label={`Scroll ${dir}`}
+              >
+                {dir === "left" ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="flex gap-4">
+            {[1,2,3].map(i => (
+              <div key={i} className="snap-start shrink-0 bg-white/50 rounded-2xl animate-pulse" style={{ width: 480, height: 290 }} />
+            ))}
+          </div>
+        ) : (
+          <div
+            ref={sliderRef}
+            className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar px-1 pb-2"
+            onMouseDown={onMouseDown} onMouseUp={onMouseUp} onMouseLeave={onMouseUp} onMouseMove={onMouseMove}
+          >
+            {posts.map((post, index) => (
+              <a
+                key={post.slug}
+                href={`https://selfuniversity.vercel.app/${post.path}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="snap-start shrink-0 group relative block"
+                style={{ width: 480, height: 290 }}
+              >
+                <div className="w-full h-full bg-black/[0.015] backdrop-blur-sm border border-black/[0.05] rounded-2xl p-7 hover:bg-white hover:border-black/10 hover:shadow-xl hover:shadow-black/[0.05] transition-all duration-500 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="w-10 h-10 rounded-xl bg-black/5 flex items-center justify-center">
+                        <Edit3 className="w-5 h-5 text-black/40" />
+                      </div>
+                      <span className="text-[10px] font-semibold tracking-[0.22em] text-black/40 uppercase">
+                        Self University
+                      </span>
+                    </div>
+                    <h3 className="text-[1.1rem] font-semibold text-black tracking-tight line-clamp-2 mb-2 group-hover:opacity-80 transition-opacity duration-300">
+                      {post.title}
+                    </h3>
+                    <p className="text-[13px] text-black/50 leading-relaxed line-clamp-2">
+                      {post.summary || 'Read the full article on Self University'}
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between pt-5 border-t border-black/[0.05]">
+                    <span className="text-[11px] font-semibold tracking-[0.18em] text-black/40 uppercase">
+                      {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </span>
+                    <span className="inline-flex items-center text-[11px] font-semibold tracking-[0.18em] text-black hover:text-black/70 transition-colors uppercase">
+                      Read more
+                      <ArrowRight className="w-3 h-3 ml-1.5 group-hover:translate-x-1 transition-transform duration-400" />
+                    </span>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
+
 // ------------------------------------------------------------------------------
 // Main Page
 // ------------------------------------------------------------------------------
@@ -643,7 +784,7 @@ export default function Home() {
         </div>
       </section>
 
-      <TechnologySlider />
+      <BlogSlider />
       <Footer />
     </div>
   );
