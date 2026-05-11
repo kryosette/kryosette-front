@@ -19,12 +19,11 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} relative`}>
+    <html lang="en" className="dark">
+      <body className={`${inter.className} relative bg-black text-white antialiased`}>
         <Header />
         <Analytics />
-        {/* Основной контент с белым фоном */}
-        <main className="relative z-10 bg-white min-h-screen">{children}</main>
+        <main className="relative z-10 min-h-screen">{children}</main>
       </body>
     </html>
   );

@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
 body {
-  @apply text-black antialiased;
-  /* БОЛЬШЕ НЕТ bg-white */
+  @apply bg-black text-white antialiased;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 @utility no-scrollbar {
@@ -11,13 +14,4 @@ body {
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-.freeform-dots {
-  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
-  background-size: 24px 24px;
 }

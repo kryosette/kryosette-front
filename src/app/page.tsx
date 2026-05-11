@@ -68,18 +68,16 @@ const orbs = [
 
 const LiquidGlassBackground = () => (
   <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
-    {/* Base gradient */}
     <div
       className="absolute inset-0"
       style={{
         background:
-          "radial-gradient(ellipse at 30% 20%, rgba(79,126,255,0.06) 0%, transparent 60%), " +
-          "radial-gradient(ellipse at 80% 70%, rgba(168,85,247,0.05) 0%, transparent 55%), " +
-          "radial-gradient(ellipse at 10% 80%, rgba(6,182,212,0.05) 0%, transparent 50%), " +
-          "linear-gradient(180deg, #fafafe 0%, #f8f8ff 50%, #fafaff 100%)",
+          "radial-gradient(ellipse at 30% 20%, rgba(79,126,255,0.08) 0%, transparent 60%), " +
+          "radial-gradient(ellipse at 80% 70%, rgba(168,85,247,0.06) 0%, transparent 55%), " +
+          "radial-gradient(ellipse at 10% 80%, rgba(6,182,212,0.06) 0%, transparent 50%), " +
+          "linear-gradient(180deg, #0a0a0a 0%, #050510 50%, #0a0a0a 100%)",
       }}
     />
-    {/* Big animated orbs */}
     {orbs.map((orb, i) => (
       <motion.div
         key={i}
@@ -108,20 +106,18 @@ const LiquidGlassBackground = () => (
         }}
       />
     ))}
-    {/* Glass pane */}
     <div
       className="absolute inset-0"
       style={{
-        background: "linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.15) 100%)",
+        background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.05) 100%)",
         backdropFilter: "blur(0.5px)",
       }}
     />
-    {/* Transition to white at bottom */}
     <div
       className="absolute left-0 right-0 bottom-0"
       style={{
         height: "35%",
-        background: "linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.6) 40%, rgba(255,255,255,0.95) 75%, #ffffff 100%)",
+        background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0.8) 75%, #000000 100%)",
       }}
     />
   </div>
@@ -146,25 +142,23 @@ const LiquidGlassCard = ({ tech, index }: { tech: typeof techStack[0]; index: nu
           className="h-full relative rounded-[28px] p-[1px] aspect-[16/10] transition-all duration-700"
           style={{
             background: isHovered
-              ? `linear-gradient(135deg, ${tech.accent}60 0%, ${tech.accent}20 30%, rgba(255,255,255,0.2) 50%, ${tech.accent}20 70%, ${tech.accent}60 100%)`
-              : 'linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 100%)',
+              ? `linear-gradient(135deg, ${tech.accent}60 0%, ${tech.accent}20 30%, rgba(255,255,255,0.1) 50%, ${tech.accent}20 70%, ${tech.accent}60 100%)`
+              : 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%)',
             boxShadow: isHovered
               ? `0 0 0 1px ${tech.accent}15, 0 25px 50px -12px ${tech.accent}30, 0 0 80px ${tech.accent}15, inset 0 0 60px ${tech.accent}05`
-              : '0 0 0 1px rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.04)',
+              : '0 0 0 1px rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.3)',
           }}
         >
-          {/* Inner glass container */}
           <div
             className="h-full rounded-[27px] p-7 sm:p-8 relative overflow-hidden transition-all duration-700"
             style={{
               background: isHovered
-                ? `linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 50%, rgba(255,255,255,0.9) 100%)`
-                : 'linear-gradient(145deg, rgba(255,255,255,0.8) 0%, rgba(249,249,251,0.95) 100%)',
+                ? 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.06) 100%)'
+                : 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
               backdropFilter: 'blur(40px) saturate(180%)',
               WebkitBackdropFilter: 'blur(40px) saturate(180%)',
             }}
           >
-            {/* Glows */}
             <motion.div
               className="absolute -top-20 -left-20 w-60 h-60 rounded-full pointer-events-none"
               style={{
@@ -191,18 +185,17 @@ const LiquidGlassCard = ({ tech, index }: { tech: typeof techStack[0]; index: nu
             />
             <motion.div
               className="absolute top-0 left-0 right-0 h-[1px] pointer-events-none"
-              style={{ background: `linear-gradient(90deg, transparent 0%, ${tech.accent}30 20%, rgba(255,255,255,0.8) 50%, ${tech.accent}30 80%, transparent 100%)` }}
+              style={{ background: `linear-gradient(90deg, transparent 0%, ${tech.accent}30 20%, rgba(255,255,255,0.5) 50%, ${tech.accent}30 80%, transparent 100%)` }}
               animate={{ opacity: isHovered ? 1 : 0.3 }}
               transition={{ duration: 0.5 }}
             />
             <motion.div
               className="absolute top-2 left-4 right-4 h-16 rounded-full pointer-events-none"
-              style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.6) 0%, transparent 100%)', filter: 'blur(8px)' }}
-              animate={{ opacity: isHovered ? 0.8 : 0.4 }}
+              style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%)', filter: 'blur(8px)' }}
+              animate={{ opacity: isHovered ? 0.6 : 0.2 }}
               transition={{ duration: 0.5 }}
             />
 
-            {/* Content */}
             <div className="relative z-10 flex flex-col justify-between h-full">
               <div>
                 <div className="flex items-center gap-3 mb-6">
@@ -210,7 +203,7 @@ const LiquidGlassCard = ({ tech, index }: { tech: typeof techStack[0]; index: nu
                     className="w-11 h-11 rounded-2xl flex items-center justify-center relative overflow-hidden"
                     style={{
                       background: `linear-gradient(135deg, ${tech.accent}25 0%, ${tech.accent}10 100%)`,
-                      boxShadow: isHovered ? `0 0 20px ${tech.accent}40, inset 0 0 20px ${tech.accent}10` : `0 2px 8px ${tech.accent}15`,
+                      boxShadow: isHovered ? `0 0 20px ${tech.accent}40, inset 0 0 20px ${tech.accent}10` : 'none',
                       border: `1px solid ${tech.accent}30`,
                     }}
                     animate={{ scale: isHovered ? 1.08 : 1 }}
@@ -224,23 +217,23 @@ const LiquidGlassCard = ({ tech, index }: { tech: typeof techStack[0]; index: nu
                     />
                     <Icon className="w-5 h-5 relative z-10 transition-all duration-500" style={{ color: tech.accent, filter: isHovered ? `drop-shadow(0 0 8px ${tech.accent}80)` : 'none' }} />
                   </motion.div>
-                  <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-black/50">
+                  <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-white/50">
                     {tech.subtitle}
                   </span>
                 </div>
-                <h3 className="text-[1.3rem] sm:text-[1.5rem] font-bold tracking-[-0.02em] text-black mb-3 transition-opacity duration-400 group-hover:opacity-90">
+                <h3 className="text-[1.3rem] sm:text-[1.5rem] font-bold tracking-[-0.02em] text-white mb-3 transition-opacity duration-400 group-hover:opacity-90">
                   {tech.title}
                 </h3>
-                <p className="text-[14px] font-light text-black/55 leading-relaxed transition-colors duration-400 group-hover:text-black/70 max-w-md">
+                <p className="text-[14px] font-light text-white/50 leading-relaxed transition-colors duration-400 group-hover:text-white/70 max-w-md">
                   {tech.description}
                 </p>
               </div>
 
               <div
                 className="relative z-10 mt-auto pt-5 transition-colors duration-500"
-                style={{ borderTop: `1px solid ${isHovered ? `${tech.accent}25` : 'rgba(0,0,0,0.05)'}` }}
+                style={{ borderTop: `1px solid ${isHovered ? `${tech.accent}25` : 'rgba(255,255,255,0.06)'}` }}
               >
-                <span className="inline-flex items-center text-[11px] font-semibold tracking-[0.18em] uppercase text-black/40">
+                <span className="inline-flex items-center text-[11px] font-semibold tracking-[0.18em] uppercase text-white/40">
                   Learn more
                   <ArrowRight className="w-3 h-3 ml-1.5 group-hover:translate-x-1 transition-transform duration-400" />
                 </span>
@@ -301,19 +294,19 @@ const LiquidGlassSliderCard = ({ item, index }: { item: typeof sliderItems[0]; i
         className="w-full h-full relative rounded-[24px] p-[1px] transition-all duration-700"
         style={{
           background: isHovered
-            ? `linear-gradient(135deg, ${item.accent}50 0%, ${item.accent}15 35%, rgba(255,255,255,0.3) 50%, ${item.accent}15 65%, ${item.accent}50 100%)`
-            : 'linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 100%)',
+            ? `linear-gradient(135deg, ${item.accent}50 0%, ${item.accent}15 35%, rgba(255,255,255,0.1) 50%, ${item.accent}15 65%, ${item.accent}50 100%)`
+            : 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%)',
           boxShadow: isHovered
             ? `0 0 0 1px ${item.accent}20, 0 25px 60px -15px ${item.accent}35, 0 0 100px ${item.accent}15`
-            : '0 0 0 1px rgba(0,0,0,0.05), 0 4px 20px rgba(0,0,0,0.03)',
+            : '0 0 0 1px rgba(255,255,255,0.06), 0 4px 20px rgba(0,0,0,0.3)',
         }}
       >
         <div
           className="w-full h-full rounded-[23px] p-7 relative overflow-hidden transition-all duration-700"
           style={{
             background: isHovered
-              ? 'linear-gradient(145deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.92) 100%)'
-              : 'linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%)',
+              ? 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.06) 100%)'
+              : 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
             backdropFilter: 'blur(40px) saturate(180%)',
             WebkitBackdropFilter: 'blur(40px) saturate(180%)',
           }}
@@ -332,7 +325,7 @@ const LiquidGlassSliderCard = ({ item, index }: { item: typeof sliderItems[0]; i
           />
           <motion.div
             className="absolute top-0 left-0 right-0 h-[1px]"
-            style={{ background: `linear-gradient(90deg, transparent, ${item.accent}40, rgba(255,255,255,0.9), ${item.accent}40, transparent)` }}
+            style={{ background: `linear-gradient(90deg, transparent, ${item.accent}40, rgba(255,255,255,0.5), ${item.accent}40, transparent)` }}
             animate={{ opacity: isHovered ? 1 : 0.2 }}
             transition={{ duration: 0.5 }}
           />
@@ -357,18 +350,18 @@ const LiquidGlassSliderCard = ({ item, index }: { item: typeof sliderItems[0]; i
               <Icon className="w-7 h-7 relative z-10 transition-all duration-500" style={{ color: item.accent, filter: isHovered ? `drop-shadow(0 0 10px ${item.accent}90)` : 'none' }} />
             </motion.div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-[1.1rem] font-semibold text-black tracking-tight truncate mb-1.5 group-hover:opacity-80 transition-opacity duration-300">
+              <h3 className="text-[1.1rem] font-semibold text-white tracking-tight truncate mb-1.5 group-hover:opacity-80 transition-opacity duration-300">
                 {item.title}
               </h3>
-              <p className="text-[13px] text-black/50 leading-relaxed truncate group-hover:text-black/65 transition-colors duration-300">
+              <p className="text-[13px] text-white/40 leading-relaxed truncate group-hover:text-white/60 transition-colors duration-300">
                 {item.description}
               </p>
-              <span className="inline-flex items-center text-[11px] font-semibold tracking-[0.18em] uppercase mt-5 text-black/40">
+              <span className="inline-flex items-center text-[11px] font-semibold tracking-[0.18em] uppercase mt-5 text-white/30">
                 Learn more
                 <ArrowRight className="w-3 h-3 ml-1.5 group-hover:translate-x-1 transition-transform duration-400" />
               </span>
             </div>
-            <span className="absolute bottom-4 right-5 text-[4.5rem] font-extrabold text-black/[0.04] leading-none pointer-events-none select-none tabular-nums">
+            <span className="absolute bottom-4 right-5 text-[4.5rem] font-extrabold text-white/[0.03] leading-none pointer-events-none select-none tabular-nums">
               {String(index + 1).padStart(2, "0")}
             </span>
           </div>
@@ -416,17 +409,17 @@ const TechnologySlider = () => {
   const onMouseMove = (e: React.MouseEvent) => { if (!isDragging || !sliderRef.current) return; sliderRef.current.scrollLeft = scrollLeftPos.current - (e.clientX - startX.current); };
 
   return (
-    <section className="py-24 lg:py-32 px-4 lg:px-8 bg-[#f5f5f7] border-t border-black/[0.04]">
+    <section className="py-24 lg:py-32 px-4 lg:px-8 bg-[#1c1c1e] border-t border-white/5">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-end justify-between mb-12">
           <div>
-            <p className="text-[11px] font-semibold tracking-[0.35em] text-black/50 uppercase mb-4">Explore more</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-[-0.025em] text-black leading-tight">Dive into the stack</h2>
+            <p className="text-[11px] font-semibold tracking-[0.35em] text-white/50 uppercase mb-4">Explore more</p>
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-[-0.025em] text-white leading-tight">Dive into the stack</h2>
           </div>
           <div className="hidden sm:flex gap-2.5">
             {(["left", "right"] as const).map(dir => (
               <button key={dir} onClick={() => scroll(dir)} disabled={dir === "left" ? !canScrollLeft : !canScrollRight}
-                className="w-9 h-9 rounded-full bg-black/[0.05] border border-black/[0.08] flex items-center justify-center disabled:opacity-25 hover:bg-black/10 transition-all duration-300"
+                className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center disabled:opacity-25 hover:bg-white/10 transition-all duration-300"
                 aria-label={`Scroll ${dir}`}
               >
                 {dir === "left" ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
@@ -448,43 +441,76 @@ const TechnologySlider = () => {
   );
 };
 
-// ------------------------------------------------------------------------------
-// Footer
-// ------------------------------------------------------------------------------
 const Footer = () => (
-  <footer className="bg-[#f5f5f7] text-[#6e6e73] text-[12px] leading-normal py-10 px-6 lg:px-16 border-t border-black/[0.06]">
+  <footer className="bg-[#1c1c1e] text-[#6e6e73] text-[12px] leading-normal py-10 px-6 lg:px-16 border-t border-white/5">
     <div className="max-w-6xl mx-auto">
       <div className="mb-9 flex items-end">
-        <div className="text-2xl font-bold text-black tracking-tighter">kryosette</div>
+        <div className="text-2xl font-bold text-white tracking-tighter">kryosette</div>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-9">
         {[
-          { title: "Explore", links: [{ href: "/#technologies", label: "Technologies" }, { href: "/self-university", label: "Self University" }, { href: "/#status", label: "Status" }] },
-          { title: "kryosette", links: [{ href: "/manifesto", label: "Manifesto" }, { href: "/threat-model", label: "Threat Model" }, { href: "/warrant-canary", label: "Warrant Canary" }] },
-          { title: "Contact", links: [{ href: "mailto:kryosette@gmail.com", label: "Email" },
-    { href: "https://github.com/kryosette", label: "GitHub", external: true },
-    { href: "https://t.me/kryosette", label: "Telegram", external: true },] },
-          { title: "Legal", links: [{ href: "/privacy", label: "Privacy Policy" }, { href: "/terms", label: "Terms of Use" }] },
+          { 
+            title: "Explore", 
+            links: [
+              { href: "/#technologies", label: "Technologies" }, 
+              { href: "/self-university", label: "Self University" }, 
+              { href: "/bytegraph", label: "ByteGraph" },
+              { href: "/roadmap", label: "Roadmap" },
+              { href: "/changelog", label: "Changelog" },
+            ] 
+          },
+          { 
+            title: "Community", 
+            links: [
+              { href: "/community", label: "Community" },
+              { href: "/docs", label: "Documentation" },
+              { href: "/careers", label: "Careers" },
+              { href: "/press", label: "Press Kit" },
+              { href: "/events", label: "Events" },
+            ] 
+          },
+          { 
+            title: "Security", 
+            links: [
+              { href: "/security", label: "Security Center" },
+              { href: "/transparency", label: "Transparency Report" },
+              { href: "/warrant-canary", label: "Warrant Canary" },
+              { href: "/threat-model", label: "Threat Model" },
+            ] 
+          },
+          { 
+            title: "More", 
+            links: [
+              { href: "/manifesto", label: "Manifesto" },
+              { href: "/start", label: "Getting Started" },
+              { href: "/faq", label: "FAQ" },
+              { href: "/why-kryosette", label: "Why kryosette?" },
+              { href: "/pricing", label: "Pricing" },
+              { href: "/partners", label: "Partners" },
+            ] 
+          },
         ].map(col => (
           <div key={col.title}>
-            <h4 className="text-black text-[13px] font-semibold mb-3">{col.title}</h4>
+            <h4 className="text-white text-[13px] font-semibold mb-3">{col.title}</h4>
             <ul className="space-y-2">
               {col.links.map(link => (
                 <li key={link.label}>
-                  {"external" in link && link.external ? (
-                    <a href={link.href} target="_blank" rel="noopener noreferrer" className="hover:text-black transition-colors duration-200">{link.label}</a>
-                  ) : (
-                    <Link href={link.href} className="hover:text-black transition-colors duration-200">{link.label}</Link>
-                  )}
+                  <Link href={link.href} className="hover:text-white transition-colors duration-200">
+                    {link.label}
+                  </Link>
                 </li>
               ))}
-              {col.title === "Legal" && <li><span className="cursor-default">© 2026 kryosette</span></li>}
             </ul>
           </div>
         ))}
       </div>
-      <div className="border-t border-gray-200/80 pt-5 flex flex-col md:flex-row md:justify-between text-[11px]">
-        <p>Built with security as foundation. No trackers. No analytics. No compromises.</p>
+      <div className="border-t border-white/10 pt-5 flex flex-col md:flex-row md:justify-between text-[11px]">
+        <div className="flex flex-wrap gap-4">
+          <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+          <Link href="/terms" className="hover:text-white transition-colors">Terms of Use</Link>
+          <Link href="mailto:kryosette@gmail.com" className="hover:text-white transition-colors">Contact</Link>
+          <span className="cursor-default">© 2026 kryosette</span>
+        </div>
         <p className="mt-2 md:mt-0">Desktop only · Linux x86 · C/ASM core</p>
       </div>
     </div>
@@ -508,12 +534,10 @@ const BlogSlider = () => {
   const startX = useRef(0);
   const scrollLeftPos = useRef(0);
 
-  // Загружаем посты
   useEffect(() => {
     fetch('https://selfuniversity.vercel.app/api/posts')
       .then(res => res.json())
       .then(data => {
-        // Только английские посты, убираем дубликаты по slug
         const enPosts = data
           .filter((p: any) => p.language === 'en')
           .filter((p: any, i: number, arr: any[]) => arr.findIndex((x: any) => x.slug === p.slug) === i);
@@ -552,21 +576,21 @@ const BlogSlider = () => {
   const onMouseMove = (e: React.MouseEvent) => { if (!isDragging || !sliderRef.current) return; sliderRef.current.scrollLeft = scrollLeftPos.current - (e.clientX - startX.current); };
 
   return (
-    <section className="py-24 lg:py-32 px-4 lg:px-8 bg-[#f5f5f7] border-t border-black/[0.04]">
+    <section className="py-24 lg:py-32 px-4 lg:px-8 bg-[#1c1c1e] border-t border-white/5">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-end justify-between mb-12">
           <div>
-            <p className="text-[11px] font-semibold tracking-[0.35em] text-black/50 uppercase mb-4">
+            <p className="text-[11px] font-semibold tracking-[0.35em] text-white/50 uppercase mb-4">
               From Self University
             </p>
-            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-[-0.025em] text-black leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-[-0.025em] text-white leading-tight">
               Latest articles
             </h2>
           </div>
           <div className="hidden sm:flex gap-2.5">
             {(["left", "right"] as const).map(dir => (
               <button key={dir} onClick={() => scroll(dir)} disabled={dir === "left" ? !canScrollLeft : !canScrollRight}
-                className="w-9 h-9 rounded-full bg-black/[0.05] border border-black/[0.08] flex items-center justify-center disabled:opacity-25 hover:bg-black/10 transition-all duration-300"
+                className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center disabled:opacity-25 hover:bg-white/10 transition-all duration-300"
                 aria-label={`Scroll ${dir}`}
               >
                 {dir === "left" ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
@@ -578,7 +602,7 @@ const BlogSlider = () => {
         {loading ? (
           <div className="flex gap-4">
             {[1,2,3].map(i => (
-              <div key={i} className="snap-start shrink-0 bg-white/50 rounded-2xl animate-pulse" style={{ width: 480, height: 290 }} />
+              <div key={i} className="snap-start shrink-0 bg-white/5 rounded-2xl animate-pulse" style={{ width: 480, height: 290 }} />
             ))}
           </div>
         ) : (
@@ -596,28 +620,28 @@ const BlogSlider = () => {
                 className="snap-start shrink-0 group relative block"
                 style={{ width: 480, height: 290 }}
               >
-                <div className="w-full h-full bg-black/[0.015] backdrop-blur-sm border border-black/[0.05] rounded-2xl p-7 hover:bg-white hover:border-black/10 hover:shadow-xl hover:shadow-black/[0.05] transition-all duration-500 flex flex-col justify-between">
+                <div className="w-full h-full bg-white/[0.02] backdrop-blur-sm border border-white/5 rounded-2xl p-7 hover:bg-white/[0.04] hover:border-white/10 hover:shadow-xl hover:shadow-black/50 transition-all duration-500 flex flex-col justify-between">
                   <div>
                     <div className="flex items-center gap-3 mb-5">
-                      <div className="w-10 h-10 rounded-xl bg-black/5 flex items-center justify-center">
-                        <Edit3 className="w-5 h-5 text-black/40" />
+                      <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
+                        <Edit3 className="w-5 h-5 text-white/40" />
                       </div>
-                      <span className="text-[10px] font-semibold tracking-[0.22em] text-black/40 uppercase">
+                      <span className="text-[10px] font-semibold tracking-[0.22em] text-white/40 uppercase">
                         Self University
                       </span>
                     </div>
-                    <h3 className="text-[1.1rem] font-semibold text-black tracking-tight line-clamp-2 mb-2 group-hover:opacity-80 transition-opacity duration-300">
+                    <h3 className="text-[1.1rem] font-semibold text-white tracking-tight line-clamp-2 mb-2 group-hover:opacity-80 transition-opacity duration-300">
                       {post.title}
                     </h3>
-                    <p className="text-[13px] text-black/50 leading-relaxed line-clamp-2">
+                    <p className="text-[13px] text-white/40 leading-relaxed line-clamp-2">
                       {post.summary || 'Read the full article on Self University'}
                     </p>
                   </div>
-                  <div className="flex items-center justify-between pt-5 border-t border-black/[0.05]">
-                    <span className="text-[11px] font-semibold tracking-[0.18em] text-black/40 uppercase">
+                  <div className="flex items-center justify-between pt-5 border-t border-white/5">
+                    <span className="text-[11px] font-semibold tracking-[0.18em] text-white/30 uppercase">
                       {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </span>
-                    <span className="inline-flex items-center text-[11px] font-semibold tracking-[0.18em] text-black hover:text-black/70 transition-colors uppercase">
+                    <span className="inline-flex items-center text-[11px] font-semibold tracking-[0.18em] text-white/50 hover:text-white transition-colors uppercase">
                       Read more
                       <ArrowRight className="w-3 h-3 ml-1.5 group-hover:translate-x-1 transition-transform duration-400" />
                     </span>
@@ -641,7 +665,7 @@ export default function Home() {
   const progressBarScale = useSpring(scrollYProgress, { stiffness: 40, damping: 15 });
 
   return (
-    <div ref={containerRef} className="relative bg-white text-black overflow-x-hidden">
+    <div ref={containerRef} className="relative bg-black text-white overflow-x-hidden">
       <motion.div
         className="fixed top-0 left-0 right-0 h-[1.5px] z-50 origin-left"
         style={{ scaleX: progressBarScale, background: "linear-gradient(90deg, rgba(79,126,255,0.6), rgba(168,85,247,0.6), rgba(244,63,142,0.6))" }}
@@ -653,10 +677,10 @@ export default function Home() {
         <div className="w-full max-w-6xl mx-auto relative z-10">
           <div className="max-w-3xl">
             <FadeUp delay={0.05}>
-              <p className="text-[11px] font-semibold tracking-[0.38em] text-black/50 uppercase mb-10">Desktop only · Linux x86 · C/ASM core</p>
+              <p className="text-[11px] font-semibold tracking-[0.38em] text-white/50 uppercase mb-10">Desktop only · Linux x86 · C/ASM core</p>
             </FadeUp>
             <FadeUp delay={0.12}>
-              <h1 className="text-[4.5rem] sm:text-[7rem] lg:text-[10rem] xl:text-[12rem] font-extrabold tracking-[-0.035em] leading-[0.82] text-black mb-10 -translate-x-2">
+              <h1 className="text-[4.5rem] sm:text-[7rem] lg:text-[10rem] xl:text-[12rem] font-extrabold tracking-[-0.035em] leading-[0.82] text-white mb-10 -translate-x-2">
                 <span className="whitespace-nowrap">
                   {["k","r","y","o","s","e","t","t","e"].map((l, i) => (
                     <JellyLetter key={i} letter={l} delay={i * 0.18} />
@@ -665,17 +689,79 @@ export default function Home() {
               </h1>
             </FadeUp>
             <FadeUp delay={0.25}>
-              <p className="text-xl sm:text-2xl lg:text-[1.65rem] font-light text-black/70 max-w-2xl leading-relaxed mb-12 tracking-[-0.01em]">
+              <p className="text-xl sm:text-2xl lg:text-[1.65rem] font-light text-white/70 max-w-2xl leading-relaxed mb-12 tracking-[-0.01em]">
                 A social network built from the ground up for security, resilience, and true ownership.
               </p>
             </FadeUp>
             <FadeUp delay={0.35}>
               <div className="flex flex-wrap gap-4">
-                <Link href="#tech-stack" className="group inline-flex items-center justify-center px-8 py-3.5 text-[13px] font-semibold tracking-[0.02em] text-white bg-black rounded-full hover:bg-gray-800 transition-all duration-400 shadow-lg shadow-black/20">
-                  <span>Discover the tech</span>
-                  <ArrowRight className="w-4 h-4 ml-2.5 group-hover:translate-x-0.5 transition-transform duration-400" />
-                </Link>
-                <Link href="/self-university" className="group inline-flex items-center justify-center px-8 py-3.5 text-[13px] font-semibold tracking-[0.02em] text-black/80 bg-white/60 backdrop-blur-sm border border-black/12 rounded-full hover:bg-white/80 hover:border-black/20 transition-all duration-400 shadow-sm">
+                <Link
+  href="/demo"
+  className="group relative inline-flex items-center justify-center px-8 py-3.5 text-[13px] font-semibold tracking-[0.02em] text-white rounded-full transition-all duration-500 overflow-hidden"
+  style={{
+    background: 'rgba(255, 255, 255, 0.05)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 0 30px rgba(255, 255, 255, 0.08), inset 0 0 30px rgba(255, 255, 255, 0.03)',
+  }}
+>
+  {/* Медленное RGB-свечение — всегда активно */}
+  <motion.div
+    className="absolute inset-0 rounded-full"
+    style={{
+      background: `
+        radial-gradient(circle at 30% 50%, rgba(255, 0, 0, 0.2), transparent 50%),
+        radial-gradient(circle at 70% 50%, rgba(0, 0, 255, 0.2), transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(0, 255, 0, 0.15), transparent 50%)
+      `,
+    }}
+    animate={{
+      background: [
+        `
+          radial-gradient(circle at 30% 50%, rgba(255, 0, 0, 0.2), transparent 50%),
+          radial-gradient(circle at 70% 50%, rgba(0, 0, 255, 0.2), transparent 50%),
+          radial-gradient(circle at 50% 50%, rgba(0, 255, 0, 0.15), transparent 50%)
+        `,
+        `
+          radial-gradient(circle at 20% 60%, rgba(255, 255, 0, 0.2), transparent 50%),
+          radial-gradient(circle at 80% 40%, rgba(255, 0, 255, 0.2), transparent 50%),
+          radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.15), transparent 50%)
+        `,
+        `
+          radial-gradient(circle at 40% 50%, rgba(0, 255, 0, 0.2), transparent 50%),
+          radial-gradient(circle at 60% 50%, rgba(0, 255, 255, 0.2), transparent 50%),
+          radial-gradient(circle at 50% 50%, rgba(255, 0, 255, 0.15), transparent 50%)
+        `,
+        `
+          radial-gradient(circle at 30% 40%, rgba(0, 0, 255, 0.2), transparent 50%),
+          radial-gradient(circle at 70% 60%, rgba(255, 0, 0, 0.2), transparent 50%),
+          radial-gradient(circle at 50% 50%, rgba(255, 255, 0, 0.15), transparent 50%)
+        `,
+        `
+          radial-gradient(circle at 30% 50%, rgba(255, 0, 0, 0.2), transparent 50%),
+          radial-gradient(circle at 70% 50%, rgba(0, 0, 255, 0.2), transparent 50%),
+          radial-gradient(circle at 50% 50%, rgba(0, 255, 0, 0.15), transparent 50%)
+        `,
+      ],
+    }}
+    transition={{
+      duration: 6,
+      repeat: Infinity,
+      ease: "linear",
+    }}
+  />
+
+  {/* Блик по верху */}
+  <div className="absolute top-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+
+  {/* Контент */}
+  <span className="relative z-10 flex items-center gap-2.5">
+    DEMO2026
+    <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-400" />
+  </span>
+</Link>
+                <Link href="/self-university" className="group inline-flex items-center justify-center px-8 py-3.5 text-[13px] font-semibold tracking-[0.02em] text-white bg-white/20 backdrop-blur-sm border border-white/20 rounded-full hover:bg-white/30 transition-all duration-400 shadow-sm">
                   <span>Self University</span>
                   <ArrowRight className="w-4 h-4 ml-2.5 group-hover:translate-x-0.5 transition-transform duration-400" />
                 </Link>
@@ -686,11 +772,11 @@ export default function Home() {
       </section>
 
       {/* Tech Grid */}
-      <section id="tech-stack" className="py-32 lg:py-40 px-6 lg:px-16 bg-white">
+      <section id="tech-stack" className="py-32 lg:py-40 px-6 lg:px-16 bg-black">
         <div className="max-w-7xl mx-auto">
           <FadeUp className="mb-20">
-            <p className="text-[11px] font-semibold tracking-[0.38em] text-black/40 uppercase mb-5">Technology</p>
-            <h2 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-[-0.03em] text-black leading-tight">Core systems</h2>
+            <p className="text-[11px] font-semibold tracking-[0.38em] text-white/40 uppercase mb-5">Technology</p>
+            <h2 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-[-0.03em] text-white leading-tight">Core systems</h2>
           </FadeUp>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {techStack.map((tech, index) => (
@@ -701,37 +787,37 @@ export default function Home() {
       </section>
 
       {/* Preview */}
-      <section className="py-32 lg:py-40 px-6 lg:px-16 bg-[#f5f5f7]">
+      <section className="py-32 lg:py-40 px-6 lg:px-16 bg-black">
         <div className="max-w-6xl mx-auto">
           <FadeUp className="mb-16 text-center">
-            <p className="text-[11px] font-semibold tracking-[0.38em] text-black/40 uppercase mb-5">Preview</p>
-            <h2 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-[-0.03em] text-black leading-tight">See it in action</h2>
+            <p className="text-[11px] font-semibold tracking-[0.38em] text-white/40 uppercase mb-5">Preview</p>
+            <h2 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-[-0.03em] text-white leading-tight">See it in action</h2>
           </FadeUp>
           <FadeUp delay={0.1}>
-            <div className="bg-white border border-black/[0.05] rounded-3xl p-3 sm:p-5 overflow-hidden shadow-2xl shadow-black/[0.06]">
+            <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-3 sm:p-5 overflow-hidden shadow-2xl shadow-black/50">
               <Image src="https://github.com/user-attachments/assets/93610fa8-71f6-448a-85c4-08d9f96ab8f0" alt="kryosette preview interface" width={2940} height={1786} className="w-full h-auto rounded-2xl" priority unoptimized />
             </div>
-            <p className="text-center text-[11px] font-semibold tracking-[0.2em] text-black/30 mt-6 uppercase">Early preview · work in progress</p>
+            <p className="text-center text-[11px] font-semibold tracking-[0.2em] text-white/20 mt-6 uppercase">Early preview · work in progress</p>
           </FadeUp>
         </div>
       </section>
 
       {/* Status */}
-      <section className="py-32 lg:py-40 px-6 lg:px-16 bg-white">
+      <section className="py-32 lg:py-40 px-6 lg:px-16 bg-black">
         <div className="max-w-5xl mx-auto">
           <FadeUp className="mb-20 text-center">
-            <p className="text-[11px] font-semibold tracking-[0.38em] text-black/40 uppercase mb-5">Progress</p>
-            <h2 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-[-0.03em] text-black leading-tight">Current Status</h2>
+            <p className="text-[11px] font-semibold tracking-[0.38em] text-white/40 uppercase mb-5">Progress</p>
+            <h2 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-[-0.03em] text-white leading-tight">Current Status</h2>
           </FadeUp>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FadeUp delay={0.1}>
-              <div className="h-full bg-[#f9f9fb] border border-black/[0.05] rounded-3xl p-8 sm:p-10 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500">
-                <h3 className="text-[1.05rem] font-bold tracking-[-0.015em] mb-8 flex items-center gap-3 text-black">
+              <div className="h-full bg-[#2c2c2e] border border-white/5 rounded-3xl p-8 sm:p-10 hover:shadow-xl hover:shadow-black/50 transition-all duration-500">
+                <h3 className="text-[1.05rem] font-bold tracking-[-0.015em] mb-8 flex items-center gap-3 text-white">
                   <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" /> Implemented
                 </h3>
                 <ul className="space-y-3.5">
                   {implemented.map((item, i) => (
-                    <li key={i} className="text-[13px] font-light text-black/65 flex items-start gap-3">
+                    <li key={i} className="text-[13px] font-light text-white/50 flex items-start gap-3">
                       <span className="w-1 h-1 rounded-full bg-green-400/60 mt-2 shrink-0" /> {item}
                     </li>
                   ))}
@@ -739,13 +825,13 @@ export default function Home() {
               </div>
             </FadeUp>
             <FadeUp delay={0.2}>
-              <div className="h-full bg-[#f9f9fb] border border-black/[0.05] rounded-3xl p-8 sm:p-10 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500">
-                <h3 className="text-[1.05rem] font-bold tracking-[-0.015em] mb-8 flex items-center gap-3 text-black">
+              <div className="h-full bg-[#2c2c2e] border border-white/5 rounded-3xl p-8 sm:p-10 hover:shadow-xl hover:shadow-black/50 transition-all duration-500">
+                <h3 className="text-[1.05rem] font-bold tracking-[-0.015em] mb-8 flex items-center gap-3 text-white">
                   <span className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(234,179,8,0.5)]" /> In Development
                 </h3>
                 <ul className="space-y-3.5">
                   {inDevelopment.map((item, i) => (
-                    <li key={i} className="text-[13px] font-light text-black/65 flex items-start gap-3">
+                    <li key={i} className="text-[13px] font-light text-white/50 flex items-start gap-3">
                       <span className="w-1 h-1 rounded-full bg-yellow-400/60 mt-2 shrink-0" /> {item}
                     </li>
                   ))}
@@ -753,33 +839,33 @@ export default function Home() {
               </div>
             </FadeUp>
           </div>
-          <FadeUp delay={0.3} className="mt-16 text-center">
-            <p className="text-lg font-light text-black/55">First working demo expected <span className="font-semibold text-black">May 2026</span></p>
-          </FadeUp>
+          {/* <FadeUp delay={0.3} className="mt-16 text-center">
+            <p className="text-lg font-light text-white/40">First working demo expected <span className="font-semibold text-white">May 2026</span></p>
+          </FadeUp> */}
         </div>
       </section>
 
       {/* Quote */}
-      <section className="py-32 lg:py-40 px-6 lg:px-16 bg-[#f5f5f7]">
+      <section className="py-32 lg:py-40 px-6 lg:px-16 bg-black">
         <div className="max-w-4xl mx-auto text-center">
           <FadeUp>
-            <blockquote className="text-2xl sm:text-3xl lg:text-[2.1rem] font-light italic text-black/70 leading-relaxed tracking-[-0.015em]">
+            <blockquote className="text-2xl sm:text-3xl lg:text-[2.1rem] font-light italic text-white/60 leading-relaxed tracking-[-0.015em]">
               &ldquo;There will be features that have never existed or have never been implemented in this way.&rdquo;
             </blockquote>
-            <p className="mt-8 text-[11px] font-semibold tracking-[0.38em] text-black/40 uppercase">kryosette</p>
+            <p className="mt-8 text-[11px] font-semibold tracking-[0.38em] text-white/30 uppercase">kryosette</p>
           </FadeUp>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-32 lg:py-40 px-6 lg:px-16 bg-white">
+      <section className="py-32 lg:py-40 px-6 lg:px-16 bg-black">
         <div className="text-center">
           <FadeUp>
-            <Link href="/self-university" className="group inline-flex items-center justify-center px-10 py-4 text-[13px] font-semibold tracking-[0.02em] text-black bg-[#f5f5f7] border border-black/8 rounded-full hover:bg-black hover:text-white hover:border-transparent transition-all duration-500 shadow-sm">
+            <Link href="/self-university" className="group inline-flex items-center justify-center px-10 py-4 text-[13px] font-semibold text-white bg-white/10 border border-white/10 rounded-full hover:bg-white/20 transition-all duration-500 shadow-sm">
               <span>Explore Self University</span>
               <ArrowRight className="w-4 h-4 ml-3 group-hover:translate-x-0.5 transition-transform duration-400" />
             </Link>
-            <p className="mt-8 text-[11px] font-semibold tracking-[0.38em] text-black/40 uppercase">Production only when ready</p>
+            <p className="mt-8 text-[11px] font-semibold tracking-[0.38em] text-white/20 uppercase">Production only when ready</p>
           </FadeUp>
         </div>
       </section>
