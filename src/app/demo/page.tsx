@@ -72,7 +72,7 @@ const techDetails = [
   {
     slug: "kryo-arch", icon: Cpu, title: "Kryo Arch", subtitle: "Local‑first serverless architecture",
     shortDesc: "The architectural foundation. Every component runs on your machine. No cloud backend. No API server. (Done Schematically)",
-    extended: "Kryo Arch is a radical departure from traditional client‑server models. Everything is stored locally on your machine. You decide exactly who sees your posts, who is hidden, and how data flows. This architecture makes the network virtually unblockable and puts you in complete ownership of your digital presence.",
+    extended: "Kryo Arch is a radical departure from traditional client‑server models. Everything is stored locally on your machine. You decide exactly who sees your posts, who is hidden, and how data flows. This architecture makes the network virtually unblockable and puts you in complete ownership of your digital presence. This is just a small part, and there are fundamentally different approaches",
     images: null,
   },
   {
