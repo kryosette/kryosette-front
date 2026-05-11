@@ -11,6 +11,7 @@ import {
   Database,
   BrainCircuit,
   Edit3,
+  Microscope,
 } from "lucide-react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { useRef, useState, useCallback, useEffect } from "react";
@@ -26,6 +27,7 @@ const techStack = [
   { id: "in-memory-db", title: "In‑Memory DB", subtitle: "Encrypted at runtime", description: "ACID graph database in C. AES‑256‑GCM, BLAKE3 checksums.", icon: Database, accent: "#F5C45B" },
   { id: "truth-engine", title: "Truth Engine", subtitle: "Local AI verification", description: "On‑device detection. Your data stays local.", icon: BrainCircuit, accent: "#5BF57A" },
   { id: "transparent-editor", title: "Transparent Editor", subtitle: "Full visibility", description: "Watch every process, tweak routing & policies.", icon: Edit3, accent: "#F5885B" },
+  { id: "local-great-analyzer", title: "Local Great Analyzer", subtitle: "Common-sense guardian", description: "Monitors user actions. Prevents risky behavior before it happens. Based on Truth Engine.", icon: Microscope, accent: "#14B8A6" },
 ];
 
 const implemented = [

@@ -135,6 +135,15 @@ const planned = [
     color: "text-yellow-400",
     href: "/bytegraph",
   },
+  {
+  slug: "local-great-analyzer",
+  icon: Microscope,
+  title: "Local Great Analyzer",
+  subtitle: "Common-sense control for every user action",
+  shortDesc: "Based on the Truth Engine. Monitors all user actions to ensure they remain within the bounds of common sense and security policies. Prevents accidental data leaks, risky sharing, and policy violations before they happen — without ever sending data off‑device.",
+  color: "text-teal-400",
+  href: "/technology/truth-engine",
+},
 ];
 
 // ---------------------------------------------------------------------------
