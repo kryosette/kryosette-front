@@ -786,65 +786,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Preview */}
-      <section className="py-32 lg:py-40 px-6 lg:px-16 bg-black">
-        <div className="max-w-6xl mx-auto">
-          <FadeUp className="mb-16 text-center">
-            <p className="text-[11px] font-semibold tracking-[0.38em] text-white/40 uppercase mb-5">Preview</p>
-            <h2 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-[-0.03em] text-white leading-tight">See it in action</h2>
-          </FadeUp>
-          <FadeUp delay={0.1}>
-            <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-3 sm:p-5 overflow-hidden shadow-2xl shadow-black/50">
-              <Image src="https://github.com/user-attachments/assets/93610fa8-71f6-448a-85c4-08d9f96ab8f0" alt="kryosette preview interface" width={2940} height={1786} className="w-full h-auto rounded-2xl" priority unoptimized />
-            </div>
-            <p className="text-center text-[11px] font-semibold tracking-[0.2em] text-white/20 mt-6 uppercase">Early preview · work in progress</p>
-          </FadeUp>
-        </div>
-      </section>
+     
 
-      {/* Status */}
-      <section className="py-32 lg:py-40 px-6 lg:px-16 bg-black">
-        <div className="max-w-5xl mx-auto">
-          <FadeUp className="mb-20 text-center">
-            <p className="text-[11px] font-semibold tracking-[0.38em] text-white/40 uppercase mb-5">Progress</p>
-            <h2 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-[-0.03em] text-white leading-tight">Current Status</h2>
-          </FadeUp>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FadeUp delay={0.1}>
-              <div className="h-full bg-[#2c2c2e] border border-white/5 rounded-3xl p-8 sm:p-10 hover:shadow-xl hover:shadow-black/50 transition-all duration-500">
-                <h3 className="text-[1.05rem] font-bold tracking-[-0.015em] mb-8 flex items-center gap-3 text-white">
-                  <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" /> Implemented
-                </h3>
-                <ul className="space-y-3.5">
-                  {implemented.map((item, i) => (
-                    <li key={i} className="text-[13px] font-light text-white/50 flex items-start gap-3">
-                      <span className="w-1 h-1 rounded-full bg-green-400/60 mt-2 shrink-0" /> {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </FadeUp>
-            <FadeUp delay={0.2}>
-              <div className="h-full bg-[#2c2c2e] border border-white/5 rounded-3xl p-8 sm:p-10 hover:shadow-xl hover:shadow-black/50 transition-all duration-500">
-                <h3 className="text-[1.05rem] font-bold tracking-[-0.015em] mb-8 flex items-center gap-3 text-white">
-                  <span className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(234,179,8,0.5)]" /> In Development
-                </h3>
-                <ul className="space-y-3.5">
-                  {inDevelopment.map((item, i) => (
-                    <li key={i} className="text-[13px] font-light text-white/50 flex items-start gap-3">
-                      <span className="w-1 h-1 rounded-full bg-yellow-400/60 mt-2 shrink-0" /> {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </FadeUp>
-          </div>
-          {/* <FadeUp delay={0.3} className="mt-16 text-center">
-            <p className="text-lg font-light text-white/40">First working demo expected <span className="font-semibold text-white">May 2026</span></p>
-          </FadeUp> */}
-        </div>
-      </section>
-
+    
       {/* Quote */}
       <section className="py-32 lg:py-40 px-6 lg:px-16 bg-black">
         <div className="max-w-4xl mx-auto text-center">
