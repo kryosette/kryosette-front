@@ -19,7 +19,7 @@ const channels = [
     icon: MessageCircle,
     title: "Telegram Group",
     description: "Chat with other users, share feedback, and get help.",
-    href: "https://t.me/+mWDX9nWoFwdjZTEy",
+    href: "https://t.me/kryosette_chat",
     label: "Join Group",
   },
   {
