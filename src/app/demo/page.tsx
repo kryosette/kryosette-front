@@ -183,7 +183,8 @@ const algorithms = [
     title: "ZeroSum Algorithm",
     subtitle: "Data integrity via symmetric zero‑sum sequences",
     shortDesc: "A mathematical integrity verification method using zero‑sum sequence generation. Detects data corruption and tampering with configurable sensitivity. Used for checksum verification in the in‑memory database.",
-    detailed: "ZeroSum generates symmetric sequences where all elements sum to zero with high numerical precision. The algorithm uses two parameters — f₀ (base factor) and s₀ (expected first element) — to generate a sequence that acts as a mathematical signature. After data transmission or storage, the sequence is regenerated and compared. Deviations as small as 0.2% are reliably detected. In testing across 1000 runs, the zero-sum condition was satisfied 938 times. The remaining 62 runs produced a non-zero residual due to floating-point accumulation errors — a known limitation currently being addressed. This is a security algorithm — not a cryptographic primitive.", color: "text-amber-400",
+    detailed: "ZeroSum generates symmetric sequences where all elements sum to zero with high numerical precision. The algorithm uses two parameters — f₀ (base factor) and s₀ (expected first element) — to generate a sequence that acts as a mathematical signature. After data transmission or storage, the sequence is regenerated and compared. This is a security algorithm — not a cryptographic primitive.", 
+    color: "text-amber-400",
   }, 
 ];
 
