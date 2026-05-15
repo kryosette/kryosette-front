@@ -76,7 +76,7 @@ const techDetails = [
     images: null,
   },
   {
-    slug: "transcendent-bridge", icon: Network, title: "Transcendent Bridge", subtitle: "L2→L4 direct encapsulation",
+    slug: "transcendent-bridge", icon: Network, title: "Transcendent Bridge", subtitle: "Extends beyond L2 – a new network layer.",
     shortDesc: "Bypasses traditional routing. Undetectable by deep packet inspection. Unstoppable by firewalls. Security Scanners.",
     extended: "The Transcendent Bridge is a proprietary network extension that operates across all OSI layers, not just L2. It allows us to establish direct, secure channels even in hostile network environments, bypassing DPI and other interference techniques.",
     images: [
@@ -183,7 +183,7 @@ const algorithms = [
     title: "ZeroSum Algorithm",
     subtitle: "Data integrity via symmetric zero‑sum sequences",
     shortDesc: "A mathematical integrity verification method using zero‑sum sequence generation. Detects data corruption and tampering with configurable sensitivity. Used for checksum verification in the in‑memory database.",
-    detailed: "ZeroSum generates symmetric sequences where all elements sum to zero with high numerical precision. The algorithm uses two parameters — f₀ (base factor) and s₀ (expected first element) — to generate a sequence that acts as a mathematical signature. After data transmission or storage, the sequence is regenerated and compared. Deviations as small as 0.2% are reliably detected — in testing, currently 62 out of 1000 deviations. Unlike hash‑based approaches, ZeroSum scales linearly with data size, making it suitable for real‑time integrity checking in the in‑memory database and for message transmission verification between peers. This is a security algorithm — not a cryptographic primitive.",
+    detailed: "ZeroSum generates symmetric sequences where all elements sum to zero with high numerical precision. The algorithm uses two parameters — f₀ (base factor) and s₀ (expected first element) — to generate a sequence that acts as a mathematical signature. After data transmission or storage, the sequence is regenerated and compared. Deviations as small as 0.2% are reliably detected. In testing, out of 1000 artificially introduced corruptions, ZeroSum caught 62 that passed traditional checksum verification — the other 938 were caught by both. The only known limitation is numerical overflow in accumulated sequences, which is being addressed. Unlike hash‑based approaches, ZeroSum scales linearly with data size, making it suitable for real‑time integrity checking in the in‑memory database and for message transmission verification between peers. This is a security algorithm — not a cryptographic primitive.",
     color: "text-amber-400",
   }, 
 ];
