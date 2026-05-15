@@ -78,8 +78,8 @@ const techDetails = [
   {
     slug: "transcendent-bridge", icon: Network, title: "Transcendent Bridge", subtitle: "Extends beyond L2 – a new network layer.",
     shortDesc: "Bypasses traditional routing. Undetectable by deep packet inspection. Unstoppable by firewalls. Security Scanners.",
-    extended: "The Transcendent Bridge is a proprietary network extension that operates across all OSI layers, not just L2. It allows us to establish direct, secure channels even in hostile network environments, bypassing DPI and other interference techniques.",
-    images: [
+    extended: "The Transcendent Bridge is a proprietary network extension that operates across all OSI layers, not just L2. It works at every level of the stack, allowing direct, secure channels even in hostile network environments, bypassing deep packet inspection and other interference techniques.",
+       images: [
       { src: "/assets/bridge1.png", width: 1054, height: 782 },
       { src: "/assets/bridge2.png", width: 1054, height: 782 },
       { src: "/assets/bridge3.png", width: 1054, height: 782 },

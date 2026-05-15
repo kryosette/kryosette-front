@@ -44,8 +44,8 @@ export const technologies: Technology[] = [
     shortDescription: "Extends beyond L2 – a new network layer.",
     icon: Network,
     longDescription:
-      "The Transcendent Bridge is a proprietary network extension that operates across all OSI layers, not just L2. It allows us to establish direct, secure channels even in hostile network environments, bypassing DPI and other interference techniques.",
-    features: [
+      "The Transcendent Bridge is a proprietary network extension that operates across all OSI layers, not just L2. It works at every level of the stack, allowing direct, secure channels even in hostile network environments, bypassing deep packet inspection and other interference techniques.",
+       features: [
       "Cross‑layer packet manipulation",
       "Bypasses deep packet inspection",
       "Dynamic routing around censorship",
